@@ -1,0 +1,6 @@
+[workspace]
+members = ["orchestrator", "cosmos_gravity", "gravity_utils", "gravity_proto", "gbt"]
+default-members = ["gbt"]
+
+
+[patch.crates-io]

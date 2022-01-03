@@ -1,0 +1,21 @@
+[package]
+name = "orchestrator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "orchestrator"
+path = "src/lib.rs"
+
+[dependencies]
+gravity_utils = {path = "../gravity_utils"}
+gravity_proto = {path = "../gravity_proto/"}
+cosmos_gravity = {path = "../cosmos_gravity"}
+
+deep_space = "2.8"
+clarity = "0.5"
+web30 = "0.17"
+log = "0.4"
+tonic = "0.6"
+futures = "0.3"
+tokio = "1.4.0"

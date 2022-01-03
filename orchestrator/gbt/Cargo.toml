@@ -1,0 +1,27 @@
+[package]
+name = "gbt"
+version = "1.0.10"
+edition = "2018"
+
+[dependencies]
+cosmos_gravity = {path = "../cosmos_gravity"}
+gravity_utils = {path = "../gravity_utils"}
+gravity_proto = {path = "../gravity_proto/"}
+orchestrator = {path = "../orchestrator/"}
+
+deep_space = "2.8"
+serde_derive = "1.0"
+clarity = "0.5"
+clap = {version="3.0.0-rc.7", features=["derive"]}
+serde = "1.0"
+actix-rt = "2.2"
+lazy_static = "1"
+url = "2"
+web30 = "0.17"
+env_logger = "0.9"
+log = "0.4"
+openssl-probe = "0.1"
+tokio = "1.4"
+rand = "0.8"
+dirs = "4.0"
+toml = "0.5"
