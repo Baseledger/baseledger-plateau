@@ -7,7 +7,21 @@ option go_package = "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc UbtDepositedClaim(MsgUbtDepositedClaim) returns (MsgUbtDepositedClaimResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgUbtDepositedClaim {
+  string creator = 1;
+  string eventNonce = 2;
+  string blockHeight = 3;
+  string tokenContract = 4;
+  string amount = 5;
+  string ethereumSender = 6;
+  string cosmosReceiver = 7;
+}
+
+message MsgUbtDepositedClaimResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
