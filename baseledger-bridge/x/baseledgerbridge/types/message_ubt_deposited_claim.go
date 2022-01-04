@@ -9,7 +9,7 @@ const TypeMsgUbtDepositedClaim = "ubt_deposited_claim"
 
 var _ sdk.Msg = &MsgUbtDepositedClaim{}
 
-func NewMsgUbtDepositedClaim(creator string, eventNonce string, blockHeight string, tokenContract string, amount string, ethereumSender string, cosmosReceiver string) *MsgUbtDepositedClaim {
+func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount string, ethereumSender string, cosmosReceiver string) *MsgUbtDepositedClaim {
 	return &MsgUbtDepositedClaim{
 		Creator:        creator,
 		EventNonce:     eventNonce,

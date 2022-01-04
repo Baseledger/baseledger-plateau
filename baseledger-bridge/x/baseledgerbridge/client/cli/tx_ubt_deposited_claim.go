@@ -18,8 +18,8 @@ func CmdUbtDepositedClaim() *cobra.Command {
 		Short: "Broadcast message ubtDepositedClaim",
 		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argEventNonce := args[0]
-			argBlockHeight := args[1]
+			argEventNonce, _ := strconv.ParseUint(args[0], 10, 64)
+			argBlockHeight, _ := strconv.ParseUint(args[1], 10, 64)
 			argTokenContract := args[2]
 			argAmount := args[3]
 			argEthereumSender := args[4]

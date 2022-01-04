@@ -13,8 +13,8 @@ service Msg {
 
 message MsgUbtDepositedClaim {
   string creator = 1;
-  string eventNonce = 2;
-  string blockHeight = 3;
+  uint64 eventNonce = 2;
+  uint64 blockHeight = 3;
   string tokenContract = 4;
   string amount = 5;
   string ethereumSender = 6;
