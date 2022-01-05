@@ -104,7 +104,9 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		// Check if coin is Cosmos-originated asset and get denom
-		isCosmosOriginated, denom := a.keeper.ERC20ToDenomLookup(ctx, *tokenAddress)
+		// isCosmosOriginated, denom := a.keeper.ERC20ToDenomLookup(ctx, *tokenAddress)
+		isCosmosOriginated := true
+		denom := "token"
 		coins := sdk.Coins{sdk.NewCoin(denom, claim.Amount)}
 
 		if !isCosmosOriginated {
