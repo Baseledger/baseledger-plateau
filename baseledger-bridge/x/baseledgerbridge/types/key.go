@@ -1,6 +1,11 @@
 package types
 
-import "strings"
+import (
+	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
 
 var (
 	// OracleAttestationKey attestation details by nonce and validator address
@@ -10,6 +15,12 @@ var (
 	// occur the Attestation is 'the event' that multiple claims vote on and
 	// eventually executes
 	OracleAttestationKey = "OracleAttestationKey"
+
+	// LastEventNonceByValidatorKey indexes lateset event nonce by validator
+	LastEventNonceByValidatorKey = "LastEventNonceByValidatorKey"
+
+	// LastObservedEventNonceKey indexes the latest event nonce
+	LastObservedEventNonceKey = "LastObservedEventNonceKey"
 )
 
 // GetAttestationKey returns the following key format
@@ -25,6 +36,17 @@ func GetAttestationKey(eventNonce uint64, claimHash []byte) string {
 	copy(key[len(OracleAttestationKey):], UInt64Bytes(eventNonce))
 	copy(key[len(OracleAttestationKey)+len(UInt64Bytes(0)):], claimHash)
 	return convertByteArrToString(key)
+}
+
+// GetLastEventNonceByValidatorKey indexes lateset event nonce by validator
+// GetLastEventNonceByValidatorKey returns the following key format
+// prefix              cosmos-validator
+// [0x0][gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
+func GetLastEventNonceByValidatorKey(validator sdk.ValAddress) string {
+	if err := sdk.VerifyAddressFormat(validator); err != nil {
+		panic(sdkerrors.Wrap(err, "invalid validator address"))
+	}
+	return LastEventNonceByValidatorKey + string(validator.Bytes())
 }
 
 func convertByteArrToString(value []byte) string {
