@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +22,7 @@ func CmdUbtDepositedClaim() *cobra.Command {
 			argEventNonce, _ := strconv.ParseUint(args[0], 10, 64)
 			argBlockHeight, _ := strconv.ParseUint(args[1], 10, 64)
 			argTokenContract := args[2]
-			argAmount := args[3]
+			argAmount, _ := sdk.NewIntFromString(args[3])
 			argEthereumSender := args[4]
 			argCosmosReceiver := args[5]
 
