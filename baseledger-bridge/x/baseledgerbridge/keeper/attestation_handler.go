@@ -103,9 +103,10 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			invalidAddress = true
 		}
 
+		// TODO: skos revisit this one, it seems like we don't need to add ERC20 lookup for our specific case
 		// Check if coin is Cosmos-originated asset and get denom
 		// isCosmosOriginated, denom := a.keeper.ERC20ToDenomLookup(ctx, *tokenAddress)
-		isCosmosOriginated := true
+		isCosmosOriginated := false
 		denom := "token"
 		coins := sdk.Coins{sdk.NewCoin(denom, claim.Amount)}
 
