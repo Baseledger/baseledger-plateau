@@ -31,6 +31,9 @@ func CmdUbtDepositedClaim() *cobra.Command {
 				return err
 			}
 
+			// TODO skos: why is chain id default (baseledger-bridge) wrong??
+			clientCtx = clientCtx.WithChainID("baseledgerbridge")
+
 			msg := types.NewMsgUbtDepositedClaim(
 				clientCtx.GetFromAddress().String(),
 				argEventNonce,
