@@ -38,10 +38,15 @@ func (msg *MsgSetOrchestratorAddress) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgSetOrchestratorAddress) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Validator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
+func (msg *MsgSetOrchestratorAddress) ValidateBasic() (err error) {
+	if _, err = sdk.ValAddressFromBech32(msg.Validator); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Validator)
+	}
+	if _, err = sdk.AccAddressFromBech32(msg.Orchestrator); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Orchestrator)
+	}
+	if err := ValidateEthAddress(msg.EthAddress); err != nil {
+		return sdkerrors.Wrap(err, "ethereum address")
 	}
 	return nil
 }
