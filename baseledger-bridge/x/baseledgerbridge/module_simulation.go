@@ -28,6 +28,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgUbtDepositedClaim int = 100
 
+	opWeightMsgSetOrchestratorAddress = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgSetOrchestratorAddress int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -70,6 +74,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgUbtDepositedClaim,
 		baseledgerbridgesimulation.SimulateMsgUbtDepositedClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgSetOrchestratorAddress int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSetOrchestratorAddress, &weightMsgSetOrchestratorAddress, nil,
+		func(_ *rand.Rand) {
+			weightMsgSetOrchestratorAddress = defaultWeightMsgSetOrchestratorAddress
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSetOrchestratorAddress,
+		baseledgerbridgesimulation.SimulateMsgSetOrchestratorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
