@@ -2,6 +2,7 @@ package app
 
 import (
 	"io"
+	testlogging "log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -436,7 +437,20 @@ func New(
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
-	app.mm.RegisterServices(module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter()))
+	cfg := module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.mm.RegisterServices(cfg)
+
+	testlogging.Print("LOGING WORKS")
+
+	app.UpgradeKeeper.SetUpgradeHandler("test_plan_for_upgrade", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+
+		testlogging.Print("PERFORMING MIGRATION FOR test_plan_for_upgrade")
+		// Custom setup for modules i.e. do not call initgenesis for new modules
+
+		// RunMigrations returns the VersionMap
+		// with the updated module ConsensusVersions
+		return app.mm.RunMigrations(ctx, cfg, vm)
+	})
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	app.sm = module.NewSimulationManager(
