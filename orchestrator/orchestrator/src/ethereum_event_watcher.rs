@@ -1,4 +1,4 @@
-use clarity::{utils::bytes_to_hex_str, Address as EthAddress, Uint256};
+use clarity::{Address as EthAddress, Uint256};
 use web30::client::Web3;
 use web30::jsonrpc::error::Web3Error;
 use gravity_utils::get_with_retry::get_net_version_with_retry;

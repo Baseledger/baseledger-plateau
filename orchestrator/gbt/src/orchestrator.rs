@@ -5,12 +5,11 @@ use clarity::constants::ZERO_ADDRESS;
 use cosmos_gravity::query::get_gravity_params;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use gravity_utils::connection_prep::{
-    check_delegate_addresses, check_for_eth, wait_for_cosmos_node_ready,
+    check_delegate_addresses, wait_for_cosmos_node_ready,
 };
-use gravity_utils::connection_prep::{check_for_fee, create_rpc_connections};
+use gravity_utils::connection_prep::{create_rpc_connections};
 use orchestrator::main_loop::orchestrator_main_loop;
 use orchestrator::main_loop::{ETH_ORACLE_LOOP_SPEED};
-use std::cmp::min;
 use std::path::Path;
 use std::process::exit;
 
@@ -78,7 +77,7 @@ pub async fn orchestrator(
 
     let mut grpc = connections.grpc.clone().unwrap();
     let contact = connections.contact.clone().unwrap();
-    let web3 = connections.web3.clone().unwrap();
+    // let web3 = connections.web3.clone().unwrap();
 
     let public_eth_key = ethereum_key.to_address();
     let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();

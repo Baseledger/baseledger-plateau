@@ -4,19 +4,11 @@
 
 use crate::ethereum_event_watcher::get_block_delay;
 use crate::{ethereum_event_watcher::check_for_events, oracle_resync::get_last_checked_block};
-use clarity::PrivateKey as EthPrivateKey;
 use clarity::{address::Address as EthAddress, Uint256};
-use cosmos_gravity::query::get_gravity_params;
-use deep_space::error::CosmosGrpcError;
 use deep_space::Contact;
-use deep_space::{client::ChainStatus, utils::FeeInfo};
+use deep_space::{client::ChainStatus};
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
-use futures::future::join;
-use futures::future::join3;
-use gravity_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
-use std::cmp::min;
-use std::process::exit;
 use std::time::Duration;
 use std::time::Instant;
 use tokio::time::sleep as delay_for;
@@ -179,24 +171,24 @@ pub async fn eth_oracle_main_loop(
 }
 
 
-/// Checks for fee errors on our confirm submission transactions, a failure here
-/// can be fatal and cause slashing so we want to warn the user and exit. There is
-/// no point in running if we can't perform our most important function
-fn check_for_fee_error(res: Result<TxResponse, CosmosGrpcError>, fee: &Coin) {
-    if let Err(CosmosGrpcError::InsufficientFees { fee_info }) = res {
-        match fee_info {
-            FeeInfo::InsufficientFees { min_fees } => {
-                error!(
-                    "Your specified fee value {} is too small please use at least {}",
-                    fee,
-                    Coin::display_list(&min_fees)
-                );
-                error!("Correct fee argument immediately! You will be slashed within a few hours if you fail to do so");
-                exit(1);
-            }
-            FeeInfo::InsufficientGas { .. } => {
-                panic!("Hardcoded gas amounts insufficient!");
-            }
-        }
-    }
-}
+// Checks for fee errors on our confirm submission transactions, a failure here
+// can be fatal and cause slashing so we want to warn the user and exit. There is
+// no point in running if we can't perform our most important function
+// fn check_for_fee_error(res: Result<TxResponse, CosmosGrpcError>, fee: &Coin) {
+//     if let Err(CosmosGrpcError::InsufficientFees { fee_info }) = res {
+//         match fee_info {
+//             FeeInfo::InsufficientFees { min_fees } => {
+//                 error!(
+//                     "Your specified fee value {} is too small please use at least {}",
+//                     fee,
+//                     Coin::display_list(&min_fees)
+//                 );
+//                 error!("Correct fee argument immediately! You will be slashed within a few hours if you fail to do so");
+//                 exit(1);
+//             }
+//             FeeInfo::InsufficientGas { .. } => {
+//                 panic!("Hardcoded gas amounts insufficient!");
+//             }
+//         }
+//     }
+// }
