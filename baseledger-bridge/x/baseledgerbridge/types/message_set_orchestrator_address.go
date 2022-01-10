@@ -26,11 +26,11 @@ func (msg *MsgSetOrchestratorAddress) Type() string {
 }
 
 func (msg *MsgSetOrchestratorAddress) GetSigners() []sdk.AccAddress {
-	validator, err := sdk.AccAddressFromBech32(msg.Validator)
+	acc, err := sdk.ValAddressFromBech32(msg.Validator)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{validator}
+	return []sdk.AccAddress{sdk.AccAddress(acc)}
 }
 
 func (msg *MsgSetOrchestratorAddress) GetSignBytes() []byte {

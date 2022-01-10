@@ -46,7 +46,7 @@ pub async fn set_gravity_delegate_addresses(
     };
 
     let msg = Msg::new(
-        "/gravity.v1.MsgSetOrchestratorAddress",
+        "/Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddress",
         msg_set_orch_address,
     );
     contact

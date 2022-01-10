@@ -24,7 +24,7 @@ pub struct Opts {
     pub home: Option<PathBuf>,
     /// Set the address prefix for the Cosmos chain
     /// default is 'cosmos'
-    #[clap(short, long, default_value = "gravity")]
+    #[clap(short, long, default_value = "cosmos")]
     pub address_prefix: String,
     #[clap(subcommand)]
     pub subcmd: SubCommand,
