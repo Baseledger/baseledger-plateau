@@ -1,4 +1,6 @@
 use crate::args::OrchestratorOpts;
+use crate::config::config_exists;
+use crate::config::load_keys;
 use clarity::constants::ZERO_ADDRESS;
 use cosmos_gravity::query::get_gravity_params;
 use deep_space::PrivateKey as CosmosPrivateKey;
@@ -15,6 +17,7 @@ use std::process::exit;
 pub async fn orchestrator(
     args: OrchestratorOpts,
     address_prefix: String,
+    home_dir: &Path,
 ) {
     let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
@@ -26,6 +29,12 @@ pub async fn orchestrator(
         k
     } else {
         let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.orchestrator_phrase {
+                k = Some(CosmosPrivateKey::from_phrase(&stored_key, "").unwrap())
+            }
+        }
         if k.is_none() {
             error!("You must specify an Orchestrator key phrase!");
             error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
@@ -39,6 +48,12 @@ pub async fn orchestrator(
         k
     } else {
         let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.ethereum_key {
+                k = Some(stored_key)
+            }
+        }
         if k.is_none() {
             error!("You must specify an Ethereum key!");
             error!("To set an already registered key use 'gbt keys set-ethereum-key -key \"eth private key\"`");
@@ -79,13 +94,13 @@ pub async fn orchestrator(
     wait_for_cosmos_node_ready(&contact).await;
 
     // check if the delegate addresses are correctly configured
-    // check_delegate_addresses(
-    //     &mut grpc,
-    //     public_eth_key,
-    //     public_cosmos_key,
-    //     &contact.get_prefix(),
-    // )
-    // .await;
+    check_delegate_addresses(
+        &mut grpc,
+        public_eth_key,
+        public_cosmos_key,
+        &contact.get_prefix(),
+    )
+    .await;
 
     // check if we actually have the promised balance of tokens to pay fees
     // check_for_fee(&fee, public_cosmos_key, &contact).await;
