@@ -354,6 +354,7 @@ func New(
 		keys[baseledgerbridgemoduletypes.StoreKey],
 		keys[baseledgerbridgemoduletypes.MemStoreKey],
 		app.GetSubspace(baseledgerbridgemoduletypes.ModuleName),
+		&stakingKeeper,
 	)
 	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
