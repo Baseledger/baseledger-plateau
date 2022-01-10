@@ -67,6 +67,7 @@ pub async fn check_for_events(
             contact.get_prefix(),
         )
         .await?;
+
         let deposits = SendToCosmosEvent::filter_by_event_nonce(last_event_nonce, &deposits);
 
         if !deposits.is_empty() {

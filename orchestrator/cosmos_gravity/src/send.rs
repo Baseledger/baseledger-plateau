@@ -5,7 +5,7 @@ use deep_space::Msg;
 use deep_space::{coin::Coin};
 
 use gravity_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
-use gravity_proto::gravity::MsgSendToCosmosClaim;
+use gravity_proto::gravity::MsgUbtDepositedClaim;
 use gravity_utils::types::*;
 use std::{collections::HashMap, time::Duration};
 
@@ -35,16 +35,16 @@ pub async fn send_ethereum_claims(
     // We index the events by event nonce in an unordered hashmap and then play them back in order into a vec
     let mut unordered_msgs = HashMap::new();
     for deposit in deposits {
-        let claim = MsgSendToCosmosClaim {
+        let claim = MsgUbtDepositedClaim {
+            creator: our_address.to_string(),
             event_nonce: deposit.event_nonce,
             block_height: downcast_uint256(deposit.block_height).unwrap(),
             token_contract: deposit.erc20.to_string(),
             amount: deposit.amount.to_string(),
             cosmos_receiver: deposit.destination,
             ethereum_sender: deposit.sender.to_string(),
-            orchestrator: our_address.to_string(),
         };
-        let msg = Msg::new("/gravity.v1.MsgSendToCosmosClaim", claim);
+        let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaim", claim);
         assert!(unordered_msgs.insert(deposit.event_nonce, msg).is_none());
     }
     let mut keys = Vec::new();
