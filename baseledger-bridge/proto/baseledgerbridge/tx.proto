@@ -1,6 +1,6 @@
 syntax = "proto3";
 package Baseledger.baseledgerbridge.baseledgerbridge;
-
+import "gogoproto/gogo.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types";
@@ -16,7 +16,10 @@ message MsgUbtDepositedClaim {
   uint64 eventNonce = 2;
   uint64 blockHeight = 3;
   string tokenContract = 4;
-  string amount = 5;
+  string amount         = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable)   = false
+  ];
   string ethereumSender = 6;
   string cosmosReceiver = 7;
 }
