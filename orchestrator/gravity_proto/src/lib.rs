@@ -8,3 +8,7 @@ pub use cosmos_sdk_proto;
 pub mod gravity {
     include!("prost/gravity.v1.rs");
 }
+
+pub mod baseledger {
+    include!("prost/baseledger.baseledgerbridge.baseledgerbridge.rs");
+}
