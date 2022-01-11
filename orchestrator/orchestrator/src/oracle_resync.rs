@@ -1,7 +1,7 @@
 use clarity::{Address, Uint256};
 use cosmos_gravity::utils::get_last_event_nonce_with_retry;
 use deep_space::address::Address as CosmosAddress;
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::get_with_retry::get_block_number_with_retry;
 use gravity_utils::get_with_retry::RETRY_TIME;
 use gravity_utils::types::event_signatures::*;

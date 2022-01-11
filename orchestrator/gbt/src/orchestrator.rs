@@ -101,30 +101,33 @@ pub async fn orchestrator(
     )
     .await;
 
+    // TODO skos: this is unsafe to do, but we will pass contract address as args for now
+    let contract_address = args.gravity_contract_address.unwrap();
+    // TODO skos: check if else branch here is needed...
     // check if we actually have the promised balance of tokens to pay fees
     // check_for_fee(&fee, public_cosmos_key, &contact).await;
     // check_for_eth(public_eth_key, &web3).await;
 
     // get the gravity contract address, if not provided
-    let contract_address = if let Some(c) = args.gravity_contract_address {
-        c
-    } else {
-        let params = get_gravity_params(&mut grpc).await.unwrap();
-        let c = params.bridge_ethereum_address.parse();
-        match c {
-            Ok(v) => {
-                if v == *ZERO_ADDRESS {
-                    error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
-                    exit(1);
-                }
-                c.unwrap()
-            }
-            Err(_) => {
-                error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
-                exit(1);
-            }
-        }
-    };
+    // let contract_address = if let Some(c) = args.gravity_contract_address {
+    //     c
+    // } else {
+    //     let params = get_gravity_params(&mut grpc).await.unwrap();
+    //     let c = params.bridge_ethereum_address.parse();
+    //     match c {
+    //         Ok(v) => {
+    //             if v == *ZERO_ADDRESS {
+    //                 error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
+    //                 exit(1);
+    //             }
+    //             c.unwrap()
+    //         }
+    //         Err(_) => {
+    //             error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
+    //             exit(1);
+    //         }
+    //     }
+    // };
 
     orchestrator_main_loop(
         cosmos_key,
