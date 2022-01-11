@@ -12778,6 +12778,8 @@ paths:
       tags:
         - Query
 definitions:
+  Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
+    type: object
   Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaimResponse:
     type: object
   Baseledger.baseledgerbridge.baseledgerbridge.Params:
