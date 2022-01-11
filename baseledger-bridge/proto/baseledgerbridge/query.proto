@@ -25,6 +25,11 @@ service Query {
 		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}";
 	}
 
+// Queries a list of LastEventNonceByAddress items.
+	rpc LastEventNonceByAddress(QueryLastEventNonceByAddressRequest) returns (QueryLastEventNonceByAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/last_event_nonce_by_address/{address}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -53,6 +58,14 @@ message QueryDelegateKeysByOrchestratorAddressRequest {
 message QueryDelegateKeysByOrchestratorAddressResponse {
   string validatorAddress = 1;
   string ethAddress = 2;
+}
+
+message QueryLastEventNonceByAddressRequest {
+  string address = 1;
+}
+
+message QueryLastEventNonceByAddressResponse {
+  string eventNonce = 1;
 }
 
 // this line is used by starport scaffolding # 3
