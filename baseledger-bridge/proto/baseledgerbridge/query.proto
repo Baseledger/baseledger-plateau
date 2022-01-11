@@ -20,6 +20,11 @@ service Query {
 		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_eth_address/{ethAddress}";
 	}
 
+// Queries a list of DelegateKeysByOrchestratorAddress items.
+	rpc DelegateKeysByOrchestratorAddress(QueryDelegateKeysByOrchestratorAddressRequest) returns (QueryDelegateKeysByOrchestratorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -39,6 +44,15 @@ message QueryDelegateKeysByEthAddressRequest {
 message QueryDelegateKeysByEthAddressResponse {
   string validatorAddress = 1;
   string orchestratorAddress = 2;
+}
+
+message QueryDelegateKeysByOrchestratorAddressRequest {
+  string orchestratorAddress = 1;
+}
+
+message QueryDelegateKeysByOrchestratorAddressResponse {
+  string validatorAddress = 1;
+  string ethAddress = 2;
 }
 
 // this line is used by starport scaffolding # 3
