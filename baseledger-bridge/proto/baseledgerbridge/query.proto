@@ -65,7 +65,7 @@ message QueryLastEventNonceByAddressRequest {
 }
 
 message QueryLastEventNonceByAddressResponse {
-  string eventNonce = 1;
+  uint64 eventNonce = 1;
 }
 
 // this line is used by starport scaffolding # 3

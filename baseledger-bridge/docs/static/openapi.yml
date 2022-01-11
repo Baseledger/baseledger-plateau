@@ -429,6 +429,7 @@ paths:
             properties:
               eventNonce:
                 type: string
+                format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -13421,6 +13422,7 @@ definitions:
     properties:
       eventNonce:
         type: string
+        format: uint64
   Baseledger.baseledgerbridge.baseledgerbridge.QueryParamsResponse:
     type: object
     properties:
