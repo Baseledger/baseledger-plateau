@@ -35,10 +35,6 @@ pub async fn get_last_checked_block(
         last_event_nonce = 1u8.into();
     }
 
-    // TODO skos: fix... i am harcoding last nonce here because oracle resync is not 
-    // working with my test contract, gonna have to figure how to proceed with that
-    last_event_nonce = 4u8.into();
-
     let mut current_block: Uint256 = latest_block.clone();
 
     while current_block.clone() > 0u8.into() {
@@ -68,7 +64,6 @@ pub async fn get_last_checked_block(
         }
         let send_to_cosmos_events = send_to_cosmos_events.unwrap();
 
-        println!("COSMOS EVENTS {:?}", send_to_cosmos_events);
         for event in send_to_cosmos_events {
             match SendToCosmosEvent::from_log(&event) {
                 Ok(send) => {
@@ -88,7 +83,10 @@ pub async fn get_last_checked_block(
         current_block = end_search;
     }
 
-    panic!("You have reached the end of block history without finding the Gravity contract deploy event! You must have the wrong contract address!");
+    // TODO skos: we are going to need some mechanism for this, for example, deploying our contract should throw some event or something like this
+    // in order for this to work without panicing i will just return latest current block here
+    latest_block.clone()
+    // panic!("You have reached the end of block history without finding the Gravity contract deploy event! You must have the wrong contract address!");
 }
 
 fn upcast(input: u64) -> Uint256 {
