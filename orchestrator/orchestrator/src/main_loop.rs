@@ -8,7 +8,7 @@ use clarity::{address::Address as EthAddress, Uint256};
 use deep_space::Contact;
 use deep_space::{client::ChainStatus};
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use std::time::Duration;
 use std::time::Instant;
 use tokio::time::sleep as delay_for;

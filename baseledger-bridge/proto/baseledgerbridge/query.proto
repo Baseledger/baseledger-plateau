@@ -15,7 +15,22 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a list of DelegateKeysByEthAddress items.
+	rpc DelegateKeysByEthAddress(QueryDelegateKeysByEthAddressRequest) returns (QueryDelegateKeysByEthAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_eth_address/{ethAddress}";
+	}
+
+// Queries a list of DelegateKeysByOrchestratorAddress items.
+	rpc DelegateKeysByOrchestratorAddress(QueryDelegateKeysByOrchestratorAddressRequest) returns (QueryDelegateKeysByOrchestratorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}";
+	}
+
+// Queries a list of LastEventNonceByAddress items.
+	rpc LastEventNonceByAddress(QueryLastEventNonceByAddressRequest) returns (QueryLastEventNonceByAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/last_event_nonce_by_address/{address}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +40,32 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDelegateKeysByEthAddressRequest {
+  string ethAddress = 1;
+}
+
+message QueryDelegateKeysByEthAddressResponse {
+  string validatorAddress = 1;
+  string orchestratorAddress = 2;
+}
+
+message QueryDelegateKeysByOrchestratorAddressRequest {
+  string orchestratorAddress = 1;
+}
+
+message QueryDelegateKeysByOrchestratorAddressResponse {
+  string validatorAddress = 1;
+  string ethAddress = 2;
+}
+
+message QueryLastEventNonceByAddressRequest {
+  string address = 1;
+}
+
+message QueryLastEventNonceByAddressResponse {
+  uint64 eventNonce = 1;
 }
 
 // this line is used by starport scaffolding # 3

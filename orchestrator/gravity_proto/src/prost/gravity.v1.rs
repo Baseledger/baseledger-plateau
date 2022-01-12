@@ -267,24 +267,6 @@ pub struct MsgSendToCosmosClaim {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MsgSendToCosmosClaimResponse {
 }
-
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct MsgUbtDepositedClaim {
-    #[prost(string, tag="1")]
-    pub creator: ::prost::alloc::string::String,
-    #[prost(uint64, tag="2")]
-    pub event_nonce: u64,
-    #[prost(uint64, tag="3")]
-    pub block_height: u64,
-    #[prost(string, tag="4")]
-    pub token_contract: ::prost::alloc::string::String,
-    #[prost(string, tag="5")]
-    pub amount: ::prost::alloc::string::String,
-    #[prost(string, tag="6")]
-    pub ethereum_sender: ::prost::alloc::string::String,
-    #[prost(string, tag="7")]
-    pub cosmos_receiver: ::prost::alloc::string::String,
-}
 /// BatchSendToEthClaim claims that a batch of send to eth
 /// operations on the bridge contract was executed.
 #[derive(Clone, PartialEq, ::prost::Message)]

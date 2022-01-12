@@ -7,8 +7,9 @@ use deep_space::error::CosmosGrpcError;
 use deep_space::Address as CosmosAddress;
 use deep_space::Contact;
 use deep_space::{client::ChainStatus, Coin};
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
-use gravity_proto::gravity::QueryDelegateKeysByEthAddress;
+use gravity_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
+use gravity_proto::baseledger::QueryDelegateKeysByEthAddressRequest;
+use gravity_proto::baseledger::QueryDelegateKeysByOrchestratorAddressRequest;
 use gravity_proto::gravity::QueryDelegateKeysByOrchestratorAddress;
 use std::process::exit;
 use std::time::Duration;
@@ -22,7 +23,7 @@ use crate::get_with_retry::get_eth_balances_with_retry;
 
 pub struct Connections {
     pub web3: Option<Web3>,
-    pub grpc: Option<GravityQueryClient<Channel>>,
+    pub grpc: Option<BaseledgerQueryClient<Channel>>,
     pub contact: Option<Contact>,
 }
 
@@ -44,7 +45,7 @@ pub async fn create_rpc_connections(
         check_scheme(&url, &grpc_url);
         let cosmos_grpc_url = grpc_url.trim_end_matches('/').to_string();
         // try the base url first.
-        let try_base = GravityQueryClient::connect(cosmos_grpc_url.clone()).await;
+        let try_base = BaseledgerQueryClient::connect(cosmos_grpc_url.clone()).await;
         match try_base {
             // it worked, lets go!
             Ok(val) => {
@@ -63,8 +64,8 @@ pub async fn create_rpc_connections(
                     let prefix = url.scheme();
                     let ipv6_url = format!("{}://::1:{}", prefix, port);
                     let ipv4_url = format!("{}://127.0.0.1:{}", prefix, port);
-                    let ipv6 = GravityQueryClient::connect(ipv6_url.clone()).await;
-                    let ipv4 = GravityQueryClient::connect(ipv4_url.clone()).await;
+                    let ipv6 = BaseledgerQueryClient::connect(ipv6_url.clone()).await;
+                    let ipv4 = BaseledgerQueryClient::connect(ipv4_url.clone()).await;
                     warn!("Trying fallback urls {} {}", ipv6_url, ipv4_url);
                     match (ipv4, ipv6) {
                         (Ok(v), Err(_)) => {
@@ -87,8 +88,8 @@ pub async fn create_rpc_connections(
                     // transparently upgrade to https if available, we can't transparently downgrade for obvious security reasons
                     let https_on_80_url = format!("https://{}:80", body);
                     let https_on_443_url = format!("https://{}:443", body);
-                    let https_on_80 = GravityQueryClient::connect(https_on_80_url.clone()).await;
-                    let https_on_443 = GravityQueryClient::connect(https_on_443_url.clone()).await;
+                    let https_on_80 = BaseledgerQueryClient::connect(https_on_80_url.clone()).await;
+                    let https_on_443 = BaseledgerQueryClient::connect(https_on_443_url.clone()).await;
                     warn!(
                         "Trying fallback urls {} {}",
                         https_on_443_url, https_on_80_url
@@ -234,18 +235,18 @@ pub async fn wait_for_cosmos_node_ready(contact: &Contact) {
 /// address and Orchestrator address from the Orchestrator and checks
 /// that both are registered and internally consistent.
 pub async fn check_delegate_addresses(
-    client: &mut GravityQueryClient<Channel>,
+    client: &mut BaseledgerQueryClient<Channel>,
     delegate_eth_address: EthAddress,
     delegate_orchestrator_address: CosmosAddress,
     prefix: &str,
 ) {
     let eth_response = client
-        .get_delegate_key_by_eth(QueryDelegateKeysByEthAddress {
+        .delegate_keys_by_eth_address(QueryDelegateKeysByEthAddressRequest {
             eth_address: delegate_eth_address.to_string(),
         })
         .await;
     let orchestrator_response = client
-        .get_delegate_key_by_orchestrator(QueryDelegateKeysByOrchestratorAddress {
+        .delegate_keys_by_orchestrator_address(QueryDelegateKeysByOrchestratorAddressRequest {
             orchestrator_address: delegate_orchestrator_address.to_bech32(prefix).unwrap(),
         })
         .await;
