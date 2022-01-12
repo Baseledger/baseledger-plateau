@@ -58,22 +58,21 @@ func (k msgServer) claimHandlerCommon(ctx sdk.Context, msgAny *codectypes.Any, m
 	return nil
 }
 
-// TODO: BAS-105 test this logic as separate effort
 func (k msgServer) checkOrchestratorValidatorInSet(ctx sdk.Context, orchestrator string) error {
-	// orchestratorAddress, err := sdk.AccAddressFromBech32(orchestrator)
-	// if err != nil {
-	// 	return sdkerrors.Wrap(err, "orchestrator acc address invalid")
-	// }
+	orchestratorAddress, err := sdk.AccAddressFromBech32(orchestrator)
+	if err != nil {
+		return sdkerrors.Wrap(err, "orchestrator acc address invalid")
+	}
 
-	// orchValidator, found := k.GetOrchestratorValidator(ctx, orchestratorAddress)
-	// if !found {
-	// 	return sdkerrors.Wrap(sdkerrors.Error{}, "Orchestrator address not set")
-	// }
+	orchValidator, found := k.GetOrchestratorValidator(ctx, orchestratorAddress)
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.Error{}, "Orchestrator address not set")
+	}
 
-	// validator := k.StakingKeeper.Validator(ctx, orchValidator.GetOperator())
-	// if validator == nil || !validator.IsBonded() {
-	// 	return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "Orchestrator validator not in active set")
-	// }
+	validator := k.StakingKeeper.Validator(ctx, orchValidator.GetOperator())
+	if validator == nil || !validator.IsBonded() {
+		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "Orchestrator validator not in active set")
+	}
 
 	return nil
 }

@@ -19,7 +19,6 @@ func (k Keeper) Attest(
 	if err := sdk.VerifyAddressFormat(claim.GetClaimer()); err != nil {
 		return nil, sdkerrors.Wrap(err, "invalid claimer address")
 	}
-	// TODO BAS-105
 	val, found := k.GetOrchestratorValidator(ctx, claim.GetClaimer())
 	if !found {
 		panic("Could not find ValAddr for delegate key, should be checked by now")
@@ -35,7 +34,6 @@ func (k Keeper) Attest(
 	// and prevents validators from submitting two claims with the same nonce.
 	// This prevents there being two attestations with the same nonce that get 2/3s of the votes
 	// in the endBlocker.
-	// TODO BAS-105
 	lastEventNonce := k.GetLastEventNonceByValidator(ctx, valAddr)
 	if claim.GetEventNonce() != lastEventNonce+1 {
 		return nil, errors.New("Last event nonce error")
@@ -61,12 +59,11 @@ func (k Keeper) Attest(
 	}
 
 	// Add the validator's vote to this attestation
-	// TODO BAS-105
-	// att.Votes = append(att.Votes, valAddr.String())
+	att.Votes = append(att.Votes, valAddr.String())
 
 	k.SetAttestation(ctx, claim.GetEventNonce(), hash, att)
-	// TODO BAS-105
-	// k.SetLastEventNonceByValidator(ctx, valAddr, claim.GetEventNonce())
+
+	k.SetLastEventNonceByValidator(ctx, valAddr, claim.GetEventNonce())
 
 	return att, nil
 }
