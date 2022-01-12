@@ -4,7 +4,7 @@ use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_proto::gravity::Attestation;
 use gravity_proto::gravity::Params;
 use gravity_proto::gravity::QueryAttestationsRequest;
-use gravity_proto::gravity::QueryLastEventNonceByAddrRequest;
+// use gravity_proto::gravity::QueryLastEventNonceByAddrRequest;
 use gravity_proto::gravity::QueryParamsRequest;
 use gravity_utils::error::GravityError;
 use tonic::transport::Channel;
@@ -21,9 +21,9 @@ pub async fn get_gravity_params(
 /// Gets the last event nonce that a given validator has attested to, this lets us
 /// catch up with what the current event nonce should be if a oracle is restarted
 pub async fn get_last_event_nonce_for_validator(
-    client: &mut GravityQueryClient<Channel>,
-    address: Address,
-    prefix: String,
+    _client: &mut GravityQueryClient<Channel>,
+    _address: Address,
+    _prefix: String,
 ) -> Result<u64, GravityError> {
     // TODO skos: commented this out to make it work
     // let request = client

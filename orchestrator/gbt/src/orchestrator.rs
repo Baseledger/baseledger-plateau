@@ -1,20 +1,22 @@
 use crate::args::OrchestratorOpts;
+use crate::config::config_exists;
+use crate::config::load_keys;
 use clarity::constants::ZERO_ADDRESS;
 use cosmos_gravity::query::get_gravity_params;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use gravity_utils::connection_prep::{
-    check_delegate_addresses, check_for_eth, wait_for_cosmos_node_ready,
+    check_delegate_addresses, wait_for_cosmos_node_ready,
 };
-use gravity_utils::connection_prep::{check_for_fee, create_rpc_connections};
+use gravity_utils::connection_prep::{create_rpc_connections};
 use orchestrator::main_loop::orchestrator_main_loop;
 use orchestrator::main_loop::{ETH_ORACLE_LOOP_SPEED};
-use std::cmp::min;
 use std::path::Path;
 use std::process::exit;
 
 pub async fn orchestrator(
     args: OrchestratorOpts,
     address_prefix: String,
+    home_dir: &Path,
 ) {
     let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
@@ -26,6 +28,12 @@ pub async fn orchestrator(
         k
     } else {
         let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.orchestrator_phrase {
+                k = Some(CosmosPrivateKey::from_phrase(&stored_key, "").unwrap())
+            }
+        }
         if k.is_none() {
             error!("You must specify an Orchestrator key phrase!");
             error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
@@ -39,6 +47,12 @@ pub async fn orchestrator(
         k
     } else {
         let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.ethereum_key {
+                k = Some(stored_key)
+            }
+        }
         if k.is_none() {
             error!("You must specify an Ethereum key!");
             error!("To set an already registered key use 'gbt keys set-ethereum-key -key \"eth private key\"`");
@@ -63,7 +77,7 @@ pub async fn orchestrator(
 
     let mut grpc = connections.grpc.clone().unwrap();
     let contact = connections.contact.clone().unwrap();
-    let web3 = connections.web3.clone().unwrap();
+    // let web3 = connections.web3.clone().unwrap();
 
     let public_eth_key = ethereum_key.to_address();
     let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();
@@ -79,13 +93,13 @@ pub async fn orchestrator(
     wait_for_cosmos_node_ready(&contact).await;
 
     // check if the delegate addresses are correctly configured
-    // check_delegate_addresses(
-    //     &mut grpc,
-    //     public_eth_key,
-    //     public_cosmos_key,
-    //     &contact.get_prefix(),
-    // )
-    // .await;
+    check_delegate_addresses(
+        &mut grpc,
+        public_eth_key,
+        public_cosmos_key,
+        &contact.get_prefix(),
+    )
+    .await;
 
     // check if we actually have the promised balance of tokens to pay fees
     // check_for_fee(&fee, public_cosmos_key, &contact).await;

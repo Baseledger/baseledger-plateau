@@ -23,7 +23,7 @@ pub struct Opts {
     #[clap(short, long, parse(from_str))]
     pub home: Option<PathBuf>,
     /// Set the address prefix for the Cosmos chain
-    /// default is 'cosmos' - TODO skos: change it to baseledger after
+    /// default is 'cosmos'
     #[clap(short, long, default_value = "cosmos")]
     pub address_prefix: String,
     #[clap(subcommand)]
@@ -33,6 +33,8 @@ pub struct Opts {
 #[derive(Parser)]
 pub enum SubCommand {
     Orchestrator(OrchestratorOpts),
+    Keys(KeyOpts),
+    Init(InitOpts),
 }
 
 /// The Gravity Bridge orchestrator is required for all validators of the Cosmos chain running
@@ -60,19 +62,6 @@ pub struct OrchestratorOpts {
     pub gravity_contract_address: Option<EthAddress>,
 }
 
-/// The Gravity Bridge client contains helpful command line tools for interacting with the Gravity bridge
-#[derive(Parser)]
-pub struct ClientOpts {
-    #[clap(subcommand)]
-    pub subcmd: ClientSubcommand,
-}
-
-#[derive(Parser)]
-pub enum ClientSubcommand {
-    CosmosToEth(CosmosToEthOpts),
-    EthToCosmos(EthToCosmosOpts),
-    DeployErc20Representation(DeployErc20RepresentationOpts),
-}
 
 /// Send Cosmos tokens to Ethereum
 #[derive(Parser)]

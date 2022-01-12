@@ -3,17 +3,62 @@ use deep_space::private_key::PrivateKey;
 use deep_space::Contact;
 use deep_space::Msg;
 use deep_space::{coin::Coin};
-
+use clarity::{Address as EthAddress};
+use deep_space::address::Address;
 use gravity_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use gravity_proto::gravity::MsgUbtDepositedClaim;
 use gravity_utils::types::*;
 use std::{collections::HashMap, time::Duration};
+use gravity_proto::gravity::MsgSetOrchestratorAddress;
 
 use crate::utils::downcast_uint256;
 
 
 pub const MEMO: &str = "Sent using Althea Gravity Bridge Orchestrator";
 pub const TIMEOUT: Duration = Duration::from_secs(60);
+
+/// Send a transaction updating the eth address for the sending
+/// Cosmos address. The sending Cosmos address should be a validator
+/// this can only be called once! Key rotation code is possible but
+/// not currently implemented
+pub async fn set_gravity_delegate_addresses(
+    contact: &Contact,
+    delegate_eth_address: EthAddress,
+    delegate_cosmos_address: Address,
+    private_key: PrivateKey,
+    fee: Coin,
+) -> Result<TxResponse, CosmosGrpcError> {
+    trace!("Updating Gravity Delegate addresses");
+    let our_valoper_address = private_key
+        .to_address(&contact.get_prefix())
+        .unwrap()
+        // This works so long as the format set by the cosmos hub is maintained
+        // having a main prefix followed by a series of titles for specific keys
+        // this will not work if that convention is broken. This will be resolved when
+        // GRPC exposes prefix endpoints (coming to upstream cosmos sdk soon)
+        .to_bech32(format!("{}valoper", contact.get_prefix()))
+        .unwrap();
+
+    let msg_set_orch_address = MsgSetOrchestratorAddress {
+        validator: our_valoper_address.to_string(),
+        orchestrator: delegate_cosmos_address.to_string(),
+        eth_address: delegate_eth_address.to_string(),
+    };
+
+    let msg = Msg::new(
+        "/Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddress",
+        msg_set_orch_address,
+    );
+    contact
+        .send_message(
+            &[msg],
+            Some(MEMO.to_string()),
+            &[fee],
+            Some(TIMEOUT),
+            private_key,
+        )
+        .await
+}
 
 
 #[allow(clippy::too_many_arguments)]
