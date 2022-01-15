@@ -68,7 +68,19 @@ func (k Keeper) Attest(
 	return att, nil
 }
 
-// TODO BAS-107 add try attestation mechanism
+func (k Keeper) GetAttestationMapping(ctx sdk.Context) (attestationMapping map[uint64][]types.Attestation, orderedKeys []uint64) {
+	// TODO: Ognjen - implement
+	return
+}
+
+func (k Keeper) TryAttestation(ctx sdk.Context, att *types.Attestation) {
+	// TODO: Ognjen - implement
+}
+
+// DeleteAttestation deletes the given attestation
+func (k Keeper) DeleteAttestation(ctx sdk.Context, att types.Attestation) {
+	// TODO: Ognjen - implement
+}
 
 // SetAttestation sets the attestation in the store
 func (k Keeper) SetAttestation(ctx sdk.Context, eventNonce uint64, claimHash []byte, att *types.Attestation) {
