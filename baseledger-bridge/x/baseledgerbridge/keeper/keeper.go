@@ -22,6 +22,10 @@ type (
 		paramstore paramtypes.Subspace
 
 		StakingKeeper *stakingkeeper.Keeper
+
+		AttestationHandler interface {
+			Handle(sdk.Context, types.Attestation, types.EthereumClaim) error
+		}
 	}
 )
 
@@ -71,6 +75,17 @@ func (k Keeper) IsOnBlacklist(ctx sdk.Context, addr types.EthAddress) bool {
 	// 	}
 	// }
 	return false
+}
+
+// TODO: Ognjen - Why is this code here and not in attestation.go?
+func (k Keeper) UnpackAttestationClaim(att *types.Attestation) (types.EthereumClaim, error) {
+	var msg types.EthereumClaim
+	err := k.cdc.UnpackAny(att.Claim, &msg)
+	if err != nil {
+		return nil, err
+	} else {
+		return msg, nil
+	}
 }
 
 // GetDelegateKeys iterates both the EthAddress and Orchestrator address indexes to produce

@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"errors"
+	"fmt"
+	"sort"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -69,12 +71,159 @@ func (k Keeper) Attest(
 }
 
 func (k Keeper) GetAttestationMapping(ctx sdk.Context) (attestationMapping map[uint64][]types.Attestation, orderedKeys []uint64) {
-	// TODO: Ognjen - implement
+	attestationMapping = make(map[uint64][]types.Attestation)
+	k.IterateAttestations(ctx, func(_ []byte, att types.Attestation) bool {
+		claim, err := k.UnpackAttestationClaim(&att)
+		if err != nil {
+			panic("couldn't cast to claim")
+		}
+
+		if val, ok := attestationMapping[claim.GetEventNonce()]; !ok {
+			attestationMapping[claim.GetEventNonce()] = []types.Attestation{att}
+		} else {
+			attestationMapping[claim.GetEventNonce()] = append(val, att)
+		}
+		return false
+	})
+	orderedKeys = make([]uint64, 0, len(attestationMapping))
+	for k := range attestationMapping {
+		orderedKeys = append(orderedKeys, k)
+	}
+	sort.Slice(orderedKeys, func(i, j int) bool { return orderedKeys[i] < orderedKeys[j] })
+
 	return
 }
 
+// IterateAttestations iterates through all attestations
+func (k Keeper) IterateAttestations(ctx sdk.Context, cb func([]byte, types.Attestation) bool) {
+	store := ctx.KVStore(k.storeKey)
+	prefix := types.OracleAttestationKey
+	iter := store.Iterator(prefixRange([]byte(prefix)))
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		att := types.Attestation{
+			Observed: false,
+			Votes:    []string{},
+			Height:   0,
+			Claim: &codectypes.Any{
+				TypeUrl:              "",
+				Value:                []byte{},
+				XXX_NoUnkeyedLiteral: struct{}{},
+				XXX_unrecognized:     []byte{},
+				XXX_sizecache:        0,
+			},
+		}
+		k.cdc.MustUnmarshal(iter.Value(), &att)
+		// cb returns true to stop early
+		if cb(iter.Key(), att) {
+			return
+		}
+	}
+}
+
+// TryAttestation checks if an attestation has enough votes to be applied to the consensus state
+// and has not already been marked Observed, then calls processAttestation to actually apply it to the state,
+// and then marks it Observed and emits an event.
 func (k Keeper) TryAttestation(ctx sdk.Context, att *types.Attestation) {
-	// TODO: Ognjen - implement
+	claim, err := k.UnpackAttestationClaim(att)
+	if err != nil {
+		panic("could not cast to claim")
+	}
+	hash, err := claim.ClaimHash()
+	if err != nil {
+		panic("unable to compute claim hash")
+	}
+	// If the attestation has not yet been Observed, sum up the votes and see if it is ready to apply to the state.
+	// This conditional stops the attestation from accidentally being applied twice.
+	if !att.Observed {
+		// Sum the current powers of all validators who have voted and see if it passes the current threshold
+		// TODO: The different integer types and math here needs a careful review
+		totalPower := k.StakingKeeper.GetLastTotalPower(ctx)
+		requiredPower := types.AttestationVotesPowerThreshold.Mul(totalPower).Quo(sdk.NewInt(100))
+		attestationPower := sdk.NewInt(0)
+		for _, validator := range att.Votes {
+			val, err := sdk.ValAddressFromBech32(validator)
+			if err != nil {
+				panic(err)
+			}
+			validatorPower := k.StakingKeeper.GetLastValidatorPower(ctx, val)
+			// Add it to the attestation power's sum
+			attestationPower = attestationPower.Add(sdk.NewInt(validatorPower))
+			// If the power of all the validators that have voted on the attestation is higher or equal to the threshold,
+			// process the attestation, set Observed to true, and break
+			if attestationPower.GTE(requiredPower) {
+				lastEventNonce := k.GetLastObservedEventNonce(ctx)
+				// this check is performed at the next level up so this should never panic
+				// outside of programmer error.
+				if claim.GetEventNonce() != lastEventNonce+1 {
+					panic("attempting to apply events to state out of order")
+				}
+				k.setLastObservedEventNonce(ctx, claim.GetEventNonce())
+				// TODO: Ognjen - Last observed eth height is used for gravity bridge functionality
+				// which is not used by us atm (cleanupTimedOutBatches, cleanupTimedOutLogicCalls)
+				// reintroduce if this functionly proves to be necessary or delete the line
+				// k.SetLastObservedEthereumBlockHeight(ctx, claim.GetBlockHeight())
+
+				att.Observed = true
+				k.SetAttestation(ctx, claim.GetEventNonce(), hash, att)
+
+				k.processAttestation(ctx, att, claim)
+				k.emitObservedEvent(ctx, att, claim)
+
+				break
+			}
+		}
+	} else {
+		// We panic here because this should never happen
+		panic("attempting to process observed attestation")
+	}
+}
+
+// processAttestation actually applies the attestation to the consensus state
+func (k Keeper) processAttestation(ctx sdk.Context, att *types.Attestation, claim types.EthereumClaim) {
+	hash, err := claim.ClaimHash()
+	if err != nil {
+		panic("unable to compute claim hash")
+	}
+	// then execute in a new Tx so that we can store state on failure
+	xCtx, commit := ctx.CacheContext()
+	if err := k.AttestationHandler.Handle(xCtx, *att, claim); err != nil { // execute with a transient storage
+		// If the attestation fails, something has gone wrong and we can't recover it. Log and move on
+		// The attestation will still be marked "Observed", allowing the oracle to progress properly
+		k.Logger(ctx).Error("attestation failed",
+			"cause", err.Error(),
+			"claim type", claim.GetType(),
+			"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+			"nonce", fmt.Sprint(claim.GetEventNonce()),
+		)
+	} else {
+		commit() // persist transient storage
+	}
+}
+
+// emitObservedEvent emits an event with information about an attestation that has been applied to
+// consensus state.
+func (k Keeper) emitObservedEvent(ctx sdk.Context, att *types.Attestation, claim types.EthereumClaim) {
+	hash, err := claim.ClaimHash()
+	if err != nil {
+		panic(sdkerrors.Wrap(err, "unable to compute claim hash"))
+	}
+	observationEvent := sdk.NewEvent(
+		types.EventTypeObservation,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(types.AttributeKeyAttestationType, string(claim.GetType())),
+		// TODO: Ognjen - Add to params
+		// sdk.NewAttribute(types.AttributeKeyContract, k.GetBridgeContractAddress(ctx).GetAddress()),
+		// TODO: Ognjen - Add to params
+		// sdk.NewAttribute(types.AttributeKeyBridgeChainID, strconv.Itoa(int(k.GetBridgeChainID(ctx)))),
+		// todo: serialize with hex/ base64 ?
+		sdk.NewAttribute(types.AttributeKeyAttestationID,
+			string(types.GetAttestationKey(claim.GetEventNonce(), hash))),
+		sdk.NewAttribute(types.AttributeKeyNonce, fmt.Sprint(claim.GetEventNonce())),
+		// TODO: do we want to emit more information?
+	)
+	ctx.EventManager().EmitEvent(observationEvent)
 }
 
 // DeleteAttestation deletes the given attestation
@@ -111,6 +260,12 @@ func (k Keeper) GetLastObservedEventNonce(ctx sdk.Context) uint64 {
 		return 0
 	}
 	return types.UInt64FromBytes(bytes)
+}
+
+// setLastObservedEventNonce sets the latest observed event nonce
+func (k Keeper) setLastObservedEventNonce(ctx sdk.Context, nonce uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(types.LastObservedEventNonceKey), types.UInt64Bytes(nonce))
 }
 
 // GetLastEventNonceByValidator returns the latest event nonce for a given validator
