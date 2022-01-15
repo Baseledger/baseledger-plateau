@@ -8,7 +8,10 @@ import (
 // EndBlocker is called at the end of every block
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 	// TODO: Ognjen - look into slashing mechanism for logic calls + price variations slashing(ctx, k)
+	// slashing(ctx, k)
 	attestationTally(ctx, k)
+	// TODO: Ognjen - look into if cleanup of timeout logic calls is necessary
+	// cleanupTimedOutLogicCalls(ctx, k)
 	pruneAttestations(ctx, k)
 }
 
