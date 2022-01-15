@@ -228,7 +228,17 @@ func (k Keeper) emitObservedEvent(ctx sdk.Context, att *types.Attestation, claim
 
 // DeleteAttestation deletes the given attestation
 func (k Keeper) DeleteAttestation(ctx sdk.Context, att types.Attestation) {
-	// TODO: Ognjen - implement
+	claim, err := k.UnpackAttestationClaim(&att)
+	if err != nil {
+		panic("Bad Attestation in DeleteAttestation")
+	}
+	hash, err := claim.ClaimHash()
+	if err != nil {
+		panic(sdkerrors.Wrap(err, "unable to compute claim hash"))
+	}
+	store := ctx.KVStore(k.storeKey)
+
+	store.Delete([]byte(types.GetAttestationKey(claim.GetEventNonce(), hash)))
 }
 
 // SetAttestation sets the attestation in the store
