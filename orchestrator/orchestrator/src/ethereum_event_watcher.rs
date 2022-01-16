@@ -13,7 +13,7 @@ use gravity_utils::types::event_signatures::*;
 use deep_space::Contact;
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use cosmos_gravity::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
 // TODO: this import should probably be somewhere globally, recheck and remove

@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gravity_proto = {path = "../gravity_proto/"}
+baseledger_proto = {path = "../baseledger_proto/"}
 
 deep_space = "2.8"
 web30 = "0.17"
