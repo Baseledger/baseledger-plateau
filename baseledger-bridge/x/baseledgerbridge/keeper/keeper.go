@@ -10,6 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
@@ -34,6 +36,8 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
+	bankKeeper *bankkeeper.BaseKeeper,
+	distKeeper *distrkeeper.Keeper,
 
 	stakingKeeper *stakingkeeper.Keeper,
 
@@ -43,15 +47,26 @@ func NewKeeper(
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return &Keeper{
+	k := &Keeper{
 
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
 
-		StakingKeeper: stakingKeeper,
+		StakingKeeper:      stakingKeeper,
+		AttestationHandler: nil,
 	}
+
+	attestationHandler := AttestationHandler{
+		keeper:     k,
+		bankKeeper: bankKeeper,
+		distKeeper: distKeeper,
+	}
+	attestationHandler.ValidateMembers()
+	k.AttestationHandler = attestationHandler
+
+	return k
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

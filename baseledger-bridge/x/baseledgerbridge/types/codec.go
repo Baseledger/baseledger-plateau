@@ -22,6 +22,13 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	// this line is used by starport scaffolding # 3
 
+	// TODO skos: is this good protoName?
+	registry.RegisterInterface(
+		"Baseledger.baseledgerbridge.EthereumClaim",
+		(*EthereumClaim)(nil),
+		&MsgUbtDepositedClaim{},
+	)
+
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 

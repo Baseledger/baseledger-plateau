@@ -91,7 +91,8 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 
 		// While not strictly necessary, explicitly making the receiver a native address
 		// insulates us from the implicit address conversion done in x/bank's account store iterator
-		nativeReceiver, err := types.GetNativePrefixedAccAddress(receiverAddress)
+		// TODO BAS-119: nativeReceiver
+		_, err := types.GetNativePrefixedAccAddress(receiverAddress)
 
 		if err != nil {
 			invalidAddress = true
@@ -103,10 +104,11 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			invalidAddress = true
 		}
 
-		// TODO: skos revisit this one, it seems like we don't need to add ERC20 lookup for our specific case
+		// TODO: skos revisit this one, it seems like we don't need to add ERC20 lookup for our specific case - BAS-119
 		// Check if coin is Cosmos-originated asset and get denom
 		// isCosmosOriginated, denom := a.keeper.ERC20ToDenomLookup(ctx, *tokenAddress)
-		isCosmosOriginated := false
+		// TODO: BAS-119 changed this to true to skip minting block
+		isCosmosOriginated := true
 		denom := "token"
 		coins := sdk.Coins{sdk.NewCoin(denom, claim.Amount)}
 
@@ -139,17 +141,18 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		if !invalidAddress { // valid address so far, try to lock up the coins in the requested cosmos address
-			if err := a.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, nativeReceiver, coins); err != nil {
-				// someone attempted to send tokens to a blacklisted user from Ethereum, log and send to Community pool
-				hash, _ := claim.ClaimHash()
-				a.keeper.Logger(ctx).Error("Blacklisted deposit",
-					"cause", err.Error(),
-					"claim type", claim.GetType(),
-					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
-					"nonce", fmt.Sprint(claim.GetEventNonce()),
-				)
-				invalidAddress = true
-			}
+			// if err := a.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, nativeReceiver, coins); err != nil {
+			// 	// someone attempted to send tokens to a blacklisted user from Ethereum, log and send to Community pool
+			// 	hash, _ := claim.ClaimHash()
+			// 	a.keeper.Logger(ctx).Error("Blacklisted deposit",
+			// 		"cause", err.Error(),
+			// 		"claim type", claim.GetType(),
+			// 		"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+			// 		"nonce", fmt.Sprint(claim.GetEventNonce()),
+			// 	)
+			// 	invalidAddress = true
+			// }
+			fmt.Println("BAS-119 FIXME")
 		}
 
 		// for whatever reason above, blacklisted, invalid string, etc this deposit is not valid
