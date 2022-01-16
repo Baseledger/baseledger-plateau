@@ -1,6 +1,6 @@
 use crate::query::get_last_event_nonce_for_validator;
 use deep_space::Address as CosmosAddress;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::get_with_retry::RETRY_TIME;
 use tokio::time::sleep;
 use tonic::transport::Channel;

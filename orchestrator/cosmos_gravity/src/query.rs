@@ -1,11 +1,11 @@
 
 use deep_space::address::Address;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
-use gravity_proto::baseledger::Attestation;
-use gravity_proto::baseledger::Params;
-use gravity_proto::baseledger::QueryAttestationsRequest;
-use gravity_proto::baseledger::QueryLastEventNonceByAddressRequest;
-use gravity_proto::baseledger::QueryParamsRequest;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::Attestation;
+use baseledger_proto::baseledger::Params;
+use baseledger_proto::baseledger::QueryAttestationsRequest;
+use baseledger_proto::baseledger::QueryLastEventNonceByAddressRequest;
+use baseledger_proto::baseledger::QueryParamsRequest;
 use gravity_utils::error::GravityError;
 use tonic::transport::Channel;
 
