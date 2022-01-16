@@ -9,7 +9,7 @@ use gravity_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use gravity_proto::baseledger::MsgUbtDepositedClaim;
 use gravity_utils::types::*;
 use std::{collections::HashMap, time::Duration};
-use gravity_proto::gravity::MsgSetOrchestratorAddress;
+use gravity_proto::baseledger::MsgSetOrchestratorAddress;
 
 use crate::utils::downcast_uint256;
 

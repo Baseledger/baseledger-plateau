@@ -10,7 +10,6 @@ use deep_space::{client::ChainStatus, Coin};
 use gravity_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use gravity_proto::baseledger::QueryDelegateKeysByEthAddressRequest;
 use gravity_proto::baseledger::QueryDelegateKeysByOrchestratorAddressRequest;
-use gravity_proto::gravity::QueryDelegateKeysByOrchestratorAddress;
 use std::process::exit;
 use std::time::Duration;
 use tokio::time::sleep as delay_for;
