@@ -66,6 +66,7 @@ pub async fn send_ethereum_claims(
     contact: &Contact,
     private_key: PrivateKey,
     deposits: Vec<SendToCosmosEvent>,
+    power_changes: Vec<ValidatorPowerChangeEvent>,
     fee: Coin,
 ) -> Result<TxResponse, CosmosGrpcError> {
     let our_address = private_key.to_address(&contact.get_prefix()).unwrap();
