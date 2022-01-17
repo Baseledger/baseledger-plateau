@@ -10,6 +10,7 @@ import (
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUbtDepositedClaim{}, "baseledgerbridge/UbtDepositedClaim", nil)
 	cdc.RegisterConcrete(&MsgSetOrchestratorAddress{}, "baseledgerbridge/SetOrchestratorAddress", nil)
+	cdc.RegisterConcrete(&MsgValidatorPowerChangedClaim{}, "baseledgerbridge/ValidatorPowerChangedClaim", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -19,6 +20,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSetOrchestratorAddress{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgValidatorPowerChangedClaim{},
 	)
 	// this line is used by starport scaffolding # 3
 
