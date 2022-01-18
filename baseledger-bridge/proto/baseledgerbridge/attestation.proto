@@ -11,6 +11,7 @@ enum ClaimType {
 
   CLAIM_TYPE_UNSPECIFIED         = 0;
   CLAIM_UBT_DEPOSITED     = 1;
+  CLAIM_VALIDATOR_POWER_CHANGED = 2;
 }
 
 message Attestation {

@@ -31,6 +31,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		"Baseledger.baseledgerbridge.EthereumClaim",
 		(*EthereumClaim)(nil),
 		&MsgUbtDepositedClaim{},
+		&MsgValidatorPowerChangedClaim{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

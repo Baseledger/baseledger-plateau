@@ -39,6 +39,7 @@ type EthereumClaim interface {
 //nolint: exhaustivestruct
 var (
 	_ EthereumClaim = &MsgUbtDepositedClaim{}
+	_ EthereumClaim = &MsgValidatorPowerChangedClaim{}
 )
 
 // UInt64Bytes uses the SDK byte marshaling to encode a uint64
