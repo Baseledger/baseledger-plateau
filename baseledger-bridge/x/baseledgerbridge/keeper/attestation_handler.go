@@ -179,6 +179,8 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				sdk.NewAttribute("MsgSendToCosmosToken", tokenAddress.GetAddress()),
 			),
 		)
+	case *types.MsgValidatorPowerChangedClaim:
+		fmt.Println("BAS-119 Implement MsgValidatorPowerChangedClaim handler")
 	default:
 		panic(fmt.Sprintf("Invalid event type for attestations %s", claim.GetType()))
 	}
