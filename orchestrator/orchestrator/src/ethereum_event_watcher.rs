@@ -80,7 +80,7 @@ pub async fn check_for_events(
             )
         }
 
-        let price = get_ubt_price().await.unwrap();
+        let ubt_price = get_ubt_price().await.unwrap();
 
         let mut new_event_nonce: Uint256 = last_event_nonce.into();
         if !deposits.is_empty()
@@ -90,6 +90,7 @@ pub async fn check_for_events(
                 our_private_key,
                 deposits,
                 fee,
+                ubt_price,
             )
             .await?;
             new_event_nonce = get_last_event_nonce_for_validator(
