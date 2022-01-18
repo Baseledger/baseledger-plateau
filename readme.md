@@ -22,3 +22,12 @@ cargo build --all in root of orchestrator folder
 navigate to gbt and execute
 
 cargo run -- orchestrator --fees "1token" --cosmos-phrase=<mnemonic-from-local-starport> --ethereum-key=<ethereum-private-key-from-keepass-mnemonic> --ethereum-rpc=<infura-kee-pass-url> --gravity-contract-address="0x9e7144C01e3B1D8f3E8127a0C4769637eBac01EA"
+
+
+## Building proto files
+
+- change in baseledger bridge
+- starport chain build --proto-all-modules
+- copy folder third party from gravitybridge repo  to baseledger-bridge
+- run orchestrator/proto_build/cargo run
+- delete third party folder
