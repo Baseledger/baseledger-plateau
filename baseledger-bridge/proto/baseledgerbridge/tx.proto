@@ -23,6 +23,10 @@ message MsgUbtDepositedClaim {
   ];
   string ethereumSender = 6;
   string cosmosReceiver = 7;
+  string price         = 8 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Decimal",
+    (gogoproto.nullable)   = false
+  ];
 }
 
 message MsgUbtDepositedClaimResponse {
