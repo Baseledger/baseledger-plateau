@@ -7,6 +7,7 @@ use clarity::{Address as EthAddress};
 use deep_space::address::Address;
 use baseledger_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use baseledger_proto::baseledger::MsgUbtDepositedClaim;
+use baseledger_proto::baseledger::MsgValidatorPowerChangedClaim;
 use gravity_utils::types::*;
 use std::{collections::HashMap, time::Duration};
 use baseledger_proto::baseledger::MsgSetOrchestratorAddress;
@@ -93,6 +94,21 @@ pub async fn send_ethereum_claims(
         let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaim", claim);
         assert!(unordered_msgs.insert(deposit.event_nonce, msg).is_none());
     }
+
+    for power_change in power_changes {
+        let claim = MsgValidatorPowerChangedClaim {
+            creator: our_address.to_string(),
+            event_nonce: power_change.event_nonce,
+            block_height: downcast_uint256(power_change.block_height).unwrap(),
+            token_contract: power_change.erc20.to_string(),
+            amount: power_change.amount.to_string(),
+            cosmos_receiver: power_change.destination,
+            ethereum_sender: power_change.sender.to_string(),
+        };
+        let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgValidatorPowerChangedClaim", claim);
+        assert!(unordered_msgs.insert(power_change.event_nonce, msg).is_none());
+    }
+
     let mut keys = Vec::new();
     for (key, _) in unordered_msgs.iter() {
         keys.push(*key);
