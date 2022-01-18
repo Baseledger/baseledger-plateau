@@ -15,7 +15,7 @@ var _ = strconv.Itoa(0)
 
 func CmdUbtDepositedClaim() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "ubt-deposited-claim [event-nonce] [block-height] [token-contract] [amount] [ethereum-sender] [cosmos-receiver]",
+		Use:   "ubt-deposited-claim [event-nonce] [block-height] [token-contract] [amount] [ethereum-sender] [cosmos-receiver] [ubt-price]",
 		Short: "Broadcast message ubtDepositedClaim",
 		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -25,6 +25,7 @@ func CmdUbtDepositedClaim() *cobra.Command {
 			argAmount, _ := sdk.NewIntFromString(args[3])
 			argEthereumSender := args[4]
 			argCosmosReceiver := args[5]
+			argUbtPrice, _ := sdk.NewDecFromStr(args[6])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -42,6 +43,7 @@ func CmdUbtDepositedClaim() *cobra.Command {
 				argAmount,
 				argEthereumSender,
 				argCosmosReceiver,
+				argUbtPrice,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

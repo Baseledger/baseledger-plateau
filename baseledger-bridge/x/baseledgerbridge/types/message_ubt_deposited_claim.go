@@ -12,7 +12,7 @@ const TypeMsgUbtDepositedClaim = "ubt_deposited_claim"
 
 var _ sdk.Msg = &MsgUbtDepositedClaim{}
 
-func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string) *MsgUbtDepositedClaim {
+func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string, ubtPrice sdk.Dec) *MsgUbtDepositedClaim {
 	return &MsgUbtDepositedClaim{
 		Creator:        creator,
 		EventNonce:     eventNonce,
@@ -21,6 +21,7 @@ func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint
 		Amount:         amount,
 		EthereumSender: ethereumSender,
 		CosmosReceiver: cosmosReceiver,
+		Price:          ubtPrice,
 	}
 }
 
