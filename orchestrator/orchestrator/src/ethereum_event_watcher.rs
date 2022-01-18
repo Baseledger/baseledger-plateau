@@ -77,6 +77,8 @@ pub async fn check_for_events(
             )
         }
 
+        // TODO: Ognjen - add UBT price fetching
+
         let mut new_event_nonce: Uint256 = last_event_nonce.into();
         if !deposits.is_empty()
         {

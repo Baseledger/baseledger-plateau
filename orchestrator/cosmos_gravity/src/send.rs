@@ -88,6 +88,7 @@ pub async fn send_ethereum_claims(
             amount: deposit.amount.to_string(),
             cosmos_receiver: deposit.destination,
             ethereum_sender: deposit.sender.to_string(),
+            // TODO: Ognjen add deposit unt price to claim
         };
         let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaim", claim);
         assert!(unordered_msgs.insert(deposit.event_nonce, msg).is_none());
