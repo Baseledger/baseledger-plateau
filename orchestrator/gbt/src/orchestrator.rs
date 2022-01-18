@@ -18,24 +18,16 @@ pub async fn orchestrator(
     args: OrchestratorOpts,
     address_prefix: String,
     home_dir: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) {
     let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
     let ethereum_rpc = args.ethereum_rpc;
     let ethereum_key = args.ethereum_key;
     let cosmos_key = args.cosmos_phrase;
 
-    let res = reqwest::get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=<token>").await?;
-    println!("Status: {}", res.status());
-    
-    let body = res.text().await?;
+    let price = get_ubt_price().await.unwrap();
 
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["data"]["UBT"]["quote"]["USD"]["price"].to_string();
-    let price_decimal: f32 = price_str.parse().unwrap();
-    println!("price decimal:\n{}", price_decimal);
-
-    return Ok(())
+    println!("price decimal:\n{}", price);
 
     // let cosmos_key = if let Some(k) = cosmos_key {
     //     k
@@ -151,4 +143,21 @@ pub async fn orchestrator(
     //     fee,
     // )
     // .await;
+}
+
+// Checks for fee errors on our confirm submission transactions, a failure here
+// can be fatal and cause slashing so we want to warn the user and exit. There is
+// no point in running if we can't perform our most important function
+async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
+    let res = reqwest::get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=<token>").await?;
+    println!("Status: {}", res.status());
+    
+    let body = res.text().await?;
+
+    let v: Value = serde_json::from_str(&body)?;
+    let price_str = &v["data"]["UBT"]["quote"]["USD"]["price"].to_string();
+    let price_decimal: f32 = price_str.parse().unwrap();
+    println!("price decimal:\n{}", price_decimal);
+
+    return Ok(price_decimal)
 }

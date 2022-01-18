@@ -121,7 +121,6 @@ pub async fn check_for_events(
     }
 }
 
-
 /// The number of blocks behind the 'latest block' on Ethereum our event checking should be.
 /// Ethereum does not have finality and as such is subject to chain reorgs and temporary forks
 /// if we check for events up to the very latest block we may process an event which did not
