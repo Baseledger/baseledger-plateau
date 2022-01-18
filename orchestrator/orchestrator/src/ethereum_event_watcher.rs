@@ -16,6 +16,9 @@ use tonic::transport::Channel;
 use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use cosmos_gravity::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
+use serde_json::Value;
+use configparser::ini::Ini;
+
 // TODO: this import should probably be somewhere globally, recheck and remove
 use log::trace;
 use log::info;
@@ -77,7 +80,7 @@ pub async fn check_for_events(
             )
         }
 
-        // TODO: Ognjen - add UBT price fetching
+        let price = get_ubt_price().await.unwrap();
 
         let mut new_event_nonce: Uint256 = last_event_nonce.into();
         if !deposits.is_empty()
@@ -119,6 +122,28 @@ pub async fn check_for_events(
             "Failed to get logs!".to_string(),
         )))
     }
+}
+
+async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
+    let mut config = Ini::new();
+    config.load("config.ini"); // TODO: Ognjen - where to place this file
+    let token = config.get("secrets", "coinmarketcapapitoken").unwrap();
+    let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=";
+
+    let full_url = format!("{}\n{}", token, url);
+    println!("Full url: {}", full_url);
+    
+    let res = reqwest::get(full_url).await?;
+    println!("Status: {}", res.status());
+    
+    let body = res.text().await?;
+
+    let v: Value = serde_json::from_str(&body)?;
+    let price_str = &v["data"]["UBT"]["quote"]["USD"]["price"].to_string();
+    let price_decimal: f32 = price_str.parse().unwrap();
+    println!("price decimal:\n{}", price_decimal);
+
+    return Ok(price_decimal)
 }
 
 /// The number of blocks behind the 'latest block' on Ethereum our event checking should be.

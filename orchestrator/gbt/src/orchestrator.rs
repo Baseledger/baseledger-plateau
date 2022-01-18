@@ -12,7 +12,6 @@ use orchestrator::main_loop::orchestrator_main_loop;
 use orchestrator::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;
 use std::process::exit;
-use serde_json::Value;
 
 pub async fn orchestrator(
     args: OrchestratorOpts,
@@ -25,89 +24,85 @@ pub async fn orchestrator(
     let ethereum_key = args.ethereum_key;
     let cosmos_key = args.cosmos_phrase;
 
-    let price = get_ubt_price().await.unwrap();
+    let cosmos_key = if let Some(k) = cosmos_key {
+        k
+    } else {
+        let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.orchestrator_phrase {
+                k = Some(CosmosPrivateKey::from_phrase(&stored_key, "").unwrap())
+            }
+        }
+        if k.is_none() {
+            error!("You must specify an Orchestrator key phrase!");
+            error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
+            error!("To run from the command line, with no key storage use 'gbt orchestrator --cosmos-phrase \"your phrase\"' ");
+            error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
+            exit(1);
+        }
+        k.unwrap()
+    };
+    let ethereum_key = if let Some(k) = ethereum_key {
+        k
+    } else {
+        let mut k = None;
+        if config_exists(home_dir) {
+            let keys = load_keys(home_dir);
+            if let Some(stored_key) = keys.ethereum_key {
+                k = Some(stored_key)
+            }
+        }
+        if k.is_none() {
+            error!("You must specify an Ethereum key!");
+            error!("To set an already registered key use 'gbt keys set-ethereum-key -key \"eth private key\"`");
+            error!("To run from the command line, with no key storage use 'gbt orchestrator --ethereum-key your key' ");
+            error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
+            exit(1);
+        }
+        k.unwrap()
+    };
 
-    println!("price decimal:\n{}", price);
+    let timeout = ETH_ORACLE_LOOP_SPEED;
 
-    // let cosmos_key = if let Some(k) = cosmos_key {
-    //     k
-    // } else {
-    //     let mut k = None;
-    //     if config_exists(home_dir) {
-    //         let keys = load_keys(home_dir);
-    //         if let Some(stored_key) = keys.orchestrator_phrase {
-    //             k = Some(CosmosPrivateKey::from_phrase(&stored_key, "").unwrap())
-    //         }
-    //     }
-    //     if k.is_none() {
-    //         error!("You must specify an Orchestrator key phrase!");
-    //         error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
-    //         error!("To run from the command line, with no key storage use 'gbt orchestrator --cosmos-phrase \"your phrase\"' ");
-    //         error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
-    //         exit(1);
-    //     }
-    //     k.unwrap()
-    // };
-    // let ethereum_key = if let Some(k) = ethereum_key {
-    //     k
-    // } else {
-    //     let mut k = None;
-    //     if config_exists(home_dir) {
-    //         let keys = load_keys(home_dir);
-    //         if let Some(stored_key) = keys.ethereum_key {
-    //             k = Some(stored_key)
-    //         }
-    //     }
-    //     if k.is_none() {
-    //         error!("You must specify an Ethereum key!");
-    //         error!("To set an already registered key use 'gbt keys set-ethereum-key -key \"eth private key\"`");
-    //         error!("To run from the command line, with no key storage use 'gbt orchestrator --ethereum-key your key' ");
-    //         error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
-    //         exit(1);
-    //     }
-    //     k.unwrap()
-    // };
+    trace!("Probing RPC connections");
+    // probe all rpc connections and see if they are valid
+    let connections = create_rpc_connections(
+        address_prefix,
+        Some(cosmos_grpc),
+        Some(ethereum_rpc),
+        timeout,
+    )
+    .await;
 
-    // let timeout = ETH_ORACLE_LOOP_SPEED;
+    let mut grpc = connections.grpc.clone().unwrap();
+    let contact = connections.contact.clone().unwrap();
+    // let web3 = connections.web3.clone().unwrap();
 
-    // trace!("Probing RPC connections");
-    // // probe all rpc connections and see if they are valid
-    // let connections = create_rpc_connections(
-    //     address_prefix,
-    //     Some(cosmos_grpc),
-    //     Some(ethereum_rpc),
-    //     timeout,
-    // )
-    // .await;
+    let public_eth_key = ethereum_key.to_address();
+    let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();
+    info!("Starting Gravity Validator companion binary Relayer + Oracle + Eth Signer");
+    info!(
+        "Ethereum Address: {} Cosmos Address {}",
+        public_eth_key, public_cosmos_key
+    );
 
-    // let mut grpc = connections.grpc.clone().unwrap();
-    // let contact = connections.contact.clone().unwrap();
-    // // let web3 = connections.web3.clone().unwrap();
+    // check if the cosmos node is syncing, if so wait for it
+    // we can't move any steps above this because they may fail on an incorrect
+    // historic chain state while syncing occurs
+    wait_for_cosmos_node_ready(&contact).await;
 
-    // let public_eth_key = ethereum_key.to_address();
-    // let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();
-    // info!("Starting Gravity Validator companion binary Relayer + Oracle + Eth Signer");
-    // info!(
-    //     "Ethereum Address: {} Cosmos Address {}",
-    //     public_eth_key, public_cosmos_key
-    // );
-
-    // // check if the cosmos node is syncing, if so wait for it
-    // // we can't move any steps above this because they may fail on an incorrect
-    // // historic chain state while syncing occurs
-    // wait_for_cosmos_node_ready(&contact).await;
-
-    // // check if the delegate addresses are correctly configured
-    // check_delegate_addresses(
-    //     &mut grpc,
-    //     public_eth_key,
-    //     public_cosmos_key,
-    //     &contact.get_prefix(),
-    // )
-    // .await;
+    // check if the delegate addresses are correctly configured
+    check_delegate_addresses(
+        &mut grpc,
+        public_eth_key,
+        public_cosmos_key,
+        &contact.get_prefix(),
+    )
+    .await;
 
     // TODO skos: this is unsafe to do, but we will pass contract address as args for now
-    // let contract_address = args.gravity_contract_address.unwrap();
+    let contract_address = args.gravity_contract_address.unwrap();
     // TODO skos: check if else branch here is needed...
     // check if we actually have the promised balance of tokens to pay fees
     // check_for_fee(&fee, public_cosmos_key, &contact).await;
@@ -134,30 +129,13 @@ pub async fn orchestrator(
     //     }
     // };
 
-    // orchestrator_main_loop(
-    //     cosmos_key,
-    //     connections.web3.unwrap(),
-    //     connections.contact.unwrap(),
-    //     connections.grpc.unwrap(),
-    //     contract_address,
-    //     fee,
-    // )
-    // .await;
-}
-
-// Checks for fee errors on our confirm submission transactions, a failure here
-// can be fatal and cause slashing so we want to warn the user and exit. There is
-// no point in running if we can't perform our most important function
-async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
-    let res = reqwest::get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=<token>").await?;
-    println!("Status: {}", res.status());
-    
-    let body = res.text().await?;
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["data"]["UBT"]["quote"]["USD"]["price"].to_string();
-    let price_decimal: f32 = price_str.parse().unwrap();
-    println!("price decimal:\n{}", price_decimal);
-
-    return Ok(price_decimal)
+    orchestrator_main_loop(
+        cosmos_key,
+        connections.web3.unwrap(),
+        connections.contact.unwrap(),
+        connections.grpc.unwrap(),
+        contract_address,
+        fee,
+    )
+    .await;
 }
