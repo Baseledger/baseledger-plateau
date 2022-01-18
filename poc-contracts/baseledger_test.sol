@@ -12,11 +12,9 @@ interface IERC20 {
     function approve(address spender, uint256 amount) external returns (bool);
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
-
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
-
 
 library SafeMath {
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -32,29 +30,35 @@ library SafeMath {
 }
 
 contract BaseledgerTest {
-    event SendToCosmosEvent(
+  event SendToCosmosEvent(
 		address indexed _tokenContract,
 		address indexed _sender,
 		string _destination,
 		uint256 _amount,
 		uint256 _eventNonce
 	);
-    IERC20 private token = IERC20(0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e);
 
-    // event nonce zero is reserved by the Cosmos module as a special
+  event ValidatorPowerChangeEvent(
+		address indexed _tokenContract,
+		address indexed _sender,
+		string _destination,
+		uint256 _amount,
+		uint256 _eventNonce
+	);
+  
+  IERC20 private token = IERC20(0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e);
+
+  // event nonce zero is reserved by the Cosmos module as a special
 	// value indicating that no events have yet been submitted
 	uint256 public state_lastEventNonce = 1;
 
-    function deposit(uint256 amount, string calldata destination) public {
-        require(amount > 0, "Deposit should be greater than zero.");
-        uint256 allowance = token.allowance(msg.sender, address(this));
-        require(allowance >= amount, "Check the token allowance");
-        token.transferFrom(msg.sender, address(this), amount);
-        state_lastEventNonce = state_lastEventNonce + 1;
+  function deposit(uint256 amount, string calldata destination) public {
+    require(amount > 0, "Deposit should be greater than zero.");
+    uint256 allowance = token.allowance(msg.sender, address(this));
+    require(allowance >= amount, "Check the token allowance");
+    token.transferFrom(msg.sender, address(this), amount);
+    state_lastEventNonce = state_lastEventNonce + 1;
 
-		// emit to Cosmos the actual amount our balance has changed, rather than the user
-		// provided amount. This protects against a small set of wonky ERC20 behavior, like
-		// burning on send but not tokens that for example change every users balance every day.
 		emit SendToCosmosEvent(
 			0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e,
 			msg.sender,
@@ -62,5 +66,22 @@ contract BaseledgerTest {
 			amount,
 			state_lastEventNonce
 		);
-    }
+  }
+
+  // dummy method, implementation same as above, just to test emitting and catching power change event
+  function powerChange(uint256 amount, string calldata destination) public {
+    require(amount > 0, "Deposit should be greater than zero.");
+    uint256 allowance = token.allowance(msg.sender, address(this));
+    require(allowance >= amount, "Check the token allowance");
+    token.transferFrom(msg.sender, address(this), amount);
+    state_lastEventNonce = state_lastEventNonce + 1;
+
+		emit ValidatorPowerChangeEvent(
+			0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e,
+			msg.sender,
+			destination,
+			amount,
+			state_lastEventNonce
+		);
+  }
 }
