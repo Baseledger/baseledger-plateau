@@ -1,8 +1,6 @@
 use crate::args::OrchestratorOpts;
 use crate::config::config_exists;
 use crate::config::load_keys;
-use clarity::constants::ZERO_ADDRESS;
-use cosmos_gravity::query::get_gravity_params;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use gravity_utils::connection_prep::{
     check_delegate_addresses, wait_for_cosmos_node_ready,
