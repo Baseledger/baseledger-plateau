@@ -406,12 +406,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "configparser"
-version = "3.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06821ea598337a8412cf47c5b71c3bc694a7f0aed188ac28b836fab164a2c202"
-
-[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -780,7 +774,6 @@ dependencies = [
  "actix-rt",
  "clap",
  "clarity",
- "configparser",
  "cosmos_gravity",
  "deep_space",
  "dirs",
@@ -792,10 +785,8 @@ dependencies = [
  "openssl-probe",
  "orchestrator",
  "rand",
- "reqwest",
  "serde",
  "serde_derive",
- "serde_json",
  "tokio",
  "toml",
  "url",
@@ -1435,6 +1426,7 @@ dependencies = [
  "gravity_utils",
  "log",
  "reqwest",
+ "serde_json",
  "tokio",
  "tonic",
  "web30",

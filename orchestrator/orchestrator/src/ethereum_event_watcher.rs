@@ -127,7 +127,7 @@ pub async fn check_for_events(
 async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
     let mut config = Ini::new();
     config.load("config.ini"); // TODO: Ognjen - where to place this file
-    let token = config.get("secrets", "coinmarketcapapitoken").unwrap();
+    let token = env::var("COINMARKETCAP_API_TOKEN");
     let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=";
 
     let full_url = format!("{}\n{}", token, url);
