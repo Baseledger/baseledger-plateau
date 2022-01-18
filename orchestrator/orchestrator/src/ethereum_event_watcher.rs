@@ -17,7 +17,6 @@ use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use cosmos_gravity::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
 use serde_json::Value;
-use configparser::ini::Ini;
 
 // TODO: this import should probably be somewhere globally, recheck and remove
 use log::trace;

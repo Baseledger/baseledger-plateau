@@ -54,7 +54,7 @@ async fn main() {
             }
         },
         SubCommand::Orchestrator(orchestrator_opts) => {
-            let test = orchestrator(orchestrator_opts, address_prefix, &home_dir).await;
+            orchestrator(orchestrator_opts, address_prefix, &home_dir).await
         }
         SubCommand::Init(init_opts) => init_config(init_opts, home_dir),
     }
