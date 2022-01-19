@@ -18,7 +18,22 @@ Biggest difference to gravity bridge is that gravity is doing more things not ne
 
 To make this work locally apart from starport rust is needed to be installed and then call
 
-cargo build --all in root of orchestrator folder
-navigate to gbt and execute
+1. check poc_contracts to run hardhat
 
-cargo run -- orchestrator --fees "1token" --cosmos-phrase=<mnemonic-from-local-starport> --ethereum-key=<ethereum-private-key-from-keepass-mnemonic> --ethereum-rpc=<infura-kee-pass-url> --gravity-contract-address="0x9e7144C01e3B1D8f3E8127a0C4769637eBac01EA"
+2. run `starport chain serve --verbose` in baseledger-bridge folder (if starting from scratch run `starport chain serve --verbose --reset-once` and copy alice and bob mnemonics for further usage)
+
+3. `cargo build --all` in root of orchestrator folder
+
+4. navigate to gbt folder and execute
+
+```shell
+cargo run -- init 
+
+cargo run -- keys set-orchestrator-key --phrase="<STARPORT_BOB_PHRASE>"
+
+cargo run -- keys set-ethereum-key --key ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 (using private key for hardhat account 1, this is public information and not sensitive)
+
+cargo run -- keys register-orchestrator-address --fees="0token" --validator-phrase="<STARPORT_ALICE_PHRASE>"
+
+cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --gravity-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
+```
