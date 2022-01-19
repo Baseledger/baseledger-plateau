@@ -45,8 +45,14 @@ contract BaseledgerTest {
 		uint256 _amount,
 		uint256 _eventNonce
 	);
+
+  IERC20 private token;
+  address private tokenAddress;
   
-  IERC20 private token = IERC20(0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e);
+  constructor(address erc20Address) {
+    tokenAddress = erc20Address;
+    token = IERC20(erc20Address);
+  }
 
   // event nonce zero is reserved by the Cosmos module as a special
 	// value indicating that no events have yet been submitted
@@ -60,7 +66,7 @@ contract BaseledgerTest {
     state_lastEventNonce = state_lastEventNonce + 1;
 
 		emit SendToCosmosEvent(
-			0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e,
+			tokenAddress,
 			msg.sender,
 			destination,
 			amount,
@@ -77,7 +83,7 @@ contract BaseledgerTest {
     state_lastEventNonce = state_lastEventNonce + 1;
 
 		emit ValidatorPowerChangeEvent(
-			0xc3D28E3748f04373496A46f2E512d0A5Ac17F54e,
+			tokenAddress,
 			msg.sender,
 			destination,
 			amount,
