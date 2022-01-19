@@ -1,15 +1,23 @@
-# Basic Sample Hardhat Project
+# Basic Sample Baseledger POC project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+## Deploy test erc20 and baseledger contracts
 
-Try running some of the following tasks:
+Deploy script will also allow 100 tokens to be deposited to baseledger bridge
+```shell
+npx hardhat node
+
+npx hardhat run --network localhost scripts/deploy_baseledger_test.js
+
+npx hardhat console --network localhost
+```
+
+## Test deposit event
 
 ```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+npx hardhat console --network localhost
+
+const Baseledger = await ethers.getContractFactory("BaseledgerTest");
+const baseledger = await Baseledger.attach(BASELEDGER_CONTRACT_ADDRESS);
+
+await baseledger.deposit(1, COSMOS_WALLET_ADDRESS);
 ```
