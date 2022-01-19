@@ -56,7 +56,7 @@ contract BaseledgerTest {
 
   // event nonce zero is reserved by the Cosmos module as a special
 	// value indicating that no events have yet been submitted
-	uint256 public state_lastEventNonce = 1;
+	uint256 public state_lastEventNonce = 0;
 
   function deposit(uint256 amount, string calldata destination) public {
     require(amount > 0, "Deposit should be greater than zero.");

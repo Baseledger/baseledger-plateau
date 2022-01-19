@@ -27,6 +27,9 @@ async function main() {
   await baseledgerTest.deployed();
 
   console.log("Baseledger test deployed to: ", baseledgerTest.address);
+
+  console.log("Approving 100 tokens for test purpose");
+  await testErc20.approve(baseledgerTest.address, 100);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
