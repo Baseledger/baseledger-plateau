@@ -16,8 +16,8 @@ npx hardhat console --network localhost
 ```shell
 npx hardhat console --network localhost
 
-const Baseledger = await ethers.getContractFactory("BaseledgerTest");
-const baseledger = await Baseledger.attach(BASELEDGER_CONTRACT_ADDRESS);
+const Baseledger = await ethers.getContractFactory("BaseledgerTest")
+const baseledger = await Baseledger.attach(BASELEDGER_CONTRACT_ADDRESS)
 
-await baseledger.deposit(1, COSMOS_WALLET_ADDRESS);
+await baseledger.deposit(1, COSMOS_WALLET_ADDRESS)
 ```
