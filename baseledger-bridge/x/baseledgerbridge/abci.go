@@ -7,8 +7,6 @@ import (
 
 // EndBlocker is called at the end of every block
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
-	// TODO: Ognjen - slash validators whose claims have UBT price > than what?
-	// slashing(ctx, k)
 	attestationTally(ctx, k)
 	pruneAttestations(ctx, k)
 }

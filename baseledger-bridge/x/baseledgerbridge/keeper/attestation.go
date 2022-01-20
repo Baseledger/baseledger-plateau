@@ -38,7 +38,16 @@ func (k Keeper) Attest(
 	// in the endBlocker.
 	lastEventNonce := k.GetLastEventNonceByValidator(ctx, valAddr)
 	if claim.GetEventNonce() != lastEventNonce+1 {
-		return nil, errors.New("Last event nonce error")
+		return nil, errors.New("last event nonce error")
+	}
+
+	ubtPrice := claim.GetUbtPrice()
+	if ubtPrice.IsNil() {
+		return nil, errors.New("ubt price not provided")
+	}
+
+	if ubtPrice.IsNegative() || ubtPrice.IsZero() {
+		return nil, errors.New("ubt price negative or zero")
 	}
 
 	// Tries to get an attestation with the same eventNonce and claim as the claim that was submitted.
@@ -57,6 +66,7 @@ func (k Keeper) Attest(
 			Votes:    []string{},
 			Height:   uint64(ctx.BlockHeight()),
 			Claim:    anyClaim,
+			// TODO: Ognjen - Maybe add the avg price here and then check that the price of the claim is in line
 		}
 	}
 

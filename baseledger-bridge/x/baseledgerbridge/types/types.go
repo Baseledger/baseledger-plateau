@@ -34,6 +34,8 @@ type EthereumClaim interface {
 	// validators claims agree. Therefore it's extremely important that this include all elements of the claim
 	// with the exception of the orchestrator who sent it in, which will be used as a different part of the index
 	ClaimHash() ([]byte, error)
+	// The ubt price oracled from orchestrator accompanying the claim
+	GetUbtPrice() sdk.Dec
 }
 
 //nolint: exhaustivestruct
