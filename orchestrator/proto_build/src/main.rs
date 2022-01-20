@@ -67,7 +67,7 @@ fn compile_protos(out_dir: &Path, tmp_dir: &Path) {
     let mut gravity_proto_include_dir = root.clone();
     gravity_proto_include_dir.push("baseledger-bridge/proto");
     let mut third_party_proto_include_dir = root;
-    third_party_proto_include_dir.push("baseledger-bridge/third_party/proto");
+    third_party_proto_include_dir.push("orchestrator/proto_build/third_party/proto");
 
     // Paths
     let proto_paths = [gravity_proto_dir];
