@@ -35,7 +35,7 @@ type EthereumClaim interface {
 	// with the exception of the orchestrator who sent it in, which will be used as a different part of the index
 	ClaimHash() ([]byte, error)
 	// The ubt price oracled from orchestrator accompanying the claim
-	GetUbtPrice() sdk.Dec
+	GetUbtPrice() sdk.Int
 }
 
 //nolint: exhaustivestruct

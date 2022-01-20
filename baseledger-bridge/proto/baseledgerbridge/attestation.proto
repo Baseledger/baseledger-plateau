@@ -14,8 +14,13 @@ enum ClaimType {
 }
 
 message Attestation {
-  bool                observed = 1;
-  repeated string     votes    = 2;
-  uint64              height   = 3;
-  google.protobuf.Any claim    = 4;
+  bool                observed    = 1;
+  repeated string     votes       = 2;
+  uint64              height      = 3;
+  google.protobuf.Any claim       = 4;
+  repeated string     ubtPrices   = 5;
+  string              avgUbtPrice = 6 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable)   = false
+  ];
 }

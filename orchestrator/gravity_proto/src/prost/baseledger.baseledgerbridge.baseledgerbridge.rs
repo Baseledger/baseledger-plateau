@@ -8,6 +8,10 @@ pub struct Attestation {
     pub height: u64,
     #[prost(message, optional, tag="4")]
     pub claim: ::core::option::Option<::prost_types::Any>,
+    #[prost(string, repeated, tag="5")]
+    pub ubt_prices: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(string, tag="6")]
+    pub avg_ubt_price: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -88,7 +92,7 @@ pub struct MsgUbtDepositedClaim {
     #[prost(string, tag="7")]
     pub cosmos_receiver: ::prost::alloc::string::String,
     #[prost(string, tag="8")]
-    pub price: ::prost::alloc::string::String,
+    pub ubt_price: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MsgUbtDepositedClaimResponse {

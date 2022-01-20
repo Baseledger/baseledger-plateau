@@ -139,6 +139,18 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		if !invalidAddress { // valid address so far, try to lock up the coins in the requested cosmos address
+
+			// TODO: Ognjen - Introduce fallback to previous att price in this one is nil, negative or zero
+			amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount, att.AvgUbtPrice)
+
+			// TODO: Ognjen - remove logging if obsolete after implementation
+			a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+				"deposited ubt amount", fmt.Sprint(claim.Amount),
+				"average ubt price", fmt.Sprint(att.AvgUbtPrice.String()),
+				"amount of worktokens", fmt.Sprint(amountOfWorkTokensToSend),
+			)
+
 			if err := a.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, nativeReceiver, coins); err != nil {
 				// someone attempted to send tokens to a blacklisted user from Ethereum, log and send to Community pool
 				hash, _ := claim.ClaimHash()
@@ -180,4 +192,15 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		panic(fmt.Sprintf("Invalid event type for attestations %s", claim.GetType()))
 	}
 	return nil
+}
+
+func calculateAmountOfWorkTokens(depositedUbtAmount sdk.Int, averagePrice sdk.Int) sdk.Int {
+	// TODO: Ognjen - Move this hardcoded value to config or somewhere
+	// TODO: Ognjen - Verify calculation
+	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
+	worktokenEurPriceInt := sdk.NewIntFromBigInt(worktokenEurPrice.BigInt())
+
+	depositedEurValueInt := depositedUbtAmount.Mul(averagePrice)
+
+	return depositedEurValueInt.Quo(worktokenEurPriceInt)
 }
