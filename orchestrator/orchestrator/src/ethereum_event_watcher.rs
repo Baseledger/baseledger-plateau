@@ -79,6 +79,7 @@ pub async fn check_for_events(
             )
         }
 
+        // TODO: BAS-123
         let ubt_price = get_ubt_price().await.unwrap();
 
         let mut new_event_nonce: Uint256 = last_event_nonce.into();

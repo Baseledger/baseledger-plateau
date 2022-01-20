@@ -140,7 +140,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 
 		if !invalidAddress { // valid address so far, try to lock up the coins in the requested cosmos address
 
-			// TODO: Ognjen - Introduce fallback to previous att price in this one is nil, negative or zero
+			// TODO: BAS-120 - Introduce fallback to previous att price in this one is nil, negative or zero
 			amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount, att.AvgUbtPrice)
 
 			// TODO: Ognjen - remove logging if obsolete after implementation
@@ -195,7 +195,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 }
 
 func calculateAmountOfWorkTokens(depositedUbtAmount sdk.Int, averagePrice sdk.Int) sdk.Int {
-	// TODO: Ognjen - Move this hardcoded value to config or somewhere
+	// TODO: BAS-121 - Move this hardcoded value to config or somewhere
 	// TODO: Ognjen - Verify calculation
 	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
 	worktokenEurPriceInt := sdk.NewIntFromBigInt(worktokenEurPrice.BigInt())

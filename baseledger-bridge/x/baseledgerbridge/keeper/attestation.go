@@ -83,7 +83,7 @@ func (k Keeper) Attest(
 	// Add the validator's vote to this attestation
 	att.Votes = append(att.Votes, valAddr.String())
 
-	// TODO: Ognjen - Ignore prices that jump out by some margin from the rest
+	// TODO: BAS-122 - Ignore prices that jump out by some margin from the rest
 	att.UbtPrices = append(att.UbtPrices, ubtPrice.String())
 	ubtPricesNewLength := sdk.NewInt(int64((len(att.UbtPrices))))
 	avgAddition := ubtPrice.Sub(att.AvgUbtPrice).Quo(ubtPricesNewLength)
