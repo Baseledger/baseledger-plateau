@@ -42,6 +42,4 @@ cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545"
 
 - change in baseledger bridge
 - starport chain build --proto-all-modules
-- copy folder third party from gravitybridge repo  to baseledger-bridge
 - run orchestrator/proto_build/cargo run
-- delete third party folder

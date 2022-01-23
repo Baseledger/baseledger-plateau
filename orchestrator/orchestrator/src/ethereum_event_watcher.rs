@@ -24,6 +24,8 @@ use log::trace;
 use log::info;
 use log::error;
 
+use std::env;
+
 pub struct CheckedNonces {
     pub block_number: Uint256,
     pub event_nonce: Uint256,
@@ -150,10 +152,10 @@ pub async fn check_for_events(
 }
 
 async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
-    let token = env::var("COINMARKETCAP_API_TOKEN");
+    let token = env::var("COINMARKETCAP_API_TOKEN").unwrap();
     let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=";
 
-    let full_url = format!("{}\n{}", token, url);
+    let full_url = format!("{}\n{}", url, token);
     println!("Full url: {}", full_url);
     
     let res = reqwest::get(full_url).await?;
