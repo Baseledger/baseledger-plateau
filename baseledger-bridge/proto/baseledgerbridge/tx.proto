@@ -9,6 +9,7 @@ option go_package = "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/
 service Msg {
       rpc UbtDepositedClaim(MsgUbtDepositedClaim) returns (MsgUbtDepositedClaimResponse);
   rpc SetOrchestratorAddress(MsgSetOrchestratorAddress) returns (MsgSetOrchestratorAddressResponse);
+  rpc ValidatorPowerChangedClaim(MsgValidatorPowerChangedClaim) returns (MsgValidatorPowerChangedClaimResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -39,6 +40,22 @@ message MsgSetOrchestratorAddress {
 }
 
 message MsgSetOrchestratorAddressResponse {
+}
+
+message MsgValidatorPowerChangedClaim {
+  string creator = 1;
+  uint64 eventNonce = 2;
+  uint64 blockHeight = 3;
+  string tokenContract = 4;
+  string amount         = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable)   = false
+  ];
+  string ethereumSender = 6;
+  string cosmosReceiver = 7;
+}
+
+message MsgValidatorPowerChangedClaimResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

@@ -1,7 +1,8 @@
+use gravity_utils::types::ValidatorPowerChangeEvent;
 use clarity::{Address, Uint256};
 use cosmos_gravity::utils::get_last_event_nonce_with_retry;
 use deep_space::address::Address as CosmosAddress;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::get_with_retry::get_block_number_with_retry;
 use gravity_utils::get_with_retry::RETRY_TIME;
 use gravity_utils::types::event_signatures::*;
@@ -55,14 +56,41 @@ pub async fn get_last_checked_block(
                 vec![SENT_TO_COSMOS_EVENT_SIG],
             )
             .await;
+        
+        let power_changes_events = web3
+            .check_for_events(
+                end_search.clone(),
+                Some(current_block.clone()),
+                vec![gravity_contract_address],
+                vec![VALIDATOR_POWER_CHANGE_EVENT_SIG],
+            )
+            .await;
 
-        if send_to_cosmos_events.is_err()
+        if send_to_cosmos_events.is_err() || power_changes_events.is_err()
         {
             error!("Failed to get blockchain events while resyncing, is your Eth node working? If you see only one of these it's fine",);
             delay_for(RETRY_TIME).await;
             continue;
         }
         let send_to_cosmos_events = send_to_cosmos_events.unwrap();
+        let power_changes_events = power_changes_events.unwrap();
+
+        for event in power_changes_events {
+            match ValidatorPowerChangeEvent::from_log(&event) {
+                Ok(send) => {
+                    trace!(
+                        "{} send event nonce {} last event nonce",
+                        send.event_nonce,
+                        last_event_nonce
+                    );
+                    if upcast(send.event_nonce) == last_event_nonce && event.block_number.is_some()
+                    {
+                        return event.block_number.unwrap();
+                    }
+                }
+                Err(e) => error!("Got SendToCosmos event that we can't parse {}", e),
+            }
+        }
 
         for event in send_to_cosmos_events {
             match SendToCosmosEvent::from_log(&event) {

@@ -286,6 +286,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a32fd6af2b5827bce66c29053ba0e7c42b9dcab01835835058558c10851a46b"
 
 [[package]]
+name = "baseledger_proto"
+version = "0.1.0"
+dependencies = [
+ "cosmos-sdk-proto-althea",
+ "prost",
+ "prost-types",
+ "tonic",
+]
+
+[[package]]
 name = "bech32"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -443,10 +453,10 @@ name = "cosmos_gravity"
 version = "0.1.0"
 dependencies = [
  "actix",
+ "baseledger_proto",
  "clarity",
  "deep_space",
  "env_logger",
- "gravity_proto",
  "gravity_utils",
  "log",
  "num256",
@@ -772,13 +782,13 @@ name = "gbt"
 version = "1.0.10"
 dependencies = [
  "actix-rt",
+ "baseledger_proto",
  "clap",
  "clarity",
  "cosmos_gravity",
  "deep_space",
  "dirs",
  "env_logger",
- "gravity_proto",
  "gravity_utils",
  "lazy_static",
  "log",
@@ -815,23 +825,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravity_proto"
-version = "0.1.0"
-dependencies = [
- "cosmos-sdk-proto-althea",
- "prost",
- "prost-types",
- "tonic",
-]
-
-[[package]]
 name = "gravity_utils"
 version = "0.1.0"
 dependencies = [
  "actix",
+ "baseledger_proto",
  "clarity",
  "deep_space",
- "gravity_proto",
  "log",
  "num-bigint 0.4.3",
  "num256",
@@ -1418,11 +1418,11 @@ dependencies = [
 name = "orchestrator"
 version = "0.1.0"
 dependencies = [
+ "baseledger_proto",
  "clarity",
  "cosmos_gravity",
  "deep_space",
  "futures",
- "gravity_proto",
  "gravity_utils",
  "log",
  "reqwest",

@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "baseledgerbridge/params.proto";
+import "baseledgerbridge/attestation.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types";
@@ -28,6 +29,11 @@ service Query {
 // Queries a list of LastEventNonceByAddress items.
 	rpc LastEventNonceByAddress(QueryLastEventNonceByAddressRequest) returns (QueryLastEventNonceByAddressResponse) {
 		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/last_event_nonce_by_address/{address}";
+	}
+
+// Queries a list of Attestations items.
+	rpc Attestations(QueryAttestationsRequest) returns (QueryAttestationsResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/baseledgerbridge/attestations/{limit}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -66,6 +72,14 @@ message QueryLastEventNonceByAddressRequest {
 
 message QueryLastEventNonceByAddressResponse {
   uint64 eventNonce = 1;
+}
+
+message QueryAttestationsRequest {
+  uint64 limit = 1;
+}
+
+message QueryAttestationsResponse {
+  repeated Attestation attestations = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

@@ -194,7 +194,7 @@ type App struct {
 
 	// keepers
 	AccountKeeper    authkeeper.AccountKeeper
-	BankKeeper       bankkeeper.Keeper
+	BankKeeper       bankkeeper.BaseKeeper
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
@@ -354,6 +354,8 @@ func New(
 		keys[baseledgerbridgemoduletypes.StoreKey],
 		keys[baseledgerbridgemoduletypes.MemStoreKey],
 		app.GetSubspace(baseledgerbridgemoduletypes.ModuleName),
+		&app.BankKeeper,
+		&app.DistrKeeper,
 		&stakingKeeper,
 	)
 	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
@@ -410,7 +412,7 @@ func New(
 		feegrant.ModuleName,
 	)
 
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, baseledgerbridgemoduletypes.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.

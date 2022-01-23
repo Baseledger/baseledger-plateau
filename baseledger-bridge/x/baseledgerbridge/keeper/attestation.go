@@ -148,6 +148,31 @@ func (k Keeper) IterateAttestations(ctx sdk.Context, cb func([]byte, types.Attes
 	}
 }
 
+// GetMostRecentAttestations returns sorted (by nonce) attestations up to a provided limit number of attestations
+// Note: calls GetAttestationMapping in the hopes that there are potentially many attestations
+// which are distributed between few nonces to minimize sorting time
+func (k Keeper) GetMostRecentAttestations(ctx sdk.Context, limit uint64) []types.Attestation {
+	attestationMapping, keys := k.GetAttestationMapping(ctx)
+	attestations := make([]types.Attestation, 0, limit)
+
+	// Iterate the nonces and collect the attestations
+	count := 0
+	for _, nonce := range keys {
+		if count >= int(limit) {
+			break
+		}
+		for _, att := range attestationMapping[nonce] {
+			if count >= int(limit) {
+				break
+			}
+			attestations = append(attestations, att)
+			count++
+		}
+	}
+
+	return attestations
+}
+
 // TryAttestation checks if an attestation has enough votes to be applied to the consensus state
 // and has not already been marked Observed, then calls processAttestation to actually apply it to the state,
 // and then marks it Observed and emits an event.

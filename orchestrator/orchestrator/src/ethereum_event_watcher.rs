@@ -6,6 +6,7 @@ use gravity_utils::{
     error::GravityError,
     types::{
         SendToCosmosEvent,
+        ValidatorPowerChangeEvent,
     },
 };
 use gravity_utils::get_with_retry::get_block_number_with_retry;
@@ -13,7 +14,7 @@ use gravity_utils::types::event_signatures::*;
 use deep_space::Contact;
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
 use cosmos_gravity::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
 use serde_json::Value;
@@ -53,10 +54,23 @@ pub async fn check_for_events(
         .await;
     trace!("Deposits {:?}", deposits);
 
-    if let Ok(deposits) = deposits
+    let power_changes = web3
+        .check_for_events(
+            starting_block.clone(),
+            Some(latest_block.clone()),
+            vec![gravity_contract_address],
+            vec![VALIDATOR_POWER_CHANGE_EVENT_SIG],
+        )
+        .await;
+    trace!("Deposits {:?}", power_changes);
+
+    if let (Ok(deposits), Ok(power_changes)) = (deposits, power_changes)
     {
         let deposits = SendToCosmosEvent::from_logs(&deposits)?;
         trace!("parsed deposits {:?}", deposits);
+
+        let power_changes = ValidatorPowerChangeEvent::from_logs(&power_changes)?;
+        trace!("parsed power_changes {:?}", power_changes);
 
         // note that starting block overlaps with our last checked block, because we have to deal with
         // the possibility that the relayer was killed after relaying only one of multiple events in a single
@@ -72,6 +86,8 @@ pub async fn check_for_events(
 
         let deposits = SendToCosmosEvent::filter_by_event_nonce(last_event_nonce, &deposits);
 
+        let power_changes = ValidatorPowerChangeEvent::filter_by_event_nonce(last_event_nonce, &power_changes);
+
         if !deposits.is_empty() {
             info!(
                 "Oracle observed deposit with sender {}, destination {:?}, amount {}, and event nonce {}",
@@ -81,14 +97,22 @@ pub async fn check_for_events(
 
         // TODO: BAS-123
         let ubt_price = get_ubt_price().await.unwrap();
+        
+        if !power_changes.is_empty() {
+            info!(
+                "Oracle observed power change with sender {}, destination {:?}, amount {}, and event nonce {}",
+                power_changes[0].sender, power_changes[0].validated_destination, power_changes[0].amount, power_changes[0].event_nonce
+            )
+        }
 
         let mut new_event_nonce: Uint256 = last_event_nonce.into();
-        if !deposits.is_empty()
+        if !deposits.is_empty() || !power_changes.is_empty()
         {
             let res = send_ethereum_claims(
                 contact,
                 our_private_key,
                 deposits,
+                power_changes,
                 fee,
                 ubt_price,
             )

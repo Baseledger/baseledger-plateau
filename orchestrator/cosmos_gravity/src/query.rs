@@ -1,11 +1,11 @@
 
 use deep_space::address::Address;
-use gravity_proto::baseledger::query_client::QueryClient as GravityQueryClient;
-// use gravity_proto::gravity::Attestation;
-use gravity_proto::baseledger::Params;
-// use gravity_proto::gravity::QueryAttestationsRequest;
-use gravity_proto::baseledger::QueryLastEventNonceByAddressRequest;
-use gravity_proto::baseledger::QueryParamsRequest;
+use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::Attestation;
+use baseledger_proto::baseledger::Params;
+use baseledger_proto::baseledger::QueryAttestationsRequest;
+use baseledger_proto::baseledger::QueryLastEventNonceByAddressRequest;
+use baseledger_proto::baseledger::QueryParamsRequest;
 use gravity_utils::error::GravityError;
 use tonic::transport::Channel;
 
@@ -34,15 +34,15 @@ pub async fn get_last_event_nonce_for_validator(
     Ok(request.into_inner().event_nonce)
 }
 
-// pub async fn get_attestations(
-//     client: &mut GravityQueryClient<Channel>,
-//     limit: Option<u64>,
-// ) -> Result<Vec<Attestation>, GravityError> {
-//     let request = client
-//         .get_attestations(QueryAttestationsRequest {
-//             limit: limit.or(Some(1000u64)).unwrap(),
-//         })
-//         .await?;
-//     let attestations = request.into_inner().attestations;
-//     Ok(attestations)
-// }
+pub async fn get_attestations(
+    client: &mut GravityQueryClient<Channel>,
+    limit: Option<u64>,
+) -> Result<Vec<Attestation>, GravityError> {
+    let request = client
+        .attestations(QueryAttestationsRequest {
+            limit: limit.or(Some(1000u64)).unwrap(),
+        })
+        .await?;
+    let attestations = request.into_inner().attestations;
+    Ok(attestations)
+}
