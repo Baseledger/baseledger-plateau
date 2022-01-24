@@ -61,8 +61,8 @@ func (k Keeper) Attest(
 		)
 		// return nil, errors.New("claim ubt price is nil")
 
-		// If proper value not provided we set it to zero
-		// not to affect the later average calculation
+		// TODO: Ognjen - If proper value not provided we set it to zero
+		// make sure not to affect the later average calculation
 		ubtPrice = sdk.ZeroInt()
 	}
 
