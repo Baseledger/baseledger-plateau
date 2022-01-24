@@ -82,7 +82,10 @@ pub async fn send_ethereum_claims(
     //
     // We index the events by event nonce in an unordered hashmap and then play them back in order into a vec
     let mut unordered_msgs = HashMap::new();
+    
     for deposit in deposits {
+        println!("ubt token amount: {}", deposit.amount.to_string());
+        println!("ubt price string: {}", ubt_price.to_string());
         let claim = MsgUbtDepositedClaim {
             creator: our_address.to_string(),
             event_nonce: deposit.event_nonce,

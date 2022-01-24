@@ -153,7 +153,7 @@ pub async fn check_for_events(
 
 async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
     let token = env::var("COINMARKETCAP_API_TOKEN").unwrap();
-    let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&CMC_PRO_API_KEY=";
+    let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&convert=EUR&CMC_PRO_API_KEY=";
 
     let full_url = format!("{}\n{}", url, token);
     println!("Full url: {}", full_url);
@@ -164,7 +164,7 @@ async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
     let body = res.text().await?;
 
     let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["data"]["UBT"]["quote"]["USD"]["price"].to_string();
+    let price_str = &v["data"]["UBT"]["quote"]["EUR"]["price"].to_string();
     let price_decimal: f32 = price_str.parse().unwrap();
     println!("price decimal:\n{}", price_decimal);
 

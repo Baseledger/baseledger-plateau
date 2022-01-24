@@ -25,7 +25,7 @@ func CmdUbtDepositedClaim() *cobra.Command {
 			argAmount, _ := sdk.NewIntFromString(args[3])
 			argEthereumSender := args[4]
 			argCosmosReceiver := args[5]
-			argUbtPrice, _ := sdk.NewIntFromString(args[6])
+			argUbtPrice := args[6]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

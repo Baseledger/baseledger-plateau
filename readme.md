@@ -35,6 +35,8 @@ cargo run -- keys set-ethereum-key --key ac0974bec39a17e36ba4a6b4d238ff944bacb47
 
 cargo run -- keys register-orchestrator-address --fees="0token" --validator-phrase="<STARPORT_ALICE_PHRASE>"
 
+export COINMARKETCAP_API_TOKEN=<token>
+
 cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --gravity-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
 ```
 

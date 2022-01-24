@@ -48,7 +48,7 @@ func (k Keeper) Attest(
 		return nil, sdkerrors.Wrap(err, "unable to compute claim hash")
 	}
 
-	ubtPrice := claim.GetUbtPrice()
+	ubtPrice := claim.GetUbtPriceAsInt()
 
 	if ubtPrice.IsNil() || ubtPrice.IsNegative() || ubtPrice.IsZero() {
 		// TODO: Ognjen - Log or err?

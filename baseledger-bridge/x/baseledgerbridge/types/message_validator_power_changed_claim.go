@@ -84,7 +84,7 @@ func (msg MsgValidatorPowerChangedClaim) GetClaimer() sdk.AccAddress {
 	return val
 }
 
-func (msg *MsgValidatorPowerChangedClaim) GetUbtPrice() sdk.Int {
+func (msg *MsgValidatorPowerChangedClaim) GetUbtPriceAsInt() sdk.Int {
 	// TODO: Ognjen - Cleanup, her just to make the build work
 	panic("Not implemented")
 }

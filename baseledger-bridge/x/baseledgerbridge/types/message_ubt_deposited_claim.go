@@ -12,7 +12,7 @@ const TypeMsgUbtDepositedClaim = "ubt_deposited_claim"
 
 var _ sdk.Msg = &MsgUbtDepositedClaim{}
 
-func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string, ubtPrice sdk.Int) *MsgUbtDepositedClaim {
+func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string, ubtPrice string) *MsgUbtDepositedClaim {
 	return &MsgUbtDepositedClaim{
 		Creator:        creator,
 		EventNonce:     eventNonce,
@@ -51,8 +51,9 @@ func (msg *MsgUbtDepositedClaim) GetType() ClaimType {
 	return CLAIM_UBT_DEPOSITED
 }
 
-func (msg *MsgUbtDepositedClaim) GetUbtPrice() sdk.Int {
-	return msg.UbtPrice
+func (msg *MsgUbtDepositedClaim) GetUbtPriceAsInt() sdk.Int {
+	priceAsDec, _ := sdk.NewDecFromStr(msg.UbtPrice)
+	return sdk.NewIntFromBigInt(priceAsDec.BigInt())
 }
 
 // ValidateBasic performs stateless checks
@@ -71,14 +72,6 @@ func (msg *MsgUbtDepositedClaim) ValidateBasic() error {
 	}
 	if msg.EventNonce == 0 {
 		return fmt.Errorf("nonce == 0")
-	}
-
-	if msg.UbtPrice.IsNil() {
-		return fmt.Errorf("ubt price nil")
-	}
-
-	if msg.UbtPrice.IsNegative() || msg.UbtPrice.IsZero() {
-		return fmt.Errorf("ubt price equal or smaller than 0")
 	}
 	return nil
 }
