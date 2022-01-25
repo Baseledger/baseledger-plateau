@@ -149,14 +149,13 @@ var (
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:             nil,
-		distrtypes.ModuleName:                  nil,
-		minttypes.ModuleName:                   {authtypes.Minter},
-		stakingtypes.BondedPoolName:            {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName:         {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:                    {authtypes.Burner},
-		ibctransfertypes.ModuleName:            {authtypes.Minter, authtypes.Burner},
-		baseledgerbridgemoduletypes.ModuleName: {authtypes.Minter},
+		authtypes.FeeCollectorName:     nil,
+		distrtypes.ModuleName:          nil,
+		minttypes.ModuleName:           {authtypes.Minter},
+		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:            {authtypes.Burner},
+		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
@@ -359,7 +358,6 @@ func New(
 		&app.BankKeeper,
 		&app.DistrKeeper,
 		&stakingKeeper,
-		&app.AccountKeeper,
 	)
 	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
