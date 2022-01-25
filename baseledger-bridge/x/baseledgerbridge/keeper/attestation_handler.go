@@ -134,7 +134,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			if err := a.bankKeeper.SendCoins(ctx, faucetAddress, nativeReceiver, coins); err != nil {
 				// in this case sending failed, log to be able to resolve
 				hash, _ := claim.ClaimHash()
-				a.keeper.Logger(ctx).Error("Failed sending work teokens from faucet to receiver",
+				a.keeper.Logger(ctx).Error("Failed sending work tokens from faucet to receiver",
 					"cause", err.Error(),
 					"claim type", claim.GetType(),
 					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
@@ -161,7 +161,101 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			),
 		)
 	case *types.MsgValidatorPowerChangedClaim:
-		fmt.Println("BAS-119 Implement MsgValidatorPowerChangedClaim handler")
+		tokenAddress, err := types.NewEthAddress(claim.TokenContract)
+		// these are not possible unless the validators get together and submit
+		// a bogus event, this would create lost tokens stuck in the bridge
+		// and not accessible to anyone
+		if err != nil {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Invalid token contract",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
+			return sdkerrors.Wrap(err, "invalid token contract on claim")
+		}
+
+		_, err = types.NewEthAddress(claim.EthereumSender)
+		if err != nil {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Invalid ethereum sender",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
+			return sdkerrors.Wrap(err, "invalid ethereum sender on claim")
+		}
+
+		valAddr, err := sdk.ValAddressFromBech32(claim.CosmosReceiver)
+		if err != nil {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Invalid validator address",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
+			return sdkerrors.Wrap(err, "invalid validator address on claim")
+		}
+
+		validator, found := a.keeper.StakingKeeper.GetValidator(ctx, valAddr)
+
+		if !found {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Validator not found",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
+			return sdkerrors.Wrap(err, "can not find validator specified on claim")
+		}
+
+		faucetAddress, err := sdk.AccAddressFromBech32(baseledgercommon.UbtFaucetAddress)
+		if err != nil {
+			panic("Faucet address invalid")
+		}
+
+		tokensDifference := sdk.NewInt(claim.Amount.Int64()).Sub(validator.Tokens)
+
+		sdk.NewDec(validator.Tokens.Sub(claim.Amount).Int64())
+
+		if tokensDifference.GT(sdk.ZeroInt()) {
+			_, err = a.keeper.StakingKeeper.Delegate(ctx, faucetAddress, tokensDifference, 1, validator, true)
+
+			if err != nil {
+				hash, _ := claim.ClaimHash()
+				a.keeper.Logger(ctx).Error("Could not delegate to validator",
+					"cause", err.Error(),
+					"claim type", claim.GetType(),
+					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+					"nonce", fmt.Sprint(claim.GetEventNonce()),
+				)
+				return sdkerrors.Wrap(err, "could not delegate to validator specified on claim")
+			}
+		} else {
+			_, err := a.keeper.StakingKeeper.Undelegate(ctx, faucetAddress, valAddr, sdk.NewDec(validator.Tokens.Sub(claim.Amount).Int64()))
+			if err != nil {
+				hash, _ := claim.ClaimHash()
+				a.keeper.Logger(ctx).Error("Could not undelegate from validator",
+					"cause", err.Error(),
+					"claim type", claim.GetType(),
+					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+					"nonce", fmt.Sprint(claim.GetEventNonce()),
+				)
+				return sdkerrors.Wrap(err, "could not undelegate from validator specified on claim")
+			}
+		}
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				sdk.EventTypeMessage,
+				sdk.NewAttribute("MsgValidatorPowerChangedAmount", claim.Amount.String()),
+				sdk.NewAttribute("MsgValidatorPowerChangedNonce", strconv.Itoa(int(claim.GetEventNonce()))),
+				sdk.NewAttribute("MsgValidatorPowerChangedToken", tokenAddress.GetAddress()),
+			),
+		)
 	default:
 		panic(fmt.Sprintf("Invalid event type for attestations %s", claim.GetType()))
 	}
