@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -24,6 +25,8 @@ type (
 		paramstore paramtypes.Subspace
 
 		StakingKeeper *stakingkeeper.Keeper
+		BankKeeper    *bankkeeper.BaseKeeper
+		AccountKeeper *authkeeper.AccountKeeper
 
 		AttestationHandler interface {
 			Handle(sdk.Context, types.Attestation, types.EthereumClaim) error
@@ -40,6 +43,7 @@ func NewKeeper(
 	distKeeper *distrkeeper.Keeper,
 
 	stakingKeeper *stakingkeeper.Keeper,
+	accountKeeper *authkeeper.AccountKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -65,6 +69,8 @@ func NewKeeper(
 	}
 	attestationHandler.ValidateMembers()
 	k.AttestationHandler = attestationHandler
+	k.BankKeeper = bankKeeper
+	k.AccountKeeper = accountKeeper
 
 	return k
 }
