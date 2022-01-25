@@ -1,5 +1,6 @@
 package common
 
+const StakeTokenDenom = "stake"
 const WorkTokenDenom = "work"
 const WorkTokenFee = "1work"
-const UbtFaucetAddress = "cosmos1sz6rulescp90l4qzhcl8afjr2kt6wzqyafwedx"
+const UbtFaucetAddress = "cosmos12s5kehx92laktvzzesf3dfs2hsg8gwfvjh0tfa"
