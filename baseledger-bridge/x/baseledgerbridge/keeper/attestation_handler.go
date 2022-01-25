@@ -13,7 +13,6 @@ import (
 
 	baseledgercommon "github.com/Baseledger/baseledger-bridge/common"
 	"github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types"
-
 	distypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
 
