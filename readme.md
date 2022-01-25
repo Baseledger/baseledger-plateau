@@ -40,8 +40,10 @@ export COINMARKETCAP_API_TOKEN=<token>
 cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --gravity-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
 ```
 
-## Building proto files
+## Changing and building proto files
 
-- change in baseledger bridge
+- change the proto files in baseledger bridge
+- navigate to <root>/baseledger-bridge
 - starport chain build --proto-all-modules
-- run orchestrator/proto_build/cargo run
+- navigate to <root>/orchestrator/proto_build
+- cargo run
