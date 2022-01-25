@@ -14,3 +14,8 @@ client:
 faucet:
   name: bob
   coins: ["5work", "100000stake"]
+genesis:
+  app_state:
+    staking:
+      params:
+        unbonding_time: "10s"
