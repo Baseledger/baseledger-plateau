@@ -253,6 +253,14 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				)
 				return sdkerrors.Wrap(err, "could not undelegate from validator specified on claim")
 			}
+		} else {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Invalid receiver address",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
 		}
 
 		ctx.EventManager().EmitEvent(
