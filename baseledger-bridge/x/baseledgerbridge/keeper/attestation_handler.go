@@ -11,7 +11,9 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	baseledgercommon "github.com/Baseledger/baseledger-bridge/common"
 	"github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types"
+
 	distypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
 
@@ -59,92 +61,68 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 	// deposit in this context means a deposit into the Ethereum side of the bridge
 	case *types.MsgUbtDepositedClaim:
 		invalidAddress := false
-		receiverAddress, addressErr := types.IBCAddressFromBech32(claim.CosmosReceiver)
-		if addressErr != nil {
+		receiverAddress, err := sdk.AccAddressFromBech32(claim.CosmosReceiver)
+		if err != nil {
 			invalidAddress = true
 		}
-		tokenAddress, errTokenAddress := types.NewEthAddress(claim.TokenContract)
-		ethereumSender, errEthereumSender := types.NewEthAddress(claim.EthereumSender)
+		tokenAddress, err := types.NewEthAddress(claim.TokenContract)
 		// these are not possible unless the validators get together and submit
 		// a bogus event, this would create lost tokens stuck in the bridge
 		// and not accessible to anyone
-		if errTokenAddress != nil {
+		if err != nil {
 			hash, _ := claim.ClaimHash()
 			a.keeper.Logger(ctx).Error("Invalid token contract",
-				"cause", errTokenAddress.Error(),
+				"cause", err.Error(),
 				"claim type", claim.GetType(),
 				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
 			)
-			return sdkerrors.Wrap(errTokenAddress, "invalid token contract on claim")
+			return sdkerrors.Wrap(err, "invalid token contract on claim")
 		}
-		if errEthereumSender != nil {
+
+		_, err = types.NewEthAddress(claim.EthereumSender)
+		if err != nil {
 			hash, _ := claim.ClaimHash()
 			a.keeper.Logger(ctx).Error("Invalid ethereum sender",
-				"cause", errEthereumSender.Error(),
+				"cause", err.Error(),
 				"claim type", claim.GetType(),
 				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
 			)
-			return sdkerrors.Wrap(errTokenAddress, "invalid ethereum sender on claim")
+			return sdkerrors.Wrap(err, "invalid ethereum sender on claim")
 		}
 
 		// While not strictly necessary, explicitly making the receiver a native address
 		// insulates us from the implicit address conversion done in x/bank's account store iterator
-		// TODO BAS-119: nativeReceiver
-		_, err := types.GetNativePrefixedAccAddress(receiverAddress)
+		nativeReceiver, err := types.GetNativePrefixedAccAddress(receiverAddress)
 
 		if err != nil {
 			invalidAddress = true
 		}
 
-		// Checks the address if it's inside the blacklisted address list and marks
-		// if it's inside the list.
-		if a.keeper.IsOnBlacklist(ctx, *ethereumSender) {
-			invalidAddress = true
+		// TODO: BAS-120 - Introduce fallback to previous att price in this one is nil, negative or zero
+		amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount, att.AvgUbtPrice)
+		coins := sdk.Coins{sdk.NewCoin(baseledgercommon.WorkTokenDenom, amountOfWorkTokensToSend)}
+
+		// TODO: Skos - what is impossible amount? i think we can keep this check just in case even though conversion should stop it
+		// Make sure that users are not bridging an impossible amount
+		prevSupply := a.bankKeeper.GetSupply(ctx, baseledgercommon.WorkTokenDenom)
+		newSupply := new(big.Int).Add(prevSupply.Amount.BigInt(), amountOfWorkTokensToSend.BigInt())
+		if newSupply.BitLen() > 256 { // new supply overflows uint256
+			a.keeper.Logger(ctx).Error("Deposit Overflow",
+				"claim type", claim.GetType(),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
+			return sdkerrors.Wrap(types.ErrIntOverflowAttestation, "invalid supply after UbtDeposit attestation")
 		}
 
-		// TODO: skos revisit this one, it seems like we don't need to add ERC20 lookup for our specific case - BAS-119
-		// Check if coin is Cosmos-originated asset and get denom
-		// isCosmosOriginated, denom := a.keeper.ERC20ToDenomLookup(ctx, *tokenAddress)
-		// TODO: BAS-119 changed this to true to skip minting block
-		isCosmosOriginated := true
-		denom := "token"
-		coins := sdk.Coins{sdk.NewCoin(denom, claim.Amount)}
+		faucetAddress, err := sdk.AccAddressFromBech32(baseledgercommon.UbtFaucetAddress)
 
-		if !isCosmosOriginated {
-			// We need to mint eth-originated coins (aka vouchers)
-			// Make sure that users are not bridging an impossible amount
-			prevSupply := a.bankKeeper.GetSupply(ctx, denom)
-			newSupply := new(big.Int).Add(prevSupply.Amount.BigInt(), claim.Amount.BigInt())
-			if newSupply.BitLen() > 256 { // new supply overflows uint256
-				a.keeper.Logger(ctx).Error("Deposit Overflow",
-					"claim type", claim.GetType(),
-					"nonce", fmt.Sprint(claim.GetEventNonce()),
-				)
-				return sdkerrors.Wrap(types.ErrIntOverflowAttestation, "invalid supply after SendToCosmos attestation")
-			}
-
-			if err := a.bankKeeper.MintCoins(ctx, types.ModuleName, coins); err != nil {
-				// in this case we have lost tokens! They are in the bridge, but not
-				// in the community pool our out in some users balance, every instance of this
-				// error needs to be detected and resolved
-				hash, _ := claim.ClaimHash()
-				a.keeper.Logger(ctx).Error("Failed minting",
-					"cause", err.Error(),
-					"claim type", claim.GetType(),
-					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
-					"nonce", fmt.Sprint(claim.GetEventNonce()),
-				)
-				return sdkerrors.Wrapf(err, "mint vouchers coins: %s", coins)
-			}
+		if err != nil {
+			panic("Faucet address invalid")
 		}
 
-		if !invalidAddress { // valid address so far, try to lock up the coins in the requested cosmos address
-
-			// TODO: BAS-120 - Introduce fallback to previous att price in this one is nil, negative or zero
-			amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount, att.AvgUbtPrice)
-
+		if !invalidAddress {
 			// TODO: Ognjen - remove logging if obsolete after implementation
 			a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
@@ -153,42 +131,33 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				"amount of worktokens", fmt.Sprint(amountOfWorkTokensToSend),
 			)
 
-			// if err := a.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, nativeReceiver, coins); err != nil {
-			// 	// someone attempted to send tokens to a blacklisted user from Ethereum, log and send to Community pool
-			// 	hash, _ := claim.ClaimHash()
-			// 	a.keeper.Logger(ctx).Error("Blacklisted deposit",
-			// 		"cause", err.Error(),
-			// 		"claim type", claim.GetType(),
-			// 		"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
-			// 		"nonce", fmt.Sprint(claim.GetEventNonce()),
-			// 	)
-			// 	invalidAddress = true
-			// }
-			fmt.Println("BAS-119 FIXME")
-		}
-
-		// for whatever reason above, blacklisted, invalid string, etc this deposit is not valid
-		// we can't send the tokens back on the Ethereum side, and if we don't put them somewhere on
-		// the cosmos side they will be lost an inaccessible even though they are locked in the bridge.
-		// so we deposit the tokens into the community pool for later use
-		if invalidAddress {
-			if err = a.SendToCommunityPool(ctx, coins); err != nil {
+			if err := a.bankKeeper.SendCoins(ctx, faucetAddress, nativeReceiver, coins); err != nil {
+				// in this case sending failed, log to be able to resolve
 				hash, _ := claim.ClaimHash()
-				a.keeper.Logger(ctx).Error("Failed community pool send",
+				a.keeper.Logger(ctx).Error("Failed sending work teokens from faucet to receiver",
 					"cause", err.Error(),
 					"claim type", claim.GetType(),
 					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
 					"nonce", fmt.Sprint(claim.GetEventNonce()),
 				)
-				return sdkerrors.Wrap(err, "failed to send to Community pool")
+				return sdkerrors.Wrapf(err, "send work coins: %s", coins)
 			}
+		} else {
+			hash, _ := claim.ClaimHash()
+			a.keeper.Logger(ctx).Error("Invalid receiver address",
+				"cause", err.Error(),
+				"claim type", claim.GetType(),
+				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+				"nonce", fmt.Sprint(claim.GetEventNonce()),
+			)
 		}
+
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				sdk.EventTypeMessage,
-				sdk.NewAttribute("MsgSendToCosmosAmount", claim.Amount.String()),
-				sdk.NewAttribute("MsgSendToCosmosNonce", strconv.Itoa(int(claim.GetEventNonce()))),
-				sdk.NewAttribute("MsgSendToCosmosToken", tokenAddress.GetAddress()),
+				sdk.NewAttribute("MsgUbtDepositedAmount", amountOfWorkTokensToSend.String()),
+				sdk.NewAttribute("MsgUbtDepositedNonce", strconv.Itoa(int(claim.GetEventNonce()))),
+				sdk.NewAttribute("MsgUbtDepositedToken", tokenAddress.GetAddress()),
 			),
 		)
 	case *types.MsgValidatorPowerChangedClaim:
