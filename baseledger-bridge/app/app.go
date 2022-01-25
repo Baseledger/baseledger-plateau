@@ -367,6 +367,7 @@ func New(
 		&app.BankKeeper,
 		&app.DistrKeeper,
 		&stakingKeeper,
+		&app.AccountKeeper,
 	)
 	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
