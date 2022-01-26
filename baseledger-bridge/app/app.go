@@ -90,6 +90,9 @@ import (
 
 	"github.com/Baseledger/baseledger-bridge/docs"
 
+	baseledgermodule "github.com/Baseledger/baseledger-bridge/x/baseledger"
+	baseledgermodulekeeper "github.com/Baseledger/baseledger-bridge/x/baseledger/keeper"
+	baseledgermoduletypes "github.com/Baseledger/baseledger-bridge/x/baseledger/types"
 	baseledgerbridgemodule "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge"
 	baseledgerbridgemodulekeeper "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/keeper"
 	baseledgerbridgemoduletypes "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types"
@@ -144,6 +147,7 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		baseledgerbridgemodule.AppModuleBasic{},
+		baseledgermodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -215,6 +219,8 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	BaseledgerbridgeKeeper baseledgerbridgemodulekeeper.Keeper
+
+	BaseledgerKeeper baseledgermodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -252,6 +258,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		baseledgerbridgemoduletypes.StoreKey,
+		baseledgermoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -361,6 +368,16 @@ func New(
 	)
 	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.BaseledgerKeeper = *baseledgermodulekeeper.NewKeeper(
+		appCodec,
+		keys[baseledgermoduletypes.StoreKey],
+		keys[baseledgermoduletypes.MemStoreKey],
+		app.GetSubspace(baseledgermoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	baseledgerModule := baseledgermodule.NewAppModule(appCodec, app.BaseledgerKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -400,6 +417,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		baseledgerbridgeModule,
+		baseledgerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -435,6 +453,7 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		baseledgerbridgemoduletypes.ModuleName,
+		baseledgermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -458,6 +477,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		baseledgerbridgeModule,
+		baseledgerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -646,6 +666,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(baseledgerbridgemoduletypes.ModuleName)
+	paramsKeeper.Subspace(baseledgermoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
