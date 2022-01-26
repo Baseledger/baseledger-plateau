@@ -111,6 +111,9 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			a.keeper.Logger(ctx).Error("Deposit Overflow",
 				"claim type", claim.GetType(),
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
+				"amount", claim.Amount,
+				"prev supply", prevSupply.Amount,
+				"new supply", newSupply,
 			)
 			return sdkerrors.Wrap(types.ErrIntOverflowAttestation, "invalid supply after UbtDeposit attestation")
 		}
@@ -217,12 +220,15 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			panic("Faucet address invalid")
 		}
 
-		tokensDifference := sdk.NewInt(claim.Amount.Int64()).Sub(validator.Tokens)
+		stakingIncreased := true
+		if claim.Amount.LT(validator.Tokens) {
+			stakingIncreased = false
+		}
 
-		sdk.NewDec(validator.Tokens.Sub(claim.Amount).Int64())
+		stakingAmountChange := claim.Amount.Sub(validator.Tokens).Abs()
 
-		if tokensDifference.GT(sdk.ZeroInt()) {
-			_, err = a.keeper.StakingKeeper.Delegate(ctx, faucetAddress, tokensDifference, 1, validator, true)
+		if stakingIncreased {
+			_, err = a.keeper.StakingKeeper.Delegate(ctx, faucetAddress, stakingAmountChange, 1, validator, true)
 
 			if err != nil {
 				hash, _ := claim.ClaimHash()
@@ -235,7 +241,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				return sdkerrors.Wrap(err, "could not delegate to validator specified on claim")
 			}
 		} else {
-			_, err := a.keeper.StakingKeeper.Undelegate(ctx, faucetAddress, valAddr, sdk.NewDec(validator.Tokens.Sub(claim.Amount).Int64()))
+			_, err := a.keeper.StakingKeeper.Undelegate(ctx, faucetAddress, valAddr, sdk.NewDecFromInt(stakingAmountChange))
 			if err != nil {
 				hash, _ := claim.ClaimHash()
 				a.keeper.Logger(ctx).Error("Could not undelegate from validator",
