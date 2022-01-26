@@ -14,6 +14,15 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
+		BaseledgerTransactionList: []types.BaseledgerTransaction{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		BaseledgerTransactionCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -25,5 +34,7 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
+	require.ElementsMatch(t, genesisState.BaseledgerTransactionList, got.BaseledgerTransactionList)
+	require.Equal(t, genesisState.BaseledgerTransactionCount, got.BaseledgerTransactionCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
