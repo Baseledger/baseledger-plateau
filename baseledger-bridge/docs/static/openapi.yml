@@ -14413,6 +14413,7 @@ definitions:
 
             URL that describes the type of the serialized message.
 
+            URL that describes the type of the serialized message.
 
             Protobuf library provides support to pack/unpack Any values in the
             form
@@ -14542,6 +14543,7 @@ definitions:
 
               (e.g., leading "." is not accepted).
 
+              the fully qualified name of the type (as in
 
               In practice, teams usually precompile into the binary all types
               that they
@@ -14554,6 +14556,8 @@ definitions:
 
               server that maps type URLs to message definitions as follows:
 
+              expect it to use in the context of Any. However, for URLs which
+              use the
 
               * If no scheme is provided, `https` is assumed.
 
@@ -14572,6 +14576,8 @@ definitions:
 
               type.googleapis.com.
 
+              Note: this functionality is not currently available in the
+              official
 
               Schemes other than `http`, `https` (or the empty scheme) might be
 
@@ -14583,6 +14589,7 @@ definitions:
 
           URL that describes the type of the serialized message.
 
+              Schemes other than `http`, `https` (or the empty scheme) might be
 
           Protobuf library provides support to pack/unpack Any values in the
           form
@@ -14642,7 +14649,9 @@ definitions:
 
           name "y.z".
 
+          methods only use the fully qualified type name after the last '/'
 
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
 
           JSON
 
