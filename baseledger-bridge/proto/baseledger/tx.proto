@@ -9,9 +9,9 @@ option go_package = "github.com/Baseledger/baseledger-bridge/x/baseledger/types"
 // Msg defines the Msg service.
 service Msg {
     rpc CreateBaseledgerTransaction(MsgCreateBaseledgerTransaction) returns (MsgCreateBaseledgerTransactionResponse);
-  rpc UpdateBaseledgerTransaction(MsgUpdateBaseledgerTransaction) returns (MsgUpdateBaseledgerTransactionResponse);
-  rpc DeleteBaseledgerTransaction(MsgDeleteBaseledgerTransaction) returns (MsgDeleteBaseledgerTransactionResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+    rpc UpdateBaseledgerTransaction(MsgUpdateBaseledgerTransaction) returns (MsgUpdateBaseledgerTransactionResponse);
+    rpc DeleteBaseledgerTransaction(MsgDeleteBaseledgerTransaction) returns (MsgDeleteBaseledgerTransactionResponse);
+    // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgCreateBaseledgerTransaction {
