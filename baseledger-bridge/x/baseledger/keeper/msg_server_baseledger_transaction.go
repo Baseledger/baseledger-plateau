@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Baseledger/baseledger-bridge/common"
 	"github.com/Baseledger/baseledger-bridge/x/baseledger/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,6 +12,29 @@ import (
 
 func (k msgServer) CreateBaseledgerTransaction(goCtx context.Context, msg *types.MsgCreateBaseledgerTransaction) (*types.MsgCreateBaseledgerTransactionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	txCreatorAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+
+	// faucet address needs to be hard coded like this, otherwise some node could change configuration and send to arbitrary acc
+	faucetAccAddress, err := sdk.AccAddressFromBech32(common.UbtFaucetAddress)
+
+	if err != nil {
+		panic(err)
+	}
+
+	coinFee, err := sdk.ParseCoinsNormalized(common.WorkTokenFee)
+	if err != nil {
+		panic(err)
+	}
+
+	err = k.bankKeeper.SendCoins(ctx, txCreatorAddress, faucetAccAddress, coinFee)
+	if err != nil {
+		k.Logger(ctx).Error("Send coins to faucet error",
+			"creator address", txCreatorAddress.String(),
+			"faucet address", faucetAccAddress.String(),
+			"fee", coinFee.String())
+		return nil, err
+	}
 
 	var baseledgerTransaction = types.BaseledgerTransaction{
 		Creator:                 msg.Creator,
