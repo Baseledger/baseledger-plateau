@@ -79,6 +79,7 @@ import (
 	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
 	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/libs/log"
@@ -90,6 +91,7 @@ import (
 
 	"github.com/Baseledger/baseledger-bridge/docs"
 
+	baseledgerlogger "github.com/Baseledger/baseledger-bridge/logger"
 	baseledgermodule "github.com/Baseledger/baseledger-bridge/x/baseledger"
 	baseledgermodulekeeper "github.com/Baseledger/baseledger-bridge/x/baseledger/keeper"
 	baseledgermoduletypes "github.com/Baseledger/baseledger-bridge/x/baseledger/types"
@@ -516,6 +518,9 @@ func New(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
+	viper.AddConfigPath("../")
+	viper.SetConfigFile(".env")
+	baseledgerlogger.SetupLogger()
 
 	return app
 }
