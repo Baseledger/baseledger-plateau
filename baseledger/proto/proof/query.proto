@@ -1,0 +1,58 @@
+syntax = "proto3";
+package Baseledger.baseledger.proof;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "proof/params.proto";
+import "proof/baseledger_transaction.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/Baseledger/baseledger/x/proof/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/Baseledger/baseledger/proof/params";
+  }
+  // Queries a BaseledgerTransaction by id.
+	rpc BaseledgerTransaction(QueryGetBaseledgerTransactionRequest) returns (QueryGetBaseledgerTransactionResponse) {
+		option (google.api.http).get = "/Baseledger/baseledger/proof/baseledger_transaction/{id}";
+	}
+
+	// Queries a list of BaseledgerTransaction items.
+	rpc BaseledgerTransactionAll(QueryAllBaseledgerTransactionRequest) returns (QueryAllBaseledgerTransactionResponse) {
+		option (google.api.http).get = "/Baseledger/baseledger/proof/baseledger_transaction";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetBaseledgerTransactionRequest {
+	uint64 id = 1;
+}
+
+message QueryGetBaseledgerTransactionResponse {
+	BaseledgerTransaction BaseledgerTransaction = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllBaseledgerTransactionRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllBaseledgerTransactionResponse {
+	repeated BaseledgerTransaction BaseledgerTransaction = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3
