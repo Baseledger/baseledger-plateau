@@ -20,7 +20,7 @@ To make this work locally apart from starport rust is needed to be installed and
 
 1. check poc_contracts to run hardhat
 
-2. run `starport chain serve --verbose` in baseledger-bridge folder (if starting from scratch run `starport chain serve --verbose --reset-once` and copy alice and bob mnemonics for further usage)
+2. run `starport chain serve --verbose` in baseledger folder (if starting from scratch run `starport chain serve --verbose --reset-once` and copy alice and bob mnemonics for further usage)
 
 3. `cargo build --all` in root of orchestrator folder
 
