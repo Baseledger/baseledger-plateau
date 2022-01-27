@@ -3,6 +3,7 @@ package keeper
 import (
 	"errors"
 	"fmt"
+	"math/big"
 	"sort"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -71,23 +72,18 @@ func (k Keeper) Attest(
 	// If it does not exist, create a new one.
 	if att == nil {
 		att = &types.Attestation{
-			Observed:    false,
-			Votes:       []string{},
-			Height:      uint64(ctx.BlockHeight()),
-			Claim:       anyClaim,
-			UbtPrices:   []string{},
-			AvgUbtPrice: ubtPrice,
+			Observed:  false,
+			Votes:     []string{},
+			Height:    uint64(ctx.BlockHeight()),
+			Claim:     anyClaim,
+			UbtPrices: []sdk.Int{},
 		}
 	}
 
 	// Add the validator's vote to this attestation
 	att.Votes = append(att.Votes, valAddr.String())
 
-	// TODO: BAS-122 - Ignore prices that jump out by some margin from the rest
-	att.UbtPrices = append(att.UbtPrices, ubtPrice.String())
-	ubtPricesNewLength := sdk.NewInt(int64((len(att.UbtPrices))))
-	avgAddition := ubtPrice.Sub(att.AvgUbtPrice).Quo(ubtPricesNewLength)
-	att.AvgUbtPrice = att.AvgUbtPrice.Add(avgAddition)
+	att.UbtPrices = append(att.UbtPrices, ubtPrice)
 
 	k.SetAttestation(ctx, claim.GetEventNonce(), hash, att)
 
@@ -359,4 +355,24 @@ func (k Keeper) SetLastEventNonceByValidator(ctx sdk.Context, validator sdk.ValA
 	}
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(types.GetLastEventNonceByValidatorKey(validator)), types.UInt64Bytes(nonce))
+}
+
+// SetLastAttestationAverageUbtPrice sets the latest average ubt price for a succesfully procesed attestation
+func (k Keeper) SetLastAttestationAverageUbtPrice(ctx sdk.Context, avgUbtPrice *big.Int) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(types.LastAttestationAvgUbtPrice), types.UInt64Bytes(avgUbtPrice.Uint64()))
+}
+
+// GetLastAttestationAverageUbtPrice returns the latest average ubt price for a succesfully procesed attestation
+func (k Keeper) GetLastAttestationAverageUbtPrice(ctx sdk.Context) *big.Int {
+	store := ctx.KVStore(k.storeKey)
+	bytes := store.Get([]byte(types.LastAttestationAvgUbtPrice))
+
+	if len(bytes) == 0 {
+		// this can happen only if the avg price calculation fails for the very first attestation
+		// fall back to 1
+		return big.NewInt(1)
+	}
+
+	return sdk.NewIntFromUint64(types.UInt64FromBytes(bytes)).BigInt()
 }
