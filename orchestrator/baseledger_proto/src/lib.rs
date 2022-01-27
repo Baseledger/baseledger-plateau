@@ -8,5 +8,5 @@ pub use cosmos_sdk_proto;
 
 
 pub mod baseledger {
-    include!("prost/baseledger.baseledgerbridge.baseledgerbridge.rs");
+    include!("prost/baseledger.baseledger.bridge.rs");
 }
