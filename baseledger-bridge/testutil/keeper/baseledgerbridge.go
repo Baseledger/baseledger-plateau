@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/keeper"
-	"github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types"
+	"github.com/Baseledger/baseledger-bridge/x/bridge/keeper"
+	"github.com/Baseledger/baseledger-bridge/x/bridge/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"

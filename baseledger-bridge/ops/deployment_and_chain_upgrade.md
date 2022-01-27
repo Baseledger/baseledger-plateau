@@ -59,7 +59,7 @@ This file is parsed by cosmovisor and is a trigger to stop the app, switch the c
 
 An example of performing a migration during chain upgrade is given on branch *chain-upgrade*. Look for SetUpgradeHandler call in the app.go that defines the upgrade name and actions to be taken.
 
-Also look in the module.go file of the baseledgerbridge module where the migration is registered with the RegisterMigration and where the module version (ConsensusVersion) is increased from 2 to 3. 
+Also look in the module.go file of the bridge module where the migration is registered with the RegisterMigration and where the module version (ConsensusVersion) is increased from 2 to 3. 
 
 ## Backups TODO
 Prior to the upgrade, validators are encouraged to take a full data snapshot. Snapshotting depends heavily on infrastructure, but generally this can be done by backing up the .gaia directory. If you use Cosmovisor to upgrade, by default, Cosmovisor will backup your data upon upgrade.

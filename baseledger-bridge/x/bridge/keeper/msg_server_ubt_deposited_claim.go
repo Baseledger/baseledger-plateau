@@ -1,0 +1,31 @@
+package keeper
+
+import (
+	"context"
+
+	"github.com/Baseledger/baseledger-bridge/x/bridge/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+func (k msgServer) UbtDepositedClaim(goCtx context.Context, msg *types.MsgUbtDepositedClaim) (*types.MsgUbtDepositedClaimResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	err := k.checkOrchestratorValidatorInSet(ctx, msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "Could not check orchestrator validator inset")
+	}
+
+	any, err := codectypes.NewAnyWithValue(msg)
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "Could not create Any value for MsgUbtDepositedClaim")
+	}
+
+	err = k.claimHandlerCommon(ctx, any, msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgUbtDepositedClaimResponse{}, nil
+}

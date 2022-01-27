@@ -95,9 +95,9 @@ import (
 	baseledgermodule "github.com/Baseledger/baseledger-bridge/x/baseledger"
 	baseledgermodulekeeper "github.com/Baseledger/baseledger-bridge/x/baseledger/keeper"
 	baseledgermoduletypes "github.com/Baseledger/baseledger-bridge/x/baseledger/types"
-	baseledgerbridgemodule "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge"
-	baseledgerbridgemodulekeeper "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/keeper"
-	baseledgerbridgemoduletypes "github.com/Baseledger/baseledger-bridge/x/baseledgerbridge/types"
+	bridgemodule "github.com/Baseledger/baseledger-bridge/x/bridge"
+	bridgemodulekeeper "github.com/Baseledger/baseledger-bridge/x/bridge/keeper"
+	bridgemoduletypes "github.com/Baseledger/baseledger-bridge/x/bridge/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -148,7 +148,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		baseledgerbridgemodule.AppModuleBasic{},
+		bridgemodule.AppModuleBasic{},
 		baseledgermodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -220,7 +220,7 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	BaseledgerbridgeKeeper baseledgerbridgemodulekeeper.Keeper
+	BaseledgerbridgeKeeper bridgemodulekeeper.Keeper
 
 	BaseledgerKeeper baseledgermodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
@@ -259,7 +259,7 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		baseledgerbridgemoduletypes.StoreKey,
+		bridgemoduletypes.StoreKey,
 		baseledgermoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -359,16 +359,16 @@ func New(
 		&stakingKeeper, govRouter,
 	)
 
-	app.BaseledgerbridgeKeeper = *baseledgerbridgemodulekeeper.NewKeeper(
+	app.BaseledgerbridgeKeeper = *bridgemodulekeeper.NewKeeper(
 		appCodec,
-		keys[baseledgerbridgemoduletypes.StoreKey],
-		keys[baseledgerbridgemoduletypes.MemStoreKey],
-		app.GetSubspace(baseledgerbridgemoduletypes.ModuleName),
+		keys[bridgemoduletypes.StoreKey],
+		keys[bridgemoduletypes.MemStoreKey],
+		app.GetSubspace(bridgemoduletypes.ModuleName),
 		&app.BankKeeper,
 		&app.DistrKeeper,
 		&stakingKeeper,
 	)
-	baseledgerbridgeModule := baseledgerbridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
+	bridgemodule := bridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
 	app.BaseledgerKeeper = *baseledgermodulekeeper.NewKeeper(
 		appCodec,
@@ -418,7 +418,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		baseledgerbridgeModule,
+		bridgemodule,
 		baseledgerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -433,7 +433,7 @@ func New(
 		feegrant.ModuleName,
 	)
 
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, baseledgerbridgemoduletypes.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, bridgemoduletypes.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -454,7 +454,7 @@ func New(
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
-		baseledgerbridgemoduletypes.ModuleName,
+		bridgemoduletypes.ModuleName,
 		baseledgermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -478,7 +478,7 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		baseledgerbridgeModule,
+		bridgemodule,
 		baseledgerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -670,7 +670,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-	paramsKeeper.Subspace(baseledgerbridgemoduletypes.ModuleName)
+	paramsKeeper.Subspace(bridgemoduletypes.ModuleName)
 	paramsKeeper.Subspace(baseledgermoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
