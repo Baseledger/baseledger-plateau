@@ -12,6 +12,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/Baseledger/baseledger/x/proof/client/cli"
+	"github.com/Baseledger/baseledger/x/proof/client/rest"
 	"github.com/Baseledger/baseledger/x/proof/keeper"
 	"github.com/Baseledger/baseledger/x/proof/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -73,6 +74,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncod
 
 // RegisterRESTRoutes registers the capability module's REST service handlers.
 func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
+	rest.RegisterRoutes(clientCtx, rtr)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
