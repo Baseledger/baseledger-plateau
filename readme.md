@@ -35,5 +35,15 @@ cargo run -- keys set-ethereum-key --key ac0974bec39a17e36ba4a6b4d238ff944bacb47
 
 cargo run -- keys register-orchestrator-address --fees="0token" --validator-phrase="<STARPORT_ALICE_PHRASE>"
 
+export COINMARKETCAP_API_TOKEN=<token>
+
 cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --gravity-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
 ```
+
+## Changing and building proto files
+
+- change the proto files in baseledger bridge
+- navigate to <root>/baseledger-bridge
+- starport chain build --proto-all-modules
+- navigate to <root>/orchestrator/proto_build
+- cargo run

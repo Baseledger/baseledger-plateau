@@ -38,7 +38,7 @@ func (k Keeper) Attest(
 	// in the endBlocker.
 	lastEventNonce := k.GetLastEventNonceByValidator(ctx, valAddr)
 	if claim.GetEventNonce() != lastEventNonce+1 {
-		return nil, errors.New("Last event nonce error")
+		return nil, errors.New("last event nonce error")
 	}
 
 	// Tries to get an attestation with the same eventNonce and claim as the claim that was submitted.
@@ -48,20 +48,46 @@ func (k Keeper) Attest(
 		return nil, sdkerrors.Wrap(err, "unable to compute claim hash")
 	}
 
+	ubtPrice := claim.GetUbtPriceAsInt()
+
+	if ubtPrice.IsNil() || ubtPrice.IsNegative() || ubtPrice.IsZero() {
+		// TODO: Ognjen - Log or err?
+		k.Logger(ctx).Error("claim ubt price is nil, negative or zero ",
+			"claim type", claim.GetType(),
+			"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+			"nonce", fmt.Sprint(claim.GetEventNonce()),
+			"claimer", claim.GetClaimer(),
+			"provided ubt price", ubtPrice.String(),
+		)
+		// return nil, errors.New("claim ubt price is nil")
+
+		// TODO: Ognjen - If proper value not provided we set it to zero
+		// make sure not to affect the later average calculation
+		ubtPrice = sdk.ZeroInt()
+	}
+
 	att := k.GetAttestation(ctx, claim.GetEventNonce(), hash)
 
 	// If it does not exist, create a new one.
 	if att == nil {
 		att = &types.Attestation{
-			Observed: false,
-			Votes:    []string{},
-			Height:   uint64(ctx.BlockHeight()),
-			Claim:    anyClaim,
+			Observed:    false,
+			Votes:       []string{},
+			Height:      uint64(ctx.BlockHeight()),
+			Claim:       anyClaim,
+			UbtPrices:   []string{},
+			AvgUbtPrice: ubtPrice,
 		}
 	}
 
 	// Add the validator's vote to this attestation
 	att.Votes = append(att.Votes, valAddr.String())
+
+	// TODO: BAS-122 - Ignore prices that jump out by some margin from the rest
+	att.UbtPrices = append(att.UbtPrices, ubtPrice.String())
+	ubtPricesNewLength := sdk.NewInt(int64((len(att.UbtPrices))))
+	avgAddition := ubtPrice.Sub(att.AvgUbtPrice).Quo(ubtPricesNewLength)
+	att.AvgUbtPrice = att.AvgUbtPrice.Add(avgAddition)
 
 	k.SetAttestation(ctx, claim.GetEventNonce(), hash, att)
 

@@ -12,7 +12,7 @@ const TypeMsgUbtDepositedClaim = "ubt_deposited_claim"
 
 var _ sdk.Msg = &MsgUbtDepositedClaim{}
 
-func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string) *MsgUbtDepositedClaim {
+func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string, ubtPrice string) *MsgUbtDepositedClaim {
 	return &MsgUbtDepositedClaim{
 		Creator:        creator,
 		EventNonce:     eventNonce,
@@ -21,6 +21,7 @@ func NewMsgUbtDepositedClaim(creator string, eventNonce uint64, blockHeight uint
 		Amount:         amount,
 		EthereumSender: ethereumSender,
 		CosmosReceiver: cosmosReceiver,
+		UbtPrice:       ubtPrice,
 	}
 }
 
@@ -48,6 +49,11 @@ func (msg *MsgUbtDepositedClaim) GetSignBytes() []byte {
 // GetType returns the type of the claim
 func (msg *MsgUbtDepositedClaim) GetType() ClaimType {
 	return CLAIM_UBT_DEPOSITED
+}
+
+func (msg *MsgUbtDepositedClaim) GetUbtPriceAsInt() sdk.Int {
+	priceAsDec, _ := sdk.NewDecFromStr(msg.UbtPrice)
+	return sdk.NewIntFromBigInt(priceAsDec.BigInt())
 }
 
 // ValidateBasic performs stateless checks

@@ -84,6 +84,11 @@ func (msg MsgValidatorPowerChangedClaim) GetClaimer() sdk.AccAddress {
 	return val
 }
 
+func (msg *MsgValidatorPowerChangedClaim) GetUbtPriceAsInt() sdk.Int {
+	// TODO: Ognjen - Cleanup, her just to make the build work
+	panic("Not implemented")
+}
+
 // Hash implements BridgeDeposit.Hash
 // modify this with care as it is security sensitive. If an element of the claim is not in this hash a single hostile validator
 // could engineer a hash collision and execute a version of the claim with any unhashed data changed to benefit them.

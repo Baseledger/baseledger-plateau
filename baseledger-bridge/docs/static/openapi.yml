@@ -203,6 +203,12 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
+                    ubtPrices:
+                      type: array
+                      items:
+                        type: string
+                    avgUbtPrice:
+                      type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13957,6 +13963,12 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+      ubtPrices:
+        type: array
+        items:
+          type: string
+      avgUbtPrice:
+        type: string
   Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
     type: object
   Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaimResponse:
@@ -14150,6 +14162,12 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+            ubtPrices:
+              type: array
+              items:
+                type: string
+            avgUbtPrice:
+              type: string
   Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByEthAddressResponse:
     type: object
     properties:

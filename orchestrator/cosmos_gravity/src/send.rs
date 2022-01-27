@@ -69,6 +69,7 @@ pub async fn send_ethereum_claims(
     deposits: Vec<SendToCosmosEvent>,
     power_changes: Vec<ValidatorPowerChangeEvent>,
     fee: Coin,
+    ubt_price: f32,
 ) -> Result<TxResponse, CosmosGrpcError> {
     let our_address = private_key.to_address(&contact.get_prefix()).unwrap();
 
@@ -81,7 +82,10 @@ pub async fn send_ethereum_claims(
     //
     // We index the events by event nonce in an unordered hashmap and then play them back in order into a vec
     let mut unordered_msgs = HashMap::new();
+    
     for deposit in deposits {
+        println!("ubt token amount: {}", deposit.amount.to_string());
+        println!("ubt price string: {}", ubt_price.to_string());
         let claim = MsgUbtDepositedClaim {
             creator: our_address.to_string(),
             event_nonce: deposit.event_nonce,
@@ -90,6 +94,7 @@ pub async fn send_ethereum_claims(
             amount: deposit.amount.to_string(),
             cosmos_receiver: deposit.destination,
             ethereum_sender: deposit.sender.to_string(),
+            ubt_price: ubt_price.to_string(),
         };
         let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaim", claim);
         assert!(unordered_msgs.insert(deposit.event_nonce, msg).is_none());
