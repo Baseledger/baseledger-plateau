@@ -255,5 +255,5 @@ func calculateAmountOfWorkTokens(depositedUbtAmount *big.Int, averagePrice *big.
 
 	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
 
-	return depositedEurValueInt.Quo(depositedEurValueInt, worktokenEurPriceInt)
+	return depositedEurValueInt.Div(depositedEurValueInt, worktokenEurPriceInt)
 }
