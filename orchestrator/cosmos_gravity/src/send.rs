@@ -47,7 +47,7 @@ pub async fn set_gravity_delegate_addresses(
     };
 
     let msg = Msg::new(
-        "/Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddress",
+        "/Baseledger.baseledger.bridge.MsgSetOrchestratorAddress",
         msg_set_orch_address,
     );
     contact
@@ -96,7 +96,7 @@ pub async fn send_ethereum_claims(
             ethereum_sender: deposit.sender.to_string(),
             ubt_price: ubt_price.to_string(),
         };
-        let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaim", claim);
+        let msg = Msg::new("/Baseledger.baseledger.bridge.MsgUbtDepositedClaim", claim);
         assert!(unordered_msgs.insert(deposit.event_nonce, msg).is_none());
     }
 
@@ -110,7 +110,7 @@ pub async fn send_ethereum_claims(
             cosmos_receiver: power_change.destination,
             ethereum_sender: power_change.sender.to_string(),
         };
-        let msg = Msg::new("/Baseledger.baseledgerbridge.baseledgerbridge.MsgValidatorPowerChangedClaim", claim);
+        let msg = Msg::new("/Baseledger.baseledger.bridge.MsgValidatorPowerChangedClaim", claim);
         assert!(unordered_msgs.insert(power_change.event_nonce, msg).is_none());
     }
 
