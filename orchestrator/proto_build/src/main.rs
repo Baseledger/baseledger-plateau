@@ -63,7 +63,7 @@ fn compile_protos(out_dir: &Path, tmp_dir: &Path) {
     let root = root.parent().unwrap().parent().unwrap().to_path_buf();
 
     let mut baseledger_proto_dir = root.clone();
-    baseledger_proto_dir.push("baseledger-bridge/proto/baseledgerbridge");
+    baseledger_proto_dir.push("baseledger-bridge/proto/bridge");
     let mut baseledger_proto_include_dir = root.clone();
     baseledger_proto_include_dir.push("baseledger-bridge/proto");
     let mut third_party_proto_include_dir = root;

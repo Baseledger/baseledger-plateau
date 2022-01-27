@@ -4,7 +4,7 @@ info:
   name: ''
   description: ''
 paths:
-  /Baseledger/baseledgerbridge/baseledger/baseledger_transaction:
+  /Baseledger/bridge/baseledger/baseledger_transaction:
     get:
       summary: Queries a list of BaseledgerTransaction items.
       operationId: BaseledgerBaseledgerbridgeBaseledgerBaseledgerTransactionAll
@@ -135,7 +135,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/Baseledger/baseledgerbridge/baseledger/baseledger_transaction/{id}':
+  '/Baseledger/bridge/baseledger/baseledger_transaction/{id}':
     get:
       summary: Queries a BaseledgerTransaction by id.
       operationId: BaseledgerBaseledgerbridgeBaseledgerBaseledgerTransaction
@@ -186,7 +186,7 @@ paths:
           format: uint64
       tags:
         - Query
-  /Baseledger/baseledgerbridge/baseledger/params:
+  /Baseledger/bridge/baseledger/params:
     get:
       summary: Parameters queries the parameters of the module.
       operationId: BaseledgerBaseledgerbridgeBaseledgerParams
@@ -222,10 +222,10 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  '/Baseledger/baseledgerbridge/baseledgerbridge/attestations/{limit}':
+  '/Baseledger/baseledgerbridge/bridge/attestations/{limit}':
     get:
       summary: Queries a list of Attestations items.
-      operationId: BaseledgerBaseledgerbridgeBaseledgerbridgeAttestations
+      operationId: BaseledgerBaseledgerbridgeBridgeAttestations
       responses:
         '200':
           description: A successful response.
@@ -620,10 +620,10 @@ paths:
           format: uint64
       tags:
         - Query
-  '/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_eth_address/{ethAddress}':
+  '/Baseledger/baseledgerbridge/bridge/delegate_keys_by_eth_address/{ethAddress}':
     get:
       summary: Queries a list of DelegateKeysByEthAddress items.
-      operationId: BaseledgerBaseledgerbridgeBaseledgerbridgeDelegateKeysByEthAddress
+      operationId: BaseledgerBaseledgerbridgeBridgeDelegateKeysByEthAddress
       responses:
         '200':
           description: A successful response.
@@ -826,11 +826,10 @@ paths:
           type: string
       tags:
         - Query
-  '/Baseledger/baseledgerbridge/baseledgerbridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}':
+  '/Baseledger/baseledgerbridge/bridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}':
     get:
       summary: Queries a list of DelegateKeysByOrchestratorAddress items.
-      operationId: >-
-        BaseledgerBaseledgerbridgeBaseledgerbridgeDelegateKeysByOrchestratorAddress
+      operationId: BaseledgerBaseledgerbridgeBridgeDelegateKeysByOrchestratorAddress
       responses:
         '200':
           description: A successful response.
@@ -1033,10 +1032,10 @@ paths:
           type: string
       tags:
         - Query
-  '/Baseledger/baseledgerbridge/baseledgerbridge/last_event_nonce_by_address/{address}':
+  '/Baseledger/baseledgerbridge/bridge/last_event_nonce_by_address/{address}':
     get:
       summary: Queries a list of LastEventNonceByAddress items.
-      operationId: BaseledgerBaseledgerbridgeBaseledgerbridgeLastEventNonceByAddress
+      operationId: BaseledgerBaseledgerbridgeBridgeLastEventNonceByAddress
       responses:
         '200':
           description: A successful response.
@@ -1238,10 +1237,10 @@ paths:
           type: string
       tags:
         - Query
-  /Baseledger/baseledgerbridge/baseledgerbridge/params:
+  /Baseledger/baseledgerbridge/bridge/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: BaseledgerBaseledgerbridgeBaseledgerbridgeParams
+      operationId: BaseledgerBaseledgerbridgeBridgeParams
       responses:
         '200':
           description: A successful response.
@@ -14510,7 +14509,7 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
-  Baseledger.baseledgerbridge.baseledgerbridge.Attestation:
+  Baseledger.baseledgerbridge.bridge.Attestation:
     type: object
     properties:
       observed:
@@ -14695,14 +14694,14 @@ definitions:
         type: string
   Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
     type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaimResponse:
+  Baseledger.baseledgerbridge.bridge.MsgUbtDepositedClaimResponse:
     type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgValidatorPowerChangedClaimResponse:
+  Baseledger.baseledgerbridge.bridge.MsgValidatorPowerChangedClaimResponse:
     type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.Params:
+  Baseledger.baseledgerbridge.bridge.Params:
     type: object
     description: Params defines the parameters for the module.
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryAttestationsResponse:
+  Baseledger.baseledgerbridge.bridge.QueryAttestationsResponse:
     type: object
     properties:
       attestations:
@@ -14899,20 +14898,20 @@ definitions:
         type: string
       orchestratorAddress:
         type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByOrchestratorAddressResponse:
+  Baseledger.baseledgerbridge.bridge.QueryDelegateKeysByOrchestratorAddressResponse:
     type: object
     properties:
       validatorAddress:
         type: string
       ethAddress:
         type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryLastEventNonceByAddressResponse:
+  Baseledger.baseledgerbridge.bridge.QueryLastEventNonceByAddressResponse:
     type: object
     properties:
       eventNonce:
         type: string
         format: uint64
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryParamsResponse:
+  Baseledger.baseledgerbridge.bridge.QueryParamsResponse:
     type: object
     properties:
       params:

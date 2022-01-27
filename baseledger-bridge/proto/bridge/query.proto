@@ -1,0 +1,85 @@
+syntax = "proto3";
+package Baseledger.baseledgerbridge.bridge;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "bridge/params.proto";
+import "bridge/attestation.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/Baseledger/baseledger-bridge/x/bridge/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/Baseledger/baseledgerbridge/bridge/params";
+  }
+  // Queries a list of DelegateKeysByEthAddress items.
+	rpc DelegateKeysByEthAddress(QueryDelegateKeysByEthAddressRequest) returns (QueryDelegateKeysByEthAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/bridge/delegate_keys_by_eth_address/{ethAddress}";
+	}
+
+// Queries a list of DelegateKeysByOrchestratorAddress items.
+	rpc DelegateKeysByOrchestratorAddress(QueryDelegateKeysByOrchestratorAddressRequest) returns (QueryDelegateKeysByOrchestratorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/bridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}";
+	}
+
+// Queries a list of LastEventNonceByAddress items.
+	rpc LastEventNonceByAddress(QueryLastEventNonceByAddressRequest) returns (QueryLastEventNonceByAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/bridge/last_event_nonce_by_address/{address}";
+	}
+
+// Queries a list of Attestations items.
+	rpc Attestations(QueryAttestationsRequest) returns (QueryAttestationsResponse) {
+		option (google.api.http).get = "/Baseledger/baseledgerbridge/bridge/attestations/{limit}";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryDelegateKeysByEthAddressRequest {
+  string ethAddress = 1;
+}
+
+message QueryDelegateKeysByEthAddressResponse {
+  string validatorAddress = 1;
+  string orchestratorAddress = 2;
+}
+
+message QueryDelegateKeysByOrchestratorAddressRequest {
+  string orchestratorAddress = 1;
+}
+
+message QueryDelegateKeysByOrchestratorAddressResponse {
+  string validatorAddress = 1;
+  string ethAddress = 2;
+}
+
+message QueryLastEventNonceByAddressRequest {
+  string address = 1;
+}
+
+message QueryLastEventNonceByAddressResponse {
+  uint64 eventNonce = 1;
+}
+
+message QueryAttestationsRequest {
+  uint64 limit = 1;
+}
+
+message QueryAttestationsResponse {
+  repeated Attestation attestations = 1 [(gogoproto.nullable) = false];
+}
+
+// this line is used by starport scaffolding # 3

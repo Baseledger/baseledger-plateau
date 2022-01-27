@@ -75,7 +75,7 @@ func NewKeyringInstance() (keyring.Keyring, error) {
 func SignTxAndGetTxBytes(clientCtx client.Context, msg sdk.Msg, accNum uint64, accSeq uint64) ([]byte, error) {
 	logger.Infof("retrieved account %v %v\n", accNum, accSeq)
 	txFactory := tx.Factory{}.
-		WithChainID("baseledgerbridge").
+		WithChainID("baseledger").
 		WithGas(1000000). // hardcoding gasWanted to high number since fees will allways be 1 token
 		WithTxConfig(clientCtx.TxConfig).
 		WithAccountNumber(accNum).
