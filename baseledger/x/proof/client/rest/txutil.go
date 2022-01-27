@@ -38,7 +38,6 @@ func BuildClientCtx(clientCtx client.Context) (*client.Context, error) {
 	}
 
 	if len(keysList) == 0 {
-		logger.Errorf("key list empty %v\n", err.Error())
 		return nil, errors.New("")
 	}
 
@@ -83,13 +82,7 @@ func SignTxAndGetTxBytes(clientCtx client.Context, msg sdk.Msg, accNum uint64, a
 		WithAccountRetriever(clientCtx.AccountRetriever).
 		WithKeybase(clientCtx.Keyring)
 
-	err := tx.BroadcastTx(clientCtx, txFactory, msg)
-	if err != nil {
-		logger.Errorf("prepare factory error %v\n", err.Error())
-		return nil, errors.New("sign tx error")
-	}
-
-	txFactory, err = prepareFactory(clientCtx, txFactory)
+	txFactory, err := prepareFactory(clientCtx, txFactory)
 	if err != nil {
 		logger.Errorf("prepare factory error %v\n", err.Error())
 		return nil, errors.New("sign tx error")
@@ -166,11 +159,6 @@ func BroadcastAndGetTxHash(clientCtx client.Context, msg sdk.Msg, accNum uint64,
 		}
 		logger.Infof("TRANSACTION %v WITH RESULT %v\n", logMsg, res)
 		return &res.TxHash, nil
-	}
-
-	// if code is not 0 and is not missmatch, don't handle it and return
-	if res.Code != errCodeMismatch {
-		return nil, err
 	}
 
 	if res.Code != 0 && res.Code != errCodeMismatch {
