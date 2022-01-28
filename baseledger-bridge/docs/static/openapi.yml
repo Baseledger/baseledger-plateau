@@ -14307,28 +14307,6 @@ definitions:
 
       JSON
 
-<<<<<<< HEAD
-              {
-                "@type": "type.googleapis.com/google.protobuf.Duration",
-                "value": "1.212s"
-              }
-      ubtPrices:
-        type: array
-        items:
-          type: string
-      avgUbtPrice:
-        type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
-    type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaimResponse:
-    type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgValidatorPowerChangedClaimResponse:
-    type: object
-  Baseledger.baseledgerbridge.baseledgerbridge.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryAttestationsResponse:
-=======
       ====
 
       The JSON representation of an `Any` value uses the regular
@@ -14362,7 +14340,6 @@ definitions:
             "value": "1.212s"
           }
   google.rpc.Status:
->>>>>>> Scaffold baseledger transaction list type
     type: object
     properties:
       code:
@@ -14520,31 +14497,19 @@ definitions:
                   "lastName": <string>
                 }
 
-                    {
-                      "@type": "type.googleapis.com/google.protobuf.Duration",
-                      "value": "1.212s"
-                    }
-            ubtPrices:
-              type: array
-              items:
-                type: string
-            avgUbtPrice:
-              type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByEthAddressResponse:
-    type: object
-    properties:
-      validatorAddress:
-        type: string
-      orchestratorAddress:
-        type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByOrchestratorAddressResponse:
-    type: object
-    properties:
-      validatorAddress:
-        type: string
-      ethAddress:
-        type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryLastEventNonceByAddressResponse:
+            If the embedded message type is well-known and has a custom JSON
+
+            representation, that representation will be embedded adding a field
+
+            `value` which holds the custom JSON in addition to the `@type`
+
+            field. Example (for message [google.protobuf.Duration][]):
+
+                {
+                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                  "value": "1.212s"
+                }
+  Baseledger.baseledgerbridge.baseledgerbridge.Attestation:
     type: object
     properties:
       observed:
@@ -14713,6 +14678,12 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+      ubtPrices:
+        type: array
+        items:
+          type: string
+      avgUbtPrice:
+        type: string
   Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
     type: object
   Baseledger.baseledgerbridge.baseledgerbridge.MsgUbtDepositedClaimResponse:
@@ -14906,6 +14877,12 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+            ubtPrices:
+              type: array
+              items:
+                type: string
+            avgUbtPrice:
+              type: string
   Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByEthAddressResponse:
     type: object
     properties:
