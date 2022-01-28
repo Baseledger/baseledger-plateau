@@ -142,7 +142,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 
 		if !invalidAddress { // valid address so far, try to lock up the coins in the requested cosmos address
 
-			avgUbtPRice := calculateAvgUbtPriceForAttestation(att)
+			avgUbtPRice := CalculateAvgUbtPriceForAttestation(att)
 
 			if avgUbtPRice.Cmp(big.NewInt(0)) == 0 {
 				avgUbtPRice = a.keeper.GetLastAttestationAverageUbtPrice(ctx)
@@ -150,7 +150,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				a.keeper.SetLastAttestationAverageUbtPrice(ctx, avgUbtPRice)
 			}
 
-			amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount.BigInt(), avgUbtPRice)
+			amountOfWorkTokensToSend := CalculateAmountOfWorkTokens(claim.Amount.BigInt(), avgUbtPRice)
 
 			// TODO: Ognjen - remove logging if obsolete after implementation
 			a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
@@ -204,56 +204,4 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		panic(fmt.Sprintf("Invalid event type for attestations %s", claim.GetType()))
 	}
 	return nil
-}
-
-func calculateAvgUbtPriceForAttestation(att types.Attestation) *big.Int {
-
-	var sum, mean, standardDev *big.Int
-
-	for i := 0; i < len(att.UbtPrices); i++ {
-		sum.Add(sum, att.UbtPrices[i].BigInt())
-	}
-
-	arrayLengthBigInt := big.NewInt(int64(len(att.UbtPrices)))
-
-	mean = sum.Div(sum, arrayLengthBigInt)
-
-	for j := 0; j < len(att.UbtPrices); j++ {
-
-		diffFromMean := new(big.Int).Sub(att.UbtPrices[j].BigInt(), mean)
-		diffFromMeanSquared := diffFromMean.Exp(diffFromMean, big.NewInt(2), nil)
-		standardDev.Add(standardDev, diffFromMeanSquared)
-	}
-
-	standardDev.Sqrt(new(big.Int).Div(standardDev, arrayLengthBigInt))
-
-	var cleansedPriceArray []big.Int
-	for k := 0; k < len(att.UbtPrices); k++ {
-		ubtPrice := att.UbtPrices[k].BigInt()
-
-		oneStDevLessFromMean := mean.Sub(mean, standardDev) // TOdO: Ognjen - potential bug since mean is changed?
-		oneStDevGreaterFromMean := mean.Add(mean, standardDev)
-
-		if ubtPrice.Cmp(oneStDevLessFromMean) == +1 && ubtPrice.Cmp(oneStDevGreaterFromMean) == -1 {
-			cleansedPriceArray = append(cleansedPriceArray, *ubtPrice)
-		}
-	}
-
-	var cleansedSum *big.Int
-	for l := 0; l < len(cleansedPriceArray); l++ {
-		cleansedSum.Add(cleansedSum, &cleansedPriceArray[l])
-	}
-
-	return cleansedSum.Div(cleansedSum, big.NewInt(int64(len(cleansedPriceArray))))
-}
-
-func calculateAmountOfWorkTokens(depositedUbtAmount *big.Int, averagePrice *big.Int) *big.Int {
-	// TODO: BAS-121 - Move this hardcoded value to config or somewhere
-	// TODO: Ognjen - Verify calculation
-	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
-	worktokenEurPriceInt := worktokenEurPrice.BigInt()
-
-	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
-
-	return depositedEurValueInt.Div(depositedEurValueInt, worktokenEurPriceInt)
 }
