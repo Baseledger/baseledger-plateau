@@ -77,9 +77,6 @@ contract BaseledgerTest {
   // dummy method, implementation same as above, just to test emitting and catching power change event
   function powerChange(uint256 amount, string calldata destination) public {
     require(amount > 0, "Deposit should be greater than zero.");
-    uint256 allowance = token.allowance(msg.sender, address(this));
-    require(allowance >= amount, "Check the token allowance");
-    token.transferFrom(msg.sender, address(this), amount);
     state_lastEventNonce = state_lastEventNonce + 1;
 
 		emit ValidatorPowerChangeEvent(

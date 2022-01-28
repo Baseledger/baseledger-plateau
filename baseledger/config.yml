@@ -1,0 +1,21 @@
+accounts:
+  - name: alice
+    coins: ["20000work", "200000000stake"]
+  - name: bob
+    coins: ["10000work", "100000000stake"]
+validator:
+  name: alice
+  staked: "100000000stake"
+client:
+  openapi:
+    path: "docs/static/openapi.yml"
+  vuex:
+    path: "vue/src/store"
+faucet:
+  name: bob
+  coins: ["5work", "100000stake"]
+genesis:
+  app_state:
+    staking:
+      params:
+        unbonding_time: "10s"

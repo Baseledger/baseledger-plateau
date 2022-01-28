@@ -1,11 +1,11 @@
-//! Protobuf files in the gravity repo, copying the result to the baseledger_proto crate for import
-//! and use. While this builder generates about a dozen files only one contains all the gravity
+//! Protobuf files in the baseledger repo, copying the result to the baseledger_proto crate for import
+//! and use. While this builder generates about a dozen files only one contains all the baseledger
 //! proto info and the rest are discarded in favor of upstream cosmos-sdk-proto
 
-// Building new Gravity rust proto definitions
+// Building new Baseledger rust proto definitions
 // run 'cargo run'
 // go to baseledger_proto/prost
-// delete all files except gravity.v1.rs
+// delete all files except baseledger.baseledger.bridge.rs
 // re-write calls to super::super::cosmos as cosmos-sdk-proto::cosmos
 
 use regex::Regex;
@@ -63,9 +63,9 @@ fn compile_protos(out_dir: &Path, tmp_dir: &Path) {
     let root = root.parent().unwrap().parent().unwrap().to_path_buf();
 
     let mut baseledger_proto_dir = root.clone();
-    baseledger_proto_dir.push("baseledger-bridge/proto/baseledgerbridge");
+    baseledger_proto_dir.push("baseledger/proto/bridge");
     let mut baseledger_proto_include_dir = root.clone();
-    baseledger_proto_include_dir.push("baseledger-bridge/proto");
+    baseledger_proto_include_dir.push("baseledger/proto");
     let mut third_party_proto_include_dir = root;
     third_party_proto_include_dir.push("orchestrator/proto_build/third_party/proto");
 

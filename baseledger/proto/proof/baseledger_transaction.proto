@@ -1,0 +1,12 @@
+syntax = "proto3";
+package Baseledger.baseledger.proof;
+
+option go_package = "github.com/Baseledger/baseledger/x/proof/types";
+
+message BaseledgerTransaction {
+  string creator = 1;
+  uint64 id = 2;
+  string baseledgerTransactionId = 3; 
+  string payload = 4;
+  uint32 opCode = 5;
+}
