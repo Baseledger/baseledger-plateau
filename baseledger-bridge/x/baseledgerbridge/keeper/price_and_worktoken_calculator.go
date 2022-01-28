@@ -19,13 +19,19 @@ func CalculateAvgUbtPriceForAttestation(att types.Attestation) *big.Int {
 
 func CalculateAmountOfWorkTokens(depositedUbtAmount *big.Int, averagePrice *big.Int) *big.Int {
 	// TODO: BAS-121 - Move this hardcoded value to config or somewhere
-	// TODO: Ognjen - Verify calculation
 	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
 	worktokenEurPriceInt := worktokenEurPrice.BigInt()
-
 	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
 
-	return depositedEurValueInt.Div(depositedEurValueInt, worktokenEurPriceInt)
+	amountOfWorkTokens := new(big.Int).Quo(depositedEurValueInt, worktokenEurPriceInt)
+	modul0 := new(big.Int).Mod(amountOfWorkTokens, big.NewInt(1000000000000000000))
+
+	if modul0.Cmp(big.NewInt(0)) == +1 {
+		amountOfWorkTokens.Sub(amountOfWorkTokens, modul0)
+		amountOfWorkTokens.Add(amountOfWorkTokens, big.NewInt(1000000000000000000))
+	}
+
+	return amountOfWorkTokens
 }
 
 func calcMean(prices []sdk.Int) *big.Int {

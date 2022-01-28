@@ -70,3 +70,42 @@ func TestCalculateAvgUbtPriceForAttestation_FourPriceValuesOneOutlier__ReturnsAv
 	// Assert
 	require.Equal(t, big.NewInt(700000000000000000), avgPrice)
 }
+
+func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithoutMod__ReturnsCorrectAmount(t *testing.T) {
+	// Arrange
+	depositedUbtAmount, _ := new(big.Int).SetString("100000000000000000000", 0) // 100
+	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)          // 1
+
+	// Act
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+
+	// Assert
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1000000000000000000000", 0) // 1000
+	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
+}
+
+func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithMod__ReturnsCeiledAmount(t *testing.T) {
+	// Arrange
+	depositedUbtAmount, _ := new(big.Int).SetString("100010000000000000000", 0) // 100.01
+	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)          // 1
+
+	// Act
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+
+	// Assert
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1001000000000000000000", 0) // 1001
+	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
+}
+
+func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithModVariation__ReturnsCeiledAmount(t *testing.T) {
+	// Arrange
+	depositedUbtAmount, _ := new(big.Int).SetString("99990000000000000000", 0) // 99.99
+	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)         // 1
+
+	// Act
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+
+	// Assert
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1000000000000000000000", 0) // 1000
+	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
+}
