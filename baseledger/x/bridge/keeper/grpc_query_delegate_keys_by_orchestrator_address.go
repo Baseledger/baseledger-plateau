@@ -30,7 +30,7 @@ func (k Keeper) DelegateKeysByOrchestratorAddress(goCtx context.Context, req *ty
 			panic("Invalid orchestrator addr in store!")
 		}
 		if reqOrchestrator.Equals(keyOrchestrator) {
-			return &types.QueryDelegateKeysByOrchestratorAddressResponse{ValidatorAddress: key.Validator, EthAddress: key.EthAddress}, nil
+			return &types.QueryDelegateKeysByOrchestratorAddressResponse{ValidatorAddress: key.Validator}, nil
 		}
 
 	}
