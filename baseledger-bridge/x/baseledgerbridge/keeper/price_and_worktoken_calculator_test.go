@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTwoPriceValues_CalculateAvgUbtPriceForAttestation_ReturnsAverage(t *testing.T) {
+func TestCalculateAvgUbtPriceForAttestation_TwoPriceValues_ReturnsAverage(t *testing.T) {
 	// Arrange
 	var attestation = types.Attestation{
 		Observed:  false,
@@ -28,7 +28,7 @@ func TestTwoPriceValues_CalculateAvgUbtPriceForAttestation_ReturnsAverage(t *tes
 	require.Equal(t, big.NewInt(750000000000000000), avgPrice)
 }
 
-func TestThreePriceValues_CalculateAvgUbtPriceForAttestation_ReturnsAverage(t *testing.T) {
+func TestCalculateAvgUbtPriceForAttestation_ThreePriceValues__ReturnsAverage(t *testing.T) {
 	// Arrange
 	var attestation = types.Attestation{
 		Observed:  false,
@@ -48,7 +48,7 @@ func TestThreePriceValues_CalculateAvgUbtPriceForAttestation_ReturnsAverage(t *t
 	require.Equal(t, big.NewInt(700000000000000000), avgPrice)
 }
 
-func TestFourPriceValuesOneOutlier_CalculateAvgUbtPriceForAttestation_ReturnsAverageWithoutOutlier(t *testing.T) {
+func TestCalculateAvgUbtPriceForAttestation_FourPriceValuesOneOutlier__ReturnsAverageWithoutOutlier(t *testing.T) {
 	// Arrange
 	var attestation = types.Attestation{
 		Observed:  false,
@@ -57,7 +57,7 @@ func TestFourPriceValuesOneOutlier_CalculateAvgUbtPriceForAttestation_ReturnsAve
 		UbtPrices: []sdk.Int{},
 	}
 
-	outlier, _ := sdk.NewIntFromString("99600000000000000000")
+	outlier, _ := sdk.NewIntFromString("99900000000000000000")
 
 	attestation.UbtPrices = append(attestation.UbtPrices, sdk.NewInt(800000000000000000))
 	attestation.UbtPrices = append(attestation.UbtPrices, sdk.NewInt(700000000000000000))
