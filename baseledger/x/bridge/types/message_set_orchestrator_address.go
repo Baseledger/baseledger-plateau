@@ -9,11 +9,10 @@ const TypeMsgSetOrchestratorAddress = "set_orchestrator_address"
 
 var _ sdk.Msg = &MsgSetOrchestratorAddress{}
 
-func NewMsgSetOrchestratorAddress(validator string, orchestrator string, ethAddress string) *MsgSetOrchestratorAddress {
+func NewMsgSetOrchestratorAddress(validator string, orchestrator string) *MsgSetOrchestratorAddress {
 	return &MsgSetOrchestratorAddress{
 		Validator:    validator,
 		Orchestrator: orchestrator,
-		EthAddress:   ethAddress,
 	}
 }
 
@@ -44,9 +43,6 @@ func (msg *MsgSetOrchestratorAddress) ValidateBasic() (err error) {
 	}
 	if _, err = sdk.AccAddressFromBech32(msg.Orchestrator); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Orchestrator)
-	}
-	if err := ValidateEthAddress(msg.EthAddress); err != nil {
-		return sdkerrors.Wrap(err, "ethereum address")
 	}
 	return nil
 }

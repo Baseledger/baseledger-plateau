@@ -14,12 +14,11 @@ var _ = strconv.Itoa(0)
 
 func CmdSetOrchestratorAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set-orchestrator-address [orchestrator] [eth-address]",
+		Use:   "set-orchestrator-address [orchestrator]",
 		Short: "Broadcast message setOrchestratorAddress",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argOrchestrator := args[0]
-			argEthAddress := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -29,7 +28,6 @@ func CmdSetOrchestratorAddress() *cobra.Command {
 			msg := types.NewMsgSetOrchestratorAddress(
 				clientCtx.GetFromAddress().String(),
 				argOrchestrator,
-				argEthAddress,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
