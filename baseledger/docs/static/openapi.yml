@@ -14177,6 +14177,12 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+      ubtPrices:
+        type: array
+        items:
+          type: string
+      avgUbtPrice:
+        type: string
   Baseledger.baseledger.bridge.MsgSetOrchestratorAddressResponse:
     type: object
   Baseledger.baseledger.bridge.MsgUbtDepositedClaimResponse:
@@ -14270,7 +14276,6 @@ definitions:
 
                 URL that describes the type of the serialized message.
 
-            URL that describes the type of the serialized message.
 
                 Protobuf library provides support to pack/unpack Any values in
                 the form
@@ -14371,6 +14376,12 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+            ubtPrices:
+              type: array
+              items:
+                type: string
+            avgUbtPrice:
+              type: string
   Baseledger.baseledger.bridge.QueryDelegateKeysByEthAddressResponse:
     type: object
     properties:
@@ -14416,7 +14427,7 @@ definitions:
           `path/google.protobuf.Duration`). The name should be in a canonical
           form
 
-              the fully qualified name of the type (as in
+          (e.g., leading "." is not accepted).
 
 
           In practice, teams usually precompile into the binary all types that
@@ -14427,8 +14438,7 @@ definitions:
 
           scheme `http`, `https`, or no scheme, one can optionally set up a type
 
-              expect it to use in the context of Any. However, for URLs which
-              use the
+          server that maps type URLs to message definitions as follows:
 
 
           * If no scheme is provided, `https` is assumed.
@@ -14445,8 +14455,7 @@ definitions:
 
           protobuf release, and it is not used for type URLs beginning with
 
-              Note: this functionality is not currently available in the
-              official
+          type.googleapis.com.
 
 
           Schemes other than `http`, `https` (or the empty scheme) might be
@@ -14457,7 +14466,7 @@ definitions:
       `Any` contains an arbitrary serialized protocol buffer message along with
       a
 
-              Schemes other than `http`, `https` (or the empty scheme) might be
+      URL that describes the type of the serialized message.
 
 
       Protobuf library provides support to pack/unpack Any values in the form
@@ -14515,9 +14524,8 @@ definitions:
 
       in the type URL, for example "foo.bar.com/x/y.z" will yield type
 
-          methods only use the fully qualified type name after the last '/'
+      name "y.z".
 
-          in the type URL, for example "foo.bar.com/x/y.z" will yield type
 
 
       JSON
@@ -14548,26 +14556,13 @@ definitions:
 
       `value` which holds the custom JSON in addition to the `@type`
 
-              {
-                "@type": "type.googleapis.com/google.protobuf.Duration",
-                "value": "1.212s"
-              }
-      ubtPrices:
-        type: array
-        items:
-          type: string
-      avgUbtPrice:
-        type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.MsgSetOrchestratorAddressResponse:
-    type: object
-  Baseledger.baseledgerbridge.bridge.MsgUbtDepositedClaimResponse:
-    type: object
-  Baseledger.baseledgerbridge.bridge.MsgValidatorPowerChangedClaimResponse:
-    type: object
-  Baseledger.baseledgerbridge.bridge.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  Baseledger.baseledgerbridge.bridge.QueryAttestationsResponse:
+      field. Example (for message [google.protobuf.Duration][]):
+
+          {
+            "@type": "type.googleapis.com/google.protobuf.Duration",
+            "value": "1.212s"
+          }
+  google.rpc.Status:
     type: object
     properties:
       code:
@@ -14733,17 +14728,11 @@ definitions:
 
             field. Example (for message [google.protobuf.Duration][]):
 
-                    {
-                      "@type": "type.googleapis.com/google.protobuf.Duration",
-                      "value": "1.212s"
-                    }
-            ubtPrices:
-              type: array
-              items:
-                type: string
-            avgUbtPrice:
-              type: string
-  Baseledger.baseledgerbridge.baseledgerbridge.QueryDelegateKeysByEthAddressResponse:
+                {
+                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                  "value": "1.212s"
+                }
+  Baseledger.baseledger.proof.BaseledgerTransaction:
     type: object
     properties:
       creator:
