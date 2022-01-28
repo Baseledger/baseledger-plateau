@@ -117,33 +117,9 @@ func (k Keeper) UnpackAttestationClaim(att *types.Attestation) (types.EthereumCl
 // For the time being this will serve
 func (k Keeper) GetDelegateKeys(ctx sdk.Context) []types.MsgSetOrchestratorAddress {
 	store := ctx.KVStore(k.storeKey)
-	prefix := []byte(types.EthAddressByValidatorKey)
+
+	prefix := []byte(types.KeyOrchestratorAddress)
 	iter := store.Iterator(prefixRange(prefix))
-	defer iter.Close()
-
-	ethAddresses := make(map[string]string)
-
-	for ; iter.Valid(); iter.Next() {
-		// the 'key' contains both the prefix and the value, so we need
-		// to cut off the starting bytes, if you don't do this a valid
-		// cosmos key will be made out of EthAddressByValidatorKey + the startin bytes
-		// of the actual key
-		key := iter.Key()[len(types.EthAddressByValidatorKey):]
-		value := iter.Value()
-		ethAddress, err := types.NewEthAddress(string(value))
-		if err != nil {
-			panic(sdkerrors.Wrapf(err, "found invalid ethAddress %v under key %v", string(value), key))
-		}
-		valAddress := sdk.ValAddress(key)
-		if err := sdk.VerifyAddressFormat(valAddress); err != nil {
-			panic(sdkerrors.Wrapf(err, "invalid valAddress in key %v", valAddress))
-		}
-		ethAddresses[valAddress.String()] = ethAddress.GetAddress()
-	}
-
-	store = ctx.KVStore(k.storeKey)
-	prefix = []byte(types.KeyOrchestratorAddress)
-	iter = store.Iterator(prefixRange(prefix))
 	defer iter.Close()
 
 	orchAddresses := make(map[string]string)
@@ -165,26 +141,17 @@ func (k Keeper) GetDelegateKeys(ctx sdk.Context) []types.MsgSetOrchestratorAddre
 
 	var result []types.MsgSetOrchestratorAddress
 
-	for valAddr, ethAddr := range ethAddresses {
-		orch, ok := orchAddresses[valAddr]
-		if !ok {
-			// this should never happen unless the store
-			// is somehow inconsistent
-			panic("Can't find address")
-		}
+	for valAddr, orch := range orchAddresses {
 		result = append(result, types.MsgSetOrchestratorAddress{
 			Orchestrator: orch,
 			Validator:    valAddr,
-			EthAddress:   ethAddr,
 		})
-
 	}
 
 	// we iterated over a map, so now we have to sort to ensure the
-	// output here is deterministic, eth address chosen for no particular
-	// reason
+	// output here is deterministic
 	sort.Slice(result[:], func(i, j int) bool {
-		return result[i].EthAddress < result[j].EthAddress
+		return result[i].Orchestrator < result[j].Orchestrator
 	})
 
 	return result

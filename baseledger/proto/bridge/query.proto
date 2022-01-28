@@ -16,10 +16,6 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/Baseledger/baseledger/bridge/params";
   }
-  // Queries a list of DelegateKeysByEthAddress items.
-	rpc DelegateKeysByEthAddress(QueryDelegateKeysByEthAddressRequest) returns (QueryDelegateKeysByEthAddressResponse) {
-		option (google.api.http).get = "/Baseledger/baseledger/bridge/delegate_keys_by_eth_address/{ethAddress}";
-	}
 
 // Queries a list of DelegateKeysByOrchestratorAddress items.
 	rpc DelegateKeysByOrchestratorAddress(QueryDelegateKeysByOrchestratorAddressRequest) returns (QueryDelegateKeysByOrchestratorAddressResponse) {
@@ -48,22 +44,12 @@ message QueryParamsResponse {
   Params params = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryDelegateKeysByEthAddressRequest {
-  string ethAddress = 1;
-}
-
-message QueryDelegateKeysByEthAddressResponse {
-  string validatorAddress = 1;
-  string orchestratorAddress = 2;
-}
-
 message QueryDelegateKeysByOrchestratorAddressRequest {
   string orchestratorAddress = 1;
 }
 
 message QueryDelegateKeysByOrchestratorAddressResponse {
   string validatorAddress = 1;
-  string ethAddress = 2;
 }
 
 message QueryLastEventNonceByAddressRequest {
