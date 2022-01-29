@@ -13,7 +13,6 @@ import (
 
 	baseledgercommon "github.com/Baseledger/baseledger/common"
 	"github.com/Baseledger/baseledger/x/bridge/types"
-	distypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
 
 // Check that distKeeper implements the expected type
@@ -38,20 +37,6 @@ func (a AttestationHandler) ValidateMembers() {
 	if a.distKeeper == nil {
 		panic("Nil distKeeper!")
 	}
-}
-
-// TODO skos: change this to send to faucet or something like that later
-// SendToCommunityPool handles sending incorrect deposits to the community pool, since the deposits
-// have already been made on Ethereum there's nothing we can do to reverse them, and we should at least
-// make use of the tokens which would otherwise be lost
-func (a AttestationHandler) SendToCommunityPool(ctx sdk.Context, coins sdk.Coins) error {
-	if err := a.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, distypes.ModuleName, coins); err != nil {
-		return sdkerrors.Wrap(err, "transfer to community pool failed")
-	}
-	feePool := (*a.distKeeper).GetFeePool(ctx)
-	feePool.CommunityPool = feePool.CommunityPool.Add(sdk.NewDecCoinsFromCoins(coins...)...)
-	(*a.distKeeper).SetFeePool(ctx, feePool)
-	return nil
 }
 
 // Handle is the entry point for Attestation processing.
