@@ -67,7 +67,7 @@ func (msg *MsgUbtDepositedClaim) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "orchestrator")
 	}
-	if _, err := IBCAddressFromBech32(msg.CosmosReceiver); err != nil {
+	if _, err := sdk.AccAddressFromBech32(msg.CosmosReceiver); err != nil {
 		return sdkerrors.Wrap(err, "cosmos receiver")
 	}
 	if msg.EventNonce == 0 {
