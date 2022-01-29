@@ -7,10 +7,10 @@ use crate::config::load_keys;
 use crate::config::save_keys;
 use crate::config::KeyStorage;
 use crate::utils::TIMEOUT;
-use cosmos_gravity::send::set_gravity_delegate_addresses;
+use utils::cosmos::send::set_gravity_delegate_addresses;
 use deep_space::{mnemonic::Mnemonic, private_key::PrivateKey as CosmosPrivateKey};
-use gravity_utils::connection_prep::check_for_fee;
-use gravity_utils::connection_prep::{create_rpc_connections, wait_for_cosmos_node_ready};
+use utils::connection_prep::check_for_fee;
+use utils::connection_prep::{create_rpc_connections, wait_for_cosmos_node_ready};
 
 pub async fn register_orchestrator_address(
     args: RegisterOrchestratorAddressOpts,

@@ -1,7 +1,7 @@
-use crate::query::get_last_event_nonce_for_validator;
+use crate::cosmos::query::get_last_event_nonce_for_validator;
 use deep_space::Address as CosmosAddress;
 use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
-use gravity_utils::get_with_retry::RETRY_TIME;
+use crate::get_with_retry::RETRY_TIME;
 use tokio::time::sleep;
 use tonic::transport::Channel;
 use std::u64::MAX as U64MAX;

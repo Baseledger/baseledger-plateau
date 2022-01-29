@@ -12,8 +12,7 @@ homepage = "https://gravitybridge.althea.net/"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cosmos_gravity = {path = "../cosmos_gravity"}
-gravity_utils = {path = "../gravity_utils"}
+utils = {path = "../utils"}
 baseledger_proto = {path = "../baseledger_proto/"}
 orchestrator = {path = "../orchestrator/"}
 
