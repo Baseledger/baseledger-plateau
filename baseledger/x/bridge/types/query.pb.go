@@ -113,26 +113,26 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
-type QueryDelegateKeysByOrchestratorAddressRequest struct {
+type QueryValidatorAddressByOrchestratorAddressRequest struct {
 	OrchestratorAddress string `protobuf:"bytes,1,opt,name=orchestratorAddress,proto3" json:"orchestratorAddress,omitempty"`
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) Reset() {
-	*m = QueryDelegateKeysByOrchestratorAddressRequest{}
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) Reset() {
+	*m = QueryValidatorAddressByOrchestratorAddressRequest{}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) String() string {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) String() string {
 	return proto.CompactTextString(m)
 }
-func (*QueryDelegateKeysByOrchestratorAddressRequest) ProtoMessage() {}
-func (*QueryDelegateKeysByOrchestratorAddressRequest) Descriptor() ([]byte, []int) {
+func (*QueryValidatorAddressByOrchestratorAddressRequest) ProtoMessage() {}
+func (*QueryValidatorAddressByOrchestratorAddressRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_09fd90c905cb448b, []int{2}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -142,45 +142,45 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_Marshal(b []byte, de
 		return b[:n], nil
 	}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressRequest.Merge(m, src)
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressRequest.Merge(m, src)
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_Size() int {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressRequest.DiscardUnknown(m)
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressRequest proto.InternalMessageInfo
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) GetOrchestratorAddress() string {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) GetOrchestratorAddress() string {
 	if m != nil {
 		return m.OrchestratorAddress
 	}
 	return ""
 }
 
-type QueryDelegateKeysByOrchestratorAddressResponse struct {
+type QueryValidatorAddressByOrchestratorAddressResponse struct {
 	ValidatorAddress string `protobuf:"bytes,1,opt,name=validatorAddress,proto3" json:"validatorAddress,omitempty"`
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) Reset() {
-	*m = QueryDelegateKeysByOrchestratorAddressResponse{}
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) Reset() {
+	*m = QueryValidatorAddressByOrchestratorAddressResponse{}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) String() string {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) String() string {
 	return proto.CompactTextString(m)
 }
-func (*QueryDelegateKeysByOrchestratorAddressResponse) ProtoMessage() {}
-func (*QueryDelegateKeysByOrchestratorAddressResponse) Descriptor() ([]byte, []int) {
+func (*QueryValidatorAddressByOrchestratorAddressResponse) ProtoMessage() {}
+func (*QueryValidatorAddressByOrchestratorAddressResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_09fd90c905cb448b, []int{3}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -190,19 +190,19 @@ func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_Marshal(b []byte, d
 		return b[:n], nil
 	}
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressResponse.Merge(m, src)
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressResponse.Merge(m, src)
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_Size() int {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressResponse.DiscardUnknown(m)
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryDelegateKeysByOrchestratorAddressResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryValidatorAddressByOrchestratorAddressResponse proto.InternalMessageInfo
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) GetValidatorAddress() string {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) GetValidatorAddress() string {
 	if m != nil {
 		return m.ValidatorAddress
 	}
@@ -388,8 +388,8 @@ func (m *QueryAttestationsResponse) GetAttestations() []Attestation {
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "Baseledger.baseledger.bridge.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "Baseledger.baseledger.bridge.QueryParamsResponse")
-	proto.RegisterType((*QueryDelegateKeysByOrchestratorAddressRequest)(nil), "Baseledger.baseledger.bridge.QueryDelegateKeysByOrchestratorAddressRequest")
-	proto.RegisterType((*QueryDelegateKeysByOrchestratorAddressResponse)(nil), "Baseledger.baseledger.bridge.QueryDelegateKeysByOrchestratorAddressResponse")
+	proto.RegisterType((*QueryValidatorAddressByOrchestratorAddressRequest)(nil), "Baseledger.baseledger.bridge.QueryValidatorAddressByOrchestratorAddressRequest")
+	proto.RegisterType((*QueryValidatorAddressByOrchestratorAddressResponse)(nil), "Baseledger.baseledger.bridge.QueryValidatorAddressByOrchestratorAddressResponse")
 	proto.RegisterType((*QueryLastEventNonceByAddressRequest)(nil), "Baseledger.baseledger.bridge.QueryLastEventNonceByAddressRequest")
 	proto.RegisterType((*QueryLastEventNonceByAddressResponse)(nil), "Baseledger.baseledger.bridge.QueryLastEventNonceByAddressResponse")
 	proto.RegisterType((*QueryAttestationsRequest)(nil), "Baseledger.baseledger.bridge.QueryAttestationsRequest")
@@ -399,46 +399,45 @@ func init() {
 func init() { proto.RegisterFile("bridge/query.proto", fileDescriptor_09fd90c905cb448b) }
 
 var fileDescriptor_09fd90c905cb448b = []byte{
-	// 616 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x95, 0xcf, 0x6f, 0xd3, 0x30,
-	0x14, 0xc7, 0x9b, 0xb1, 0x15, 0xe1, 0xed, 0x80, 0xdc, 0x4a, 0x94, 0x68, 0x0a, 0x10, 0x2a, 0x34,
-	0x26, 0x88, 0xdb, 0x82, 0x40, 0xe2, 0x82, 0x1a, 0x18, 0x12, 0xea, 0xc4, 0x8f, 0x72, 0x1a, 0x20,
-	0x45, 0x4e, 0x63, 0x65, 0x11, 0x69, 0x9c, 0xc5, 0x6e, 0x45, 0x34, 0xed, 0xc2, 0x5f, 0x80, 0xc4,
-	0x91, 0x13, 0x7f, 0x07, 0xff, 0xc0, 0x8e, 0x93, 0xb8, 0x70, 0x42, 0xa8, 0xe5, 0xca, 0x99, 0x2b,
-	0x8a, 0xe3, 0x76, 0x29, 0xed, 0x42, 0x26, 0xb8, 0x39, 0xf6, 0x7b, 0x9f, 0xf7, 0xbe, 0xf6, 0xfb,
-	0x2a, 0x00, 0xda, 0x91, 0xe7, 0xb8, 0x04, 0xed, 0x0d, 0x48, 0x14, 0x1b, 0x61, 0x44, 0x39, 0x85,
-	0xeb, 0x26, 0x66, 0xc4, 0x27, 0x8e, 0x4b, 0x22, 0xc3, 0xce, 0x2c, 0x45, 0xa4, 0x5a, 0x75, 0xa9,
-	0x4b, 0x45, 0x20, 0x4a, 0x56, 0x69, 0x8e, 0xba, 0xee, 0x52, 0xea, 0xfa, 0x04, 0xe1, 0xd0, 0x43,
-	0x38, 0x08, 0x28, 0xc7, 0xdc, 0xa3, 0x01, 0x93, 0xa7, 0x9b, 0x3d, 0xca, 0xfa, 0x94, 0xa1, 0x84,
-	0x96, 0x96, 0x42, 0xc3, 0xa6, 0x4d, 0x38, 0x6e, 0xa2, 0x10, 0xbb, 0x5e, 0x20, 0x82, 0x65, 0x6c,
-	0x45, 0x76, 0x14, 0xe2, 0x08, 0xf7, 0x27, 0x80, 0x9a, 0xdc, 0xc4, 0x9c, 0x13, 0xc6, 0x33, 0xe1,
-	0x7a, 0x15, 0xc0, 0xe7, 0x09, 0xf0, 0x99, 0x08, 0xef, 0x92, 0xbd, 0x01, 0x61, 0x5c, 0xdf, 0x01,
-	0x95, 0x99, 0x5d, 0x16, 0xd2, 0x80, 0x11, 0x68, 0x82, 0x72, 0x8a, 0xad, 0x29, 0x97, 0x95, 0x8d,
-	0xd5, 0x56, 0xdd, 0xc8, 0x93, 0x6a, 0xa4, 0xd9, 0xe6, 0xf2, 0xe1, 0xb7, 0x4b, 0xa5, 0xae, 0xcc,
-	0xd4, 0x31, 0xb8, 0x29, 0xd0, 0x0f, 0x89, 0x4f, 0x5c, 0xcc, 0x49, 0x87, 0xc4, 0xcc, 0x8c, 0x9f,
-	0x46, 0xbd, 0x5d, 0xc2, 0x78, 0x84, 0x39, 0x8d, 0xda, 0x8e, 0x13, 0x11, 0x36, 0xe9, 0x05, 0x36,
-	0x40, 0x85, 0xce, 0x9f, 0x8a, 0x0e, 0xce, 0x75, 0x17, 0x1d, 0xe9, 0xaf, 0x81, 0x51, 0xb4, 0x84,
-	0x14, 0xb6, 0x09, 0xce, 0x0f, 0xb1, 0xef, 0x39, 0xf3, 0x05, 0xe6, 0xf6, 0xf5, 0xfb, 0xe0, 0xaa,
-	0xa0, 0x6f, 0x63, 0xc6, 0xb7, 0x86, 0x24, 0xe0, 0x4f, 0x68, 0xd0, 0x23, 0x66, 0xfc, 0x47, 0xdb,
-	0x35, 0x70, 0x16, 0xcf, 0x90, 0x26, 0x9f, 0xfa, 0x23, 0x50, 0xcf, 0x07, 0xc8, 0xa6, 0x34, 0x00,
-	0xc8, 0xf4, 0x58, 0x40, 0x96, 0xbb, 0x99, 0x1d, 0xbd, 0x01, 0x6a, 0x82, 0xd3, 0x3e, 0x7e, 0xd4,
-	0x69, 0xf5, 0x2a, 0x58, 0xf1, 0xbd, 0xbe, 0xc7, 0x65, 0x5a, 0xfa, 0xa1, 0x87, 0xe0, 0xe2, 0x82,
-	0x0c, 0x59, 0xee, 0x05, 0x58, 0xcb, 0x8c, 0x47, 0xd2, 0xf5, 0x99, 0x8d, 0xd5, 0xd6, 0xf5, 0xfc,
-	0x27, 0xce, 0x90, 0xe4, 0x3b, 0xcf, 0x40, 0x5a, 0xbf, 0xca, 0x60, 0x45, 0x94, 0x84, 0x1f, 0x15,
-	0x50, 0x4e, 0x07, 0x02, 0x36, 0xf2, 0x99, 0xf3, 0xf3, 0xa8, 0x36, 0x4f, 0x91, 0x91, 0xca, 0xd1,
-	0x6f, 0xbc, 0xfb, 0xf2, 0xe3, 0xc3, 0xd2, 0x35, 0x58, 0x47, 0xc7, 0xa9, 0xc8, 0xce, 0x2c, 0xb3,
-	0x36, 0x81, 0x9f, 0x96, 0xc0, 0x95, 0xbf, 0x8e, 0x0b, 0xec, 0x14, 0x68, 0xa3, 0xe8, 0x5c, 0xab,
-	0xdb, 0xff, 0x07, 0x26, 0xe5, 0x62, 0x21, 0xf7, 0x15, 0xdc, 0xc9, 0x97, 0xeb, 0x48, 0xa0, 0xf5,
-	0x86, 0xc4, 0xcc, 0xb2, 0x63, 0x2b, 0xeb, 0x1f, 0x4b, 0x4e, 0x28, 0xda, 0x5f, 0xe0, 0xaa, 0x03,
-	0xf8, 0x53, 0x01, 0x17, 0x4e, 0x98, 0x59, 0xd8, 0x2e, 0x20, 0x26, 0xdf, 0x30, 0xaa, 0xf9, 0x2f,
-	0x08, 0x79, 0x0b, 0x1d, 0x71, 0x0b, 0x5b, 0xf0, 0x41, 0xfe, 0x2d, 0xf8, 0x98, 0x71, 0x4b, 0x38,
-	0xc9, 0x0a, 0x12, 0x50, 0x72, 0x11, 0x53, 0xed, 0x78, 0xa2, 0xf7, 0xb3, 0x02, 0xd6, 0xb2, 0x4e,
-	0x81, 0x77, 0x0a, 0x74, 0xb8, 0xc0, 0x8c, 0xea, 0xdd, 0x53, 0xe7, 0x49, 0x39, 0xf7, 0x84, 0x9c,
-	0xdb, 0xb0, 0x95, 0x2f, 0x27, 0xeb, 0x38, 0xb4, 0x2f, 0xac, 0x7e, 0x60, 0x3e, 0x3e, 0x1c, 0x69,
-	0xca, 0xd1, 0x48, 0x53, 0xbe, 0x8f, 0x34, 0xe5, 0xfd, 0x58, 0x2b, 0x1d, 0x8d, 0xb5, 0xd2, 0xd7,
-	0xb1, 0x56, 0x7a, 0x89, 0x5c, 0x8f, 0xef, 0x0e, 0x6c, 0xa3, 0x47, 0xfb, 0x27, 0x70, 0xdf, 0x4e,
-	0xc8, 0x3c, 0x0e, 0x09, 0xb3, 0xcb, 0xe2, 0x57, 0x71, 0xeb, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xdb, 0x6e, 0xe8, 0x22, 0xed, 0x06, 0x00, 0x00,
+	// 608 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcf, 0x6b, 0x13, 0x41,
+	0x14, 0xce, 0xd6, 0xfe, 0xc0, 0xd7, 0x1e, 0x64, 0x12, 0x30, 0x2e, 0x65, 0x95, 0x35, 0x4a, 0x2d,
+	0x92, 0x49, 0xa2, 0x28, 0x78, 0x91, 0xac, 0x54, 0x10, 0xc5, 0xd6, 0x08, 0x82, 0x82, 0xac, 0xb3,
+	0xc9, 0xb0, 0x5d, 0x48, 0x76, 0xb6, 0x3b, 0x93, 0x60, 0x28, 0xbd, 0x78, 0xf1, 0x2a, 0x78, 0xf4,
+	0xaf, 0xf0, 0xec, 0x3f, 0xd0, 0x63, 0xc1, 0x8b, 0x27, 0x91, 0xc4, 0xab, 0xff, 0x83, 0xec, 0xec,
+	0x24, 0x9d, 0x34, 0xe9, 0x92, 0xa0, 0xb7, 0xd9, 0x37, 0xef, 0xfb, 0xde, 0xfb, 0xde, 0xbc, 0x8f,
+	0x05, 0xe4, 0xc5, 0x41, 0xcb, 0xa7, 0xf8, 0xa0, 0x4b, 0xe3, 0x7e, 0x39, 0x8a, 0x99, 0x60, 0x68,
+	0xd3, 0x21, 0x9c, 0xb6, 0x69, 0xcb, 0xa7, 0x71, 0xd9, 0xd3, 0x8e, 0x32, 0xd3, 0x2c, 0xf8, 0xcc,
+	0x67, 0x32, 0x11, 0x27, 0xa7, 0x14, 0x63, 0x6e, 0xfa, 0x8c, 0xf9, 0x6d, 0x8a, 0x49, 0x14, 0x60,
+	0x12, 0x86, 0x4c, 0x10, 0x11, 0xb0, 0x90, 0xab, 0xdb, 0xed, 0x26, 0xe3, 0x1d, 0xc6, 0x71, 0xc2,
+	0x96, 0x96, 0xc2, 0xbd, 0xaa, 0x47, 0x05, 0xa9, 0xe2, 0x88, 0xf8, 0x41, 0x28, 0x93, 0x55, 0x6e,
+	0x5e, 0x75, 0x14, 0x91, 0x98, 0x74, 0x46, 0x04, 0x45, 0x15, 0x24, 0x42, 0x50, 0x2e, 0xb4, 0x74,
+	0xbb, 0x00, 0xe8, 0x45, 0x42, 0xb8, 0x27, 0xd3, 0x1b, 0xf4, 0xa0, 0x4b, 0xb9, 0xb0, 0x5f, 0x43,
+	0x7e, 0x22, 0xca, 0x23, 0x16, 0x72, 0x8a, 0x1c, 0x58, 0x4d, 0x69, 0x8b, 0xc6, 0x35, 0x63, 0x6b,
+	0xbd, 0x56, 0x2a, 0x67, 0x49, 0x2d, 0xa7, 0x68, 0x67, 0xf9, 0xf8, 0xe7, 0xd5, 0x5c, 0x43, 0x21,
+	0x6d, 0x0a, 0x55, 0x49, 0xfd, 0x8a, 0xb4, 0x83, 0x16, 0x11, 0x2c, 0xae, 0xb7, 0x5a, 0x31, 0xe5,
+	0xdc, 0xe9, 0xef, 0xc6, 0xcd, 0x7d, 0xca, 0x45, 0xac, 0x05, 0x55, 0x3f, 0xa8, 0x02, 0x79, 0x36,
+	0x7d, 0x2b, 0xbb, 0xb8, 0xd8, 0x98, 0x75, 0x65, 0xbf, 0x83, 0xda, 0x22, 0x65, 0x94, 0xc0, 0x6d,
+	0xb8, 0xd4, 0x3b, 0x03, 0x50, 0x45, 0xa6, 0xe2, 0xf6, 0x43, 0xb8, 0x2e, 0x2b, 0x3c, 0x23, 0x5c,
+	0xec, 0xf4, 0x68, 0x28, 0x9e, 0xb3, 0xb0, 0x49, 0x9d, 0xfe, 0x99, 0xd6, 0x8b, 0xb0, 0x46, 0x26,
+	0x98, 0x46, 0x9f, 0xf6, 0x63, 0x28, 0x65, 0x13, 0xa8, 0xa6, 0x2c, 0x00, 0x3a, 0xbe, 0x96, 0x24,
+	0xcb, 0x0d, 0x2d, 0x62, 0x57, 0xa0, 0x28, 0x79, 0xea, 0xa7, 0x8f, 0x3b, 0xae, 0x5e, 0x80, 0x95,
+	0x76, 0xd0, 0x09, 0x84, 0x82, 0xa5, 0x1f, 0x76, 0x04, 0x57, 0x66, 0x20, 0x54, 0xb9, 0x97, 0xb0,
+	0xa1, 0xad, 0x49, 0xd2, 0xf5, 0x85, 0xad, 0xf5, 0xda, 0xad, 0xec, 0xa7, 0xd6, 0x98, 0xd4, 0x7b,
+	0x4f, 0x90, 0xd4, 0x3e, 0xae, 0xc1, 0x8a, 0x2c, 0x89, 0xbe, 0x18, 0xb0, 0x9a, 0x2e, 0x06, 0xaa,
+	0x64, 0x73, 0x4e, 0xef, 0xa5, 0x59, 0x5d, 0x00, 0x91, 0xca, 0xb1, 0x6f, 0x7f, 0xf8, 0xfe, 0xfb,
+	0xf3, 0xd2, 0x4d, 0x54, 0xc2, 0xa7, 0x50, 0xec, 0x69, 0x47, 0xdd, 0x2e, 0xe8, 0xeb, 0x12, 0xdc,
+	0x98, 0x6b, 0x65, 0xd0, 0xee, 0x1c, 0xad, 0x2c, 0xb2, 0xe3, 0xe6, 0xde, 0xff, 0x23, 0x54, 0xd2,
+	0xa9, 0x94, 0xee, 0xa2, 0xb7, 0xd9, 0xd2, 0xc7, 0x9b, 0xed, 0xaa, 0xcd, 0x74, 0xbd, 0xbe, 0xab,
+	0x7b, 0x6a, 0x14, 0xc7, 0x87, 0x33, 0x9c, 0x76, 0x84, 0xfe, 0x18, 0x70, 0xf9, 0x9c, 0x1d, 0x46,
+	0xf5, 0x39, 0x44, 0x65, 0x1b, 0xc8, 0x74, 0xfe, 0x85, 0x42, 0x4d, 0xe2, 0xa9, 0x9c, 0xc4, 0x0e,
+	0x7a, 0x94, 0x3d, 0x89, 0x36, 0xe1, 0xc2, 0x95, 0xce, 0x72, 0xc3, 0x84, 0x28, 0x19, 0xc4, 0x58,
+	0x3b, 0x19, 0xe9, 0xfd, 0x66, 0xc0, 0x86, 0xee, 0x1c, 0x74, 0x6f, 0x8e, 0x0e, 0x67, 0x98, 0xd3,
+	0xbc, 0xbf, 0x30, 0x4e, 0xc9, 0x79, 0x20, 0xe5, 0xdc, 0x45, 0xb5, 0x6c, 0x39, 0xba, 0x03, 0xf1,
+	0xa1, 0xb4, 0xfe, 0x91, 0xf3, 0xe4, 0x78, 0x60, 0x19, 0x27, 0x03, 0xcb, 0xf8, 0x35, 0xb0, 0x8c,
+	0x4f, 0x43, 0x2b, 0x77, 0x32, 0xb4, 0x72, 0x3f, 0x86, 0x56, 0xee, 0x0d, 0xf6, 0x03, 0xb1, 0xdf,
+	0xf5, 0xca, 0x4d, 0xd6, 0x39, 0x87, 0xf7, 0xfd, 0x88, 0x59, 0xf4, 0x23, 0xca, 0xbd, 0x55, 0xf9,
+	0x0b, 0xb9, 0xf3, 0x37, 0x00, 0x00, 0xff, 0xff, 0x4d, 0x14, 0x4a, 0x11, 0x05, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -456,7 +455,7 @@ type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// Queries a list of DelegateKeysByOrchestratorAddress items.
-	DelegateKeysByOrchestratorAddress(ctx context.Context, in *QueryDelegateKeysByOrchestratorAddressRequest, opts ...grpc.CallOption) (*QueryDelegateKeysByOrchestratorAddressResponse, error)
+	ValidatorAddressByOrchestratorAddress(ctx context.Context, in *QueryValidatorAddressByOrchestratorAddressRequest, opts ...grpc.CallOption) (*QueryValidatorAddressByOrchestratorAddressResponse, error)
 	// Queries a list of LastEventNonceByAddress items.
 	LastEventNonceByAddress(ctx context.Context, in *QueryLastEventNonceByAddressRequest, opts ...grpc.CallOption) (*QueryLastEventNonceByAddressResponse, error)
 	// Queries a list of Attestations items.
@@ -480,9 +479,9 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
-func (c *queryClient) DelegateKeysByOrchestratorAddress(ctx context.Context, in *QueryDelegateKeysByOrchestratorAddressRequest, opts ...grpc.CallOption) (*QueryDelegateKeysByOrchestratorAddressResponse, error) {
-	out := new(QueryDelegateKeysByOrchestratorAddressResponse)
-	err := c.cc.Invoke(ctx, "/Baseledger.baseledger.bridge.Query/DelegateKeysByOrchestratorAddress", in, out, opts...)
+func (c *queryClient) ValidatorAddressByOrchestratorAddress(ctx context.Context, in *QueryValidatorAddressByOrchestratorAddressRequest, opts ...grpc.CallOption) (*QueryValidatorAddressByOrchestratorAddressResponse, error) {
+	out := new(QueryValidatorAddressByOrchestratorAddressResponse)
+	err := c.cc.Invoke(ctx, "/Baseledger.baseledger.bridge.Query/ValidatorAddressByOrchestratorAddress", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -512,7 +511,7 @@ type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// Queries a list of DelegateKeysByOrchestratorAddress items.
-	DelegateKeysByOrchestratorAddress(context.Context, *QueryDelegateKeysByOrchestratorAddressRequest) (*QueryDelegateKeysByOrchestratorAddressResponse, error)
+	ValidatorAddressByOrchestratorAddress(context.Context, *QueryValidatorAddressByOrchestratorAddressRequest) (*QueryValidatorAddressByOrchestratorAddressResponse, error)
 	// Queries a list of LastEventNonceByAddress items.
 	LastEventNonceByAddress(context.Context, *QueryLastEventNonceByAddressRequest) (*QueryLastEventNonceByAddressResponse, error)
 	// Queries a list of Attestations items.
@@ -526,8 +525,8 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
-func (*UnimplementedQueryServer) DelegateKeysByOrchestratorAddress(ctx context.Context, req *QueryDelegateKeysByOrchestratorAddressRequest) (*QueryDelegateKeysByOrchestratorAddressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DelegateKeysByOrchestratorAddress not implemented")
+func (*UnimplementedQueryServer) ValidatorAddressByOrchestratorAddress(ctx context.Context, req *QueryValidatorAddressByOrchestratorAddressRequest) (*QueryValidatorAddressByOrchestratorAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorAddressByOrchestratorAddress not implemented")
 }
 func (*UnimplementedQueryServer) LastEventNonceByAddress(ctx context.Context, req *QueryLastEventNonceByAddressRequest) (*QueryLastEventNonceByAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LastEventNonceByAddress not implemented")
@@ -558,20 +557,20 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_DelegateKeysByOrchestratorAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryDelegateKeysByOrchestratorAddressRequest)
+func _Query_ValidatorAddressByOrchestratorAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryValidatorAddressByOrchestratorAddressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).DelegateKeysByOrchestratorAddress(ctx, in)
+		return srv.(QueryServer).ValidatorAddressByOrchestratorAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Baseledger.baseledger.bridge.Query/DelegateKeysByOrchestratorAddress",
+		FullMethod: "/Baseledger.baseledger.bridge.Query/ValidatorAddressByOrchestratorAddress",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).DelegateKeysByOrchestratorAddress(ctx, req.(*QueryDelegateKeysByOrchestratorAddressRequest))
+		return srv.(QueryServer).ValidatorAddressByOrchestratorAddress(ctx, req.(*QueryValidatorAddressByOrchestratorAddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -621,8 +620,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Params_Handler,
 		},
 		{
-			MethodName: "DelegateKeysByOrchestratorAddress",
-			Handler:    _Query_DelegateKeysByOrchestratorAddress_Handler,
+			MethodName: "ValidatorAddressByOrchestratorAddress",
+			Handler:    _Query_ValidatorAddressByOrchestratorAddress_Handler,
 		},
 		{
 			MethodName: "LastEventNonceByAddress",
@@ -693,7 +692,7 @@ func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -703,12 +702,12 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) Marshal() (dAtA []byte, 
 	return dAtA[:n], nil
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -723,7 +722,7 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) MarshalToSizedBuffer(dAt
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -733,12 +732,12 @@ func (m *QueryDelegateKeysByOrchestratorAddressResponse) Marshal() (dAtA []byte,
 	return dAtA[:n], nil
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -907,7 +906,7 @@ func (m *QueryParamsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) Size() (n int) {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -920,7 +919,7 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) Size() (n int) {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1124,7 +1123,7 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryDelegateKeysByOrchestratorAddressRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryValidatorAddressByOrchestratorAddressRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1147,10 +1146,10 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) Unmarshal(dAtA []byte) e
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDelegateKeysByOrchestratorAddressRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryValidatorAddressByOrchestratorAddressRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDelegateKeysByOrchestratorAddressRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryValidatorAddressByOrchestratorAddressRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1206,7 +1205,7 @@ func (m *QueryDelegateKeysByOrchestratorAddressRequest) Unmarshal(dAtA []byte) e
 	}
 	return nil
 }
-func (m *QueryDelegateKeysByOrchestratorAddressResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryValidatorAddressByOrchestratorAddressResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1229,10 +1228,10 @@ func (m *QueryDelegateKeysByOrchestratorAddressResponse) Unmarshal(dAtA []byte) 
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDelegateKeysByOrchestratorAddressResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryValidatorAddressByOrchestratorAddressResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDelegateKeysByOrchestratorAddressResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryValidatorAddressByOrchestratorAddressResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

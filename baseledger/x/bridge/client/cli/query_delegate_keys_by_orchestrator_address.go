@@ -13,8 +13,8 @@ var _ = strconv.Itoa(0)
 
 func CmdDelegateKeysByOrchestratorAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delegate-keys-by-orchestrator-address [orchestrator-address]",
-		Short: "Query delegateKeysByOrchestratorAddress",
+		Use:   "validator-address-by-orchestrator-address [orchestrator-address]",
+		Short: "Query validatorAddressByOrchestratorAddress",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqOrchestratorAddress := args[0]
@@ -26,12 +26,12 @@ func CmdDelegateKeysByOrchestratorAddress() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryDelegateKeysByOrchestratorAddressRequest{
+			params := &types.QueryValidatorAddressByOrchestratorAddressRequest{
 
 				OrchestratorAddress: reqOrchestratorAddress,
 			}
 
-			res, err := queryClient.DelegateKeysByOrchestratorAddress(cmd.Context(), params)
+			res, err := queryClient.ValidatorAddressByOrchestratorAddress(cmd.Context(), params)
 			if err != nil {
 				return err
 			}
