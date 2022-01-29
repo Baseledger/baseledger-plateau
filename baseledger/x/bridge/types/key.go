@@ -9,7 +9,7 @@ import (
 
 var (
 	// OracleAttestationKey attestation details by nonce and validator address
-	// i.e. gravityvaloper1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm
+	// i.e. cosmosvaloper1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm
 	// An attestation can be thought of as the 'event to be executed' while
 	// the Claims are an individual validator saying that they saw an event
 	// occur the Attestation is 'the event' that multiple claims vote on and
@@ -28,7 +28,7 @@ var (
 
 // GetOrchestratorAddressKey returns the following key format
 // prefix
-// [0xe8][gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
+// [0xe8][cosmos1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
 func GetOrchestratorAddressKey(orc sdk.AccAddress) string {
 	if err := sdk.VerifyAddressFormat(orc); err != nil {
 		panic(sdkerrors.Wrap(err, "invalid orchestrator address"))
@@ -54,7 +54,7 @@ func GetAttestationKey(eventNonce uint64, claimHash []byte) string {
 // GetLastEventNonceByValidatorKey indexes lateset event nonce by validator
 // GetLastEventNonceByValidatorKey returns the following key format
 // prefix              cosmos-validator
-// [0x0][gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
+// [0x0][cosmos1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
 func GetLastEventNonceByValidatorKey(validator sdk.ValAddress) string {
 	if err := sdk.VerifyAddressFormat(validator); err != nil {
 		panic(sdkerrors.Wrap(err, "invalid validator address"))
