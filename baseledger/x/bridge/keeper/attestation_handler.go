@@ -99,14 +99,31 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			invalidAddress = true
 		}
 
-		// TODO: BAS-120 - Introduce fallback to previous att price in this one is nil, negative or zero
-		amountOfWorkTokensToSend := calculateAmountOfWorkTokens(claim.Amount, att.AvgUbtPrice)
-		coins := sdk.Coins{sdk.NewCoin(baseledgercommon.WorkTokenDenom, amountOfWorkTokensToSend)}
+		// TODO: Ognjen - Verify big int overflows in the testing phase
+		avgUbtPrice := CalculateAvgUbtPriceForAttestation(att)
+
+		if avgUbtPrice.Cmp(big.NewInt(0)) == 0 {
+			avgUbtPrice = a.keeper.GetLastAttestationAverageUbtPrice(ctx)
+		} else {
+			a.keeper.SetLastAttestationAverageUbtPrice(ctx, avgUbtPrice)
+		}
+
+		amountOfWorkTokensToSend := CalculateAmountOfWorkTokens(claim.Amount.BigInt(), avgUbtPrice)
+
+		// TODO: Ognjen - remove logging if obsolete after implementation
+		a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
+			"nonce", fmt.Sprint(claim.GetEventNonce()),
+			"deposited ubt amount", fmt.Sprint(claim.Amount),
+			"average ubt price", fmt.Sprint(avgUbtPrice.String()),
+			"amount of worktokens", fmt.Sprint(amountOfWorkTokensToSend),
+		)
+
+		coins := sdk.Coins{sdk.NewCoin(baseledgercommon.WorkTokenDenom, sdk.NewIntFromBigInt(amountOfWorkTokensToSend))}
 
 		// TODO: Skos - what is impossible amount? i think we can keep this check just in case even though conversion should stop it
 		// Make sure that users are not bridging an impossible amount
 		prevSupply := a.bankKeeper.GetSupply(ctx, baseledgercommon.WorkTokenDenom)
-		newSupply := new(big.Int).Add(prevSupply.Amount.BigInt(), amountOfWorkTokensToSend.BigInt())
+		newSupply := new(big.Int).Add(prevSupply.Amount.BigInt(), amountOfWorkTokensToSend)
 		if newSupply.BitLen() > 256 { // new supply overflows uint256
 			a.keeper.Logger(ctx).Error("Deposit Overflow",
 				"claim type", claim.GetType(),
@@ -129,7 +146,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
 				"deposited ubt amount", fmt.Sprint(claim.Amount),
-				"average ubt price", fmt.Sprint(att.AvgUbtPrice.String()),
+				"average ubt price", fmt.Sprint(avgUbtPrice.String()),
 				"amount of worktokens", fmt.Sprint(amountOfWorkTokensToSend),
 			)
 

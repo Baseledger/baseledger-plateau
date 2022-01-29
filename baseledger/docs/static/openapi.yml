@@ -207,8 +207,6 @@ paths:
                       type: array
                       items:
                         type: string
-                    avgUbtPrice:
-                      type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14181,8 +14179,6 @@ definitions:
         type: array
         items:
           type: string
-      avgUbtPrice:
-        type: string
   Baseledger.baseledger.bridge.MsgSetOrchestratorAddressResponse:
     type: object
   Baseledger.baseledger.bridge.MsgUbtDepositedClaimResponse:
@@ -14380,8 +14376,6 @@ definitions:
               type: array
               items:
                 type: string
-            avgUbtPrice:
-              type: string
   Baseledger.baseledger.bridge.QueryDelegateKeysByEthAddressResponse:
     type: object
     properties:

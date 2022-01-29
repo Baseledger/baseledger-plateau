@@ -54,12 +54,11 @@ func (ClaimType) EnumDescriptor() ([]byte, []int) {
 }
 
 type Attestation struct {
-	Observed    bool                                   `protobuf:"varint,1,opt,name=observed,proto3" json:"observed,omitempty"`
-	Votes       []string                               `protobuf:"bytes,2,rep,name=votes,proto3" json:"votes,omitempty"`
-	Height      uint64                                 `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
-	Claim       *types.Any                             `protobuf:"bytes,4,opt,name=claim,proto3" json:"claim,omitempty"`
-	UbtPrices   []string                               `protobuf:"bytes,5,rep,name=ubtPrices,proto3" json:"ubtPrices,omitempty"`
-	AvgUbtPrice github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,6,opt,name=avgUbtPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"avgUbtPrice"`
+	Observed  bool                                     `protobuf:"varint,1,opt,name=observed,proto3" json:"observed,omitempty"`
+	Votes     []string                                 `protobuf:"bytes,2,rep,name=votes,proto3" json:"votes,omitempty"`
+	Height    uint64                                   `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
+	Claim     *types.Any                               `protobuf:"bytes,4,opt,name=claim,proto3" json:"claim,omitempty"`
+	UbtPrices []github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,5,rep,name=ubtPrices,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"ubtPrices"`
 }
 
 func (m *Attestation) Reset()         { *m = Attestation{} }
@@ -123,13 +122,6 @@ func (m *Attestation) GetClaim() *types.Any {
 	return nil
 }
 
-func (m *Attestation) GetUbtPrices() []string {
-	if m != nil {
-		return m.UbtPrices
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterEnum("Baseledger.baseledger.bridge.ClaimType", ClaimType_name, ClaimType_value)
 	proto.RegisterType((*Attestation)(nil), "Baseledger.baseledger.bridge.Attestation")
@@ -188,21 +180,16 @@ func (m *Attestation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	{
-		size := m.AvgUbtPrice.Size()
-		i -= size
-		if _, err := m.AvgUbtPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintAttestation(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x32
 	if len(m.UbtPrices) > 0 {
 		for iNdEx := len(m.UbtPrices) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.UbtPrices[iNdEx])
-			copy(dAtA[i:], m.UbtPrices[iNdEx])
-			i = encodeVarintAttestation(dAtA, i, uint64(len(m.UbtPrices[iNdEx])))
+			{
+				size := m.UbtPrices[iNdEx].Size()
+				i -= size
+				if _, err := m.UbtPrices[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+					return 0, err
+				}
+				i = encodeVarintAttestation(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x2a
 		}
@@ -280,13 +267,11 @@ func (m *Attestation) Size() (n int) {
 		n += 1 + l + sovAttestation(uint64(l))
 	}
 	if len(m.UbtPrices) > 0 {
-		for _, s := range m.UbtPrices {
-			l = len(s)
+		for _, e := range m.UbtPrices {
+			l = e.Size()
 			n += 1 + l + sovAttestation(uint64(l))
 		}
 	}
-	l = m.AvgUbtPrice.Size()
-	n += 1 + l + sovAttestation(uint64(l))
 	return n
 }
 
@@ -462,39 +447,9 @@ func (m *Attestation) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UbtPrices = append(m.UbtPrices, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AvgUbtPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAttestation
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAttestation
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthAttestation
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.AvgUbtPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			var v github_com_cosmos_cosmos_sdk_types.Int
+			m.UbtPrices = append(m.UbtPrices, v)
+			if err := m.UbtPrices[len(m.UbtPrices)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
