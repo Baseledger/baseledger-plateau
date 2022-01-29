@@ -22,14 +22,19 @@ var (
 	// LastObservedEventNonceKey indexes the latest event nonce
 	LastObservedEventNonceKey = "LastObservedEventNonceKey"
 
-	// EthAddressByValidatorKey indexes cosmos validator account addresses
-	// i.e. gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm
-	EthAddressByValidatorKey = "EthAddressValidatorKey"
-
-	// ValidatorByEthAddressKey indexes ethereum addresses
-	// i.e. 0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B
-	ValidatorByEthAddressKey = "ValidatorByEthAddressKey"
+	// KeyOrchestratorAddress indexes the validator keys for an orchestrator
+	KeyOrchestratorAddress = "KeyOrchestratorAddress"
 )
+
+// GetOrchestratorAddressKey returns the following key format
+// prefix
+// [0xe8][gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
+func GetOrchestratorAddressKey(orc sdk.AccAddress) string {
+	if err := sdk.VerifyAddressFormat(orc); err != nil {
+		panic(sdkerrors.Wrap(err, "invalid orchestrator address"))
+	}
+	return KeyOrchestratorAddress + string(orc.Bytes())
+}
 
 // GetAttestationKey returns the following key format
 // prefix     nonce                             claim-details-hash
@@ -55,23 +60,6 @@ func GetLastEventNonceByValidatorKey(validator sdk.ValAddress) string {
 		panic(sdkerrors.Wrap(err, "invalid validator address"))
 	}
 	return LastEventNonceByValidatorKey + string(validator.Bytes())
-}
-
-// GetEthAddressByValidatorKey returns the following key format
-// prefix              cosmos-validator
-// [0x0][gravityvaloper1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm]
-func GetEthAddressByValidatorKey(validator sdk.ValAddress) string {
-	if err := sdk.VerifyAddressFormat(validator); err != nil {
-		panic(sdkerrors.Wrap(err, "invalid validator address"))
-	}
-	return EthAddressByValidatorKey + string(validator.Bytes())
-}
-
-// GetValidatorByEthAddressKey returns the following key format
-// prefix              cosmos-validator
-// [0xf9][0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B]
-func GetValidatorByEthAddressKey(ethAddress EthAddress) string {
-	return ValidatorByEthAddressKey + string([]byte(ethAddress.GetAddress()))
 }
 
 func convertByteArrToString(value []byte) string {
