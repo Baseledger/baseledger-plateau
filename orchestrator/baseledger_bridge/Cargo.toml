@@ -1,20 +1,15 @@
 [package]
-name = "gbt"
+name = "baseledger_bridge"
 version = "1.0.10"
-authors = ["Justin Kilpatrick <justin@althea.net>"]
 edition = "2018"
 license = "Apache-2.0"
-description = "Gravity Bridge Tools. User tooling for the Althea Ethereum <=> Cosmos Gravtiy bridge"
-repository = "https://github.com/Gravity-Bridge/Gravity-Bridge"
-homepage = "https://gravitybridge.althea.net/"
-
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 utils = {path = "../utils"}
 baseledger_proto = {path = "../baseledger_proto/"}
-orchestrator = {path = "../orchestrator/"}
+ethereum_oracle = {path = "../ethereum_oracle/"}
 
 deep_space = "2.8"
 serde_derive = "1.0"

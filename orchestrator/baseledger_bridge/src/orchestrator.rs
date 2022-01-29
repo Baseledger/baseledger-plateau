@@ -6,10 +6,11 @@ use utils::connection_prep::{
     check_validator_address, wait_for_cosmos_node_ready,
 };
 use utils::connection_prep::{create_rpc_connections};
-use orchestrator::main_loop::orchestrator_main_loop;
-use orchestrator::main_loop::{ETH_ORACLE_LOOP_SPEED};
+use ethereum_oracle::main_loop::orchestrator_main_loop;
+use ethereum_oracle::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;
 use std::process::exit;
+use utils::connection_prep::check_for_fee;
 
 pub async fn orchestrator(
     args: OrchestratorOpts,
@@ -33,9 +34,9 @@ pub async fn orchestrator(
         }
         if k.is_none() {
             error!("You must specify an Orchestrator key phrase!");
-            error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
-            error!("To run from the command line, with no key storage use 'gbt orchestrator --cosmos-phrase \"your phrase\"' ");
-            error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
+            error!("To set an already registered key use 'baseledger_bridge keys set-orchestrator-key --phrase \"your phrase\"`");
+            error!("To run from the command line, with no key storage use 'baseledger_bridge orchestrator --cosmos-phrase \"your phrase\"' ");
+            error!("If you have not already generated a key 'baseledger_bridge keys register-orchestrator-address' will generate one for you");
             exit(1);
         }
         k.unwrap()
@@ -58,7 +59,7 @@ pub async fn orchestrator(
     // let web3 = connections.web3.clone().unwrap();
 
     let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();
-    info!("Starting Gravity Validator companion binary Relayer + Oracle + Eth Signer");
+    info!("Starting Baseledger bridge");
     info!(
         "Cosmos Address {}",
         public_cosmos_key
@@ -77,33 +78,15 @@ pub async fn orchestrator(
     )
     .await;
 
-    // TODO skos: this is unsafe to do, but we will pass contract address as args for now
-    let contract_address = args.baseledger_contract_address.unwrap();
-    // TODO skos: check if else branch here is needed...
     // check if we actually have the promised balance of tokens to pay fees
-    // check_for_fee(&fee, public_cosmos_key, &contact).await;
-    // check_for_eth(public_eth_key, &web3).await;
+    check_for_fee(&fee, public_cosmos_key, &contact).await;
 
-    // get the gravity contract address, if not provided
-    // let contract_address = if let Some(c) = args.baseledger_contract_address {
-    //     c
-    // } else {
-    //     let params = get_gravity_params(&mut grpc).await.unwrap();
-    //     let c = params.bridge_ethereum_address.parse();
-    //     match c {
-    //         Ok(v) => {
-    //             if v == *ZERO_ADDRESS {
-    //                 error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
-    //                 exit(1);
-    //             }
-    //             c.unwrap()
-    //         }
-    //         Err(_) => {
-    //             error!("The Gravity address is not yet set as a chain parameter! You must specify --gravity-contract-address");
-    //             exit(1);
-    //         }
-    //     }
-    // };
+    let contract_address = if let Some(c) = args.baseledger_contract_address {
+        c
+    } else {
+        error!("The Baseledger contract address is not yet set as a chain parameter! You must specify --baseledger-contract-address");
+        exit(1);
+    };
 
     orchestrator_main_loop(
         cosmos_key,

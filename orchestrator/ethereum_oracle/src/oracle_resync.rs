@@ -2,7 +2,7 @@ use utils::types::ValidatorPowerChangeEvent;
 use clarity::{Address, Uint256};
 use utils::cosmos::utils::get_last_event_nonce_with_retry;
 use deep_space::address::Address as CosmosAddress;
-use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::get_with_retry::get_block_number_with_retry;
 use utils::get_with_retry::RETRY_TIME;
 use utils::types::event_signatures::*;
@@ -14,7 +14,7 @@ use web30::client::Web3;
 /// This function retrieves the last event nonce this oracle has relayed to Cosmos
 /// it then uses the Ethereum indexes to determine what block the last entry
 pub async fn get_last_checked_block(
-    grpc_client: GravityQueryClient<Channel>,
+    grpc_client: BaseledgerQueryClient<Channel>,
     our_cosmos_address: CosmosAddress,
     prefix: String,
     baseledger_contract_address: Address,
@@ -111,10 +111,10 @@ pub async fn get_last_checked_block(
         current_block = end_search;
     }
 
-    // TODO skos: we are going to need some mechanism for this, for example, deploying our contract should throw some event or something like this
+    // TODO BAS-94: we are going to need some mechanism for this, for example, deploying our contract should throw some event or something like this
     // in order for this to work without panicing i will just return latest current block here
     latest_block.clone()
-    // panic!("You have reached the end of block history without finding the Gravity contract deploy event! You must have the wrong contract address!");
+    // panic!("You have reached the end of block history without finding the Baseledger contract deploy event! You must have the wrong contract address!");
 }
 
 fn upcast(input: u64) -> Uint256 {

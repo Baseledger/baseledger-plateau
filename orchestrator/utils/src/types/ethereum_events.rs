@@ -1,4 +1,4 @@
-//! This file parses the Gravity contract ethereum events. Note that there is no Ethereum ABI unpacking implementation. Instead each event
+//! This file parses the Baseledger contract ethereum events. Note that there is no Ethereum ABI unpacking implementation. Instead each event
 //! is parsed directly from it's binary representation. This is technical debt within this implementation. It's quite easy to parse any
 //! individual event manually but a generic decoder can be quite challenging to implement. A proper implementation would probably closely
 //! mirror Serde and perhaps even become a serde crate for Ethereum ABI decoding
@@ -19,7 +19,7 @@ use web30::types::Log;
 const ONE_MEGABYTE: usize = 1000usize.pow(3);
 
 /// A parsed struct representing the Ethereum event fired when someone makes a deposit
-/// on the Gravity contract
+/// on the Baseledger contract
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
 pub struct SendToCosmosEvent {
     /// The token contract address for the deposit
@@ -56,7 +56,7 @@ struct SendToCosmosEventData {
 }
 
 /// A parsed struct representing the Ethereum event fired when someone makes a deposit
-/// on the Gravity contract
+/// on the Baseledger contract
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
 pub struct ValidatorPowerChangeEvent {
     /// The token contract address for the deposit
