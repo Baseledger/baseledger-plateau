@@ -36,7 +36,7 @@ pub async fn orchestrator_main_loop(
     web3: Web3,
     contact: Contact,
     grpc_client: GravityQueryClient<Channel>,
-    gravity_contract_address: EthAddress,
+    baseledger_contract_address: EthAddress,
     user_fee_amount: Coin,
 ) {
     let fee = user_fee_amount;
@@ -46,7 +46,7 @@ pub async fn orchestrator_main_loop(
         web3.clone(),
         contact.clone(),
         grpc_client.clone(),
-        gravity_contract_address,
+        baseledger_contract_address,
         fee.clone(),
     ).await;
 }
@@ -60,7 +60,7 @@ pub async fn eth_oracle_main_loop(
     web3: Web3,
     contact: Contact,
     grpc_client: GravityQueryClient<Channel>,
-    gravity_contract_address: EthAddress,
+    baseledger_contract_address: EthAddress,
     fee: Coin,
 ) {
     let our_cosmos_address = cosmos_key.to_address(&contact.get_prefix()).unwrap();
@@ -70,7 +70,7 @@ pub async fn eth_oracle_main_loop(
         grpc_client.clone(),
         our_cosmos_address,
         contact.get_prefix(),
-        gravity_contract_address,
+        baseledger_contract_address,
         &long_timeout_web30,
     )
     .await;
@@ -127,7 +127,7 @@ pub async fn eth_oracle_main_loop(
             &web3,
             &contact,
             &mut grpc_client,
-            gravity_contract_address,
+            baseledger_contract_address,
             cosmos_key,
             fee.clone(),
             last_checked_block.clone(),
@@ -147,7 +147,7 @@ pub async fn eth_oracle_main_loop(
                         grpc_client.clone(),
                         our_cosmos_address,
                         contact.get_prefix(),
-                        gravity_contract_address,
+                        baseledger_contract_address,
                         &web3,
                     )
                     .await;

@@ -36,7 +36,7 @@ pub async fn check_for_events(
     web3: &Web3,
     contact: &Contact,
     grpc_client: &mut GravityQueryClient<Channel>,
-    gravity_contract_address: EthAddress,
+    baseledger_contract_address: EthAddress,
     our_private_key: CosmosPrivateKey,
     fee: Coin,
     starting_block: Uint256,
@@ -50,7 +50,7 @@ pub async fn check_for_events(
         .check_for_events(
             starting_block.clone(),
             Some(latest_block.clone()),
-            vec![gravity_contract_address],
+            vec![baseledger_contract_address],
             vec![SENT_TO_COSMOS_EVENT_SIG],
         )
         .await;
@@ -60,7 +60,7 @@ pub async fn check_for_events(
         .check_for_events(
             starting_block.clone(),
             Some(latest_block.clone()),
-            vec![gravity_contract_address],
+            vec![baseledger_contract_address],
             vec![VALIDATOR_POWER_CHANGE_EVENT_SIG],
         )
         .await;
