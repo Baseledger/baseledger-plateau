@@ -18,8 +18,8 @@ service Query {
   }
 
 // Queries a list of DelegateKeysByOrchestratorAddress items.
-	rpc DelegateKeysByOrchestratorAddress(QueryDelegateKeysByOrchestratorAddressRequest) returns (QueryDelegateKeysByOrchestratorAddressResponse) {
-		option (google.api.http).get = "/Baseledger/baseledger/bridge/delegate_keys_by_orchestrator_address/{orchestratorAddress}";
+	rpc ValidatorAddressByOrchestratorAddress(QueryValidatorAddressByOrchestratorAddressRequest) returns (QueryValidatorAddressByOrchestratorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledger/bridge/validator_address_by_orchestrator_address/{orchestratorAddress}";
 	}
 
 // Queries a list of LastEventNonceByAddress items.
@@ -44,11 +44,11 @@ message QueryParamsResponse {
   Params params = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryDelegateKeysByOrchestratorAddressRequest {
+message QueryValidatorAddressByOrchestratorAddressRequest {
   string orchestratorAddress = 1;
 }
 
-message QueryDelegateKeysByOrchestratorAddressResponse {
+message QueryValidatorAddressByOrchestratorAddressResponse {
   string validatorAddress = 1;
 }
 

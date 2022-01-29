@@ -3,7 +3,7 @@ use crate::config::config_exists;
 use crate::config::load_keys;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use gravity_utils::connection_prep::{
-    check_delegate_addresses, wait_for_cosmos_node_ready,
+    check_validator_address, wait_for_cosmos_node_ready,
 };
 use gravity_utils::connection_prep::{create_rpc_connections};
 use orchestrator::main_loop::orchestrator_main_loop;
@@ -70,7 +70,7 @@ pub async fn orchestrator(
     wait_for_cosmos_node_ready(&contact).await;
 
     // check if the delegate addresses are correctly configured
-    check_delegate_addresses(
+    check_validator_address(
         &mut grpc,
         public_cosmos_key,
         &contact.get_prefix(),

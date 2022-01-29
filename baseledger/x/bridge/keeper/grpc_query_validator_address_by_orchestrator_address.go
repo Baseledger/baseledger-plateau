@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) DelegateKeysByOrchestratorAddress(goCtx context.Context, req *types.QueryDelegateKeysByOrchestratorAddressRequest) (*types.QueryDelegateKeysByOrchestratorAddressResponse, error) {
+func (k Keeper) ValidatorAddressByOrchestratorAddress(goCtx context.Context, req *types.QueryValidatorAddressByOrchestratorAddressRequest) (*types.QueryValidatorAddressByOrchestratorAddressResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -30,9 +30,9 @@ func (k Keeper) DelegateKeysByOrchestratorAddress(goCtx context.Context, req *ty
 			panic("Invalid orchestrator addr in store!")
 		}
 		if reqOrchestrator.Equals(keyOrchestrator) {
-			return &types.QueryDelegateKeysByOrchestratorAddressResponse{ValidatorAddress: key.Validator}, nil
+			return &types.QueryValidatorAddressByOrchestratorAddressResponse{ValidatorAddress: key.Validator}, nil
 		}
 
 	}
-	return nil, sdkerrors.Wrap(errors.New("Could not find keys by orchestrator address"), "No validator")
+	return nil, sdkerrors.Wrap(errors.New("Could not find validator address by orchestrator address"), "No validator")
 }
