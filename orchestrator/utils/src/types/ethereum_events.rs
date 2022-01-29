@@ -7,7 +7,7 @@
 // TODO this file needs static assertions that prevent it from compiling on 16 bit systems.
 // we assume a system bit width of at least 32
 
-use crate::error::GravityError;
+use crate::error::OrchestratorError;
 use clarity::Address as EthAddress;
 use deep_space::utils::bytes_to_hex_str;
 use deep_space::Address as CosmosAddress;
@@ -93,21 +93,21 @@ struct ValidatorPowerChangeEventData {
 }
 
 impl SendToCosmosEvent {
-    pub fn from_log(input: &Log) -> Result<SendToCosmosEvent, GravityError> {
+    pub fn from_log(input: &Log) -> Result<SendToCosmosEvent, OrchestratorError> {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
             let erc20 = EthAddress::from_slice(&erc20_data[12..32])?;
             let sender = EthAddress::from_slice(&sender_data[12..32])?;
             let block_height = if let Some(bn) = input.block_number.clone() {
                 if bn > u64::MAX.into() {
-                    return Err(GravityError::InvalidEventLogError(
+                    return Err(OrchestratorError::InvalidEventLogError(
                         "Block height overflow! probably incorrect parsing".to_string(),
                     ));
                 } else {
                     bn
                 }
             } else {
-                return Err(GravityError::InvalidEventLogError(
+                return Err(OrchestratorError::InvalidEventLogError(
                     "Log does not have block number, we only search logs already in blocks?"
                         .to_string(),
                 ));
@@ -115,7 +115,7 @@ impl SendToCosmosEvent {
 
             let data = SendToCosmosEvent::decode_data_bytes(&input.data)?;
             if data.event_nonce > u64::MAX.into() || block_height > u64::MAX.into() {
-                Err(GravityError::InvalidEventLogError(
+                Err(OrchestratorError::InvalidEventLogError(
                     "Event nonce overflow, probably incorrect parsing".to_string(),
                 ))
             } else {
@@ -142,14 +142,14 @@ impl SendToCosmosEvent {
                 })
             }
         } else {
-            Err(GravityError::InvalidEventLogError(
+            Err(OrchestratorError::InvalidEventLogError(
                 "Too few topics".to_string(),
             ))
         }
     }
-    fn decode_data_bytes(data: &[u8]) -> Result<SendToCosmosEventData, GravityError> {
+    fn decode_data_bytes(data: &[u8]) -> Result<SendToCosmosEventData, OrchestratorError> {
         if data.len() < 4 * 32 {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "too short for SendToCosmosEventData".to_string(),
             ));
         }
@@ -164,7 +164,7 @@ impl SendToCosmosEvent {
             Uint256::from_bytes_be(&data[destination_str_len_start..destination_str_len_end]);
 
         if destination_str_len > u32::MAX.into() {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "denom length overflow, probably incorrect parsing".to_string(),
             ));
         }
@@ -174,7 +174,7 @@ impl SendToCosmosEvent {
         let destination_str_end = destination_str_start + destination_str_len;
 
         if data.len() < destination_str_end {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "Incorrect length for dynamic data".to_string(),
             ));
         }
@@ -212,7 +212,7 @@ impl SendToCosmosEvent {
             })
         }
     }
-    pub fn from_logs(input: &[Log]) -> Result<Vec<SendToCosmosEvent>, GravityError> {
+    pub fn from_logs(input: &[Log]) -> Result<Vec<SendToCosmosEvent>, OrchestratorError> {
         let mut res = Vec::new();
         for item in input {
             res.push(SendToCosmosEvent::from_log(item)?);
@@ -233,21 +233,21 @@ impl SendToCosmosEvent {
 }
 
 impl ValidatorPowerChangeEvent {
-    pub fn from_log(input: &Log) -> Result<ValidatorPowerChangeEvent, GravityError> {
+    pub fn from_log(input: &Log) -> Result<ValidatorPowerChangeEvent, OrchestratorError> {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
             let erc20 = EthAddress::from_slice(&erc20_data[12..32])?;
             let sender = EthAddress::from_slice(&sender_data[12..32])?;
             let block_height = if let Some(bn) = input.block_number.clone() {
                 if bn > u64::MAX.into() {
-                    return Err(GravityError::InvalidEventLogError(
+                    return Err(OrchestratorError::InvalidEventLogError(
                         "Block height overflow! probably incorrect parsing".to_string(),
                     ));
                 } else {
                     bn
                 }
             } else {
-                return Err(GravityError::InvalidEventLogError(
+                return Err(OrchestratorError::InvalidEventLogError(
                     "Log does not have block number, we only search logs already in blocks?"
                         .to_string(),
                 ));
@@ -255,7 +255,7 @@ impl ValidatorPowerChangeEvent {
 
             let data = ValidatorPowerChangeEvent::decode_data_bytes(&input.data)?;
             if data.event_nonce > u64::MAX.into() || block_height > u64::MAX.into() {
-                Err(GravityError::InvalidEventLogError(
+                Err(OrchestratorError::InvalidEventLogError(
                     "Event nonce overflow, probably incorrect parsing".to_string(),
                 ))
             } else {
@@ -282,14 +282,14 @@ impl ValidatorPowerChangeEvent {
                 })
             }
         } else {
-            Err(GravityError::InvalidEventLogError(
+            Err(OrchestratorError::InvalidEventLogError(
                 "Too few topics".to_string(),
             ))
         }
     }
-    fn decode_data_bytes(data: &[u8]) -> Result<ValidatorPowerChangeEventData, GravityError> {
+    fn decode_data_bytes(data: &[u8]) -> Result<ValidatorPowerChangeEventData, OrchestratorError> {
         if data.len() < 4 * 32 {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "too short for ValidatorPowerChangeEventData".to_string(),
             ));
         }
@@ -304,7 +304,7 @@ impl ValidatorPowerChangeEvent {
             Uint256::from_bytes_be(&data[destination_str_len_start..destination_str_len_end]);
 
         if destination_str_len > u32::MAX.into() {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "denom length overflow, probably incorrect parsing".to_string(),
             ));
         }
@@ -314,7 +314,7 @@ impl ValidatorPowerChangeEvent {
         let destination_str_end = destination_str_start + destination_str_len;
 
         if data.len() < destination_str_end {
-            return Err(GravityError::InvalidEventLogError(
+            return Err(OrchestratorError::InvalidEventLogError(
                 "Incorrect length for dynamic data".to_string(),
             ));
         }
@@ -352,7 +352,7 @@ impl ValidatorPowerChangeEvent {
             })
         }
     }
-    pub fn from_logs(input: &[Log]) -> Result<Vec<ValidatorPowerChangeEvent>, GravityError> {
+    pub fn from_logs(input: &[Log]) -> Result<Vec<ValidatorPowerChangeEvent>, OrchestratorError> {
         let mut res = Vec::new();
         for item in input {
             res.push(ValidatorPowerChangeEvent::from_log(item)?);

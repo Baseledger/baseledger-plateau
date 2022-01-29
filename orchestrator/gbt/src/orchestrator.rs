@@ -2,10 +2,10 @@ use crate::args::OrchestratorOpts;
 use crate::config::config_exists;
 use crate::config::load_keys;
 use deep_space::PrivateKey as CosmosPrivateKey;
-use gravity_utils::connection_prep::{
+use utils::connection_prep::{
     check_validator_address, wait_for_cosmos_node_ready,
 };
-use gravity_utils::connection_prep::{create_rpc_connections};
+use utils::connection_prep::{create_rpc_connections};
 use orchestrator::main_loop::orchestrator_main_loop;
 use orchestrator::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;

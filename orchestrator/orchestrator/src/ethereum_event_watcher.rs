@@ -1,21 +1,21 @@
 use clarity::{Address as EthAddress, Uint256};
 use web30::client::Web3;
 use web30::jsonrpc::error::Web3Error;
-use gravity_utils::get_with_retry::get_net_version_with_retry;
-use gravity_utils::{
-    error::GravityError,
+use utils::get_with_retry::get_net_version_with_retry;
+use utils::{
+    error::OrchestratorError,
     types::{
         SendToCosmosEvent,
         ValidatorPowerChangeEvent,
     },
 };
-use gravity_utils::get_with_retry::get_block_number_with_retry;
-use gravity_utils::types::event_signatures::*;
+use utils::get_with_retry::get_block_number_with_retry;
+use utils::types::event_signatures::*;
 use deep_space::Contact;
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
 use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
-use cosmos_gravity::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
+use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
 use serde_json::Value;
 
@@ -41,7 +41,7 @@ pub async fn check_for_events(
     fee: Coin,
     starting_block: Uint256,
     block_delay: Uint256,
-) -> Result<CheckedNonces, GravityError> {
+) -> Result<CheckedNonces, OrchestratorError> {
     let our_cosmos_address = our_private_key.to_address(&contact.get_prefix()).unwrap();
     let latest_block = get_block_number_with_retry(web3).await;
     let latest_block = latest_block - block_delay;
@@ -132,7 +132,7 @@ pub async fn check_for_events(
             // since we can't actually trust that the above txresponse is correct we have to check here
             // we may be able to trust the tx response post grpc
             if new_event_nonce == last_event_nonce.into() {
-                return Err(GravityError::InvalidBridgeStateError(
+                return Err(OrchestratorError::InvalidBridgeStateError(
                     format!("Claims did not process, trying to update but still on {}, trying again in a moment, check txhash {} for errors", last_event_nonce, res.txhash),
                 ));
             } else {
@@ -145,7 +145,7 @@ pub async fn check_for_events(
         })
     } else {
         error!("Failed to get events");
-        Err(GravityError::EthereumRestError(Web3Error::BadResponse(
+        Err(OrchestratorError::EthereumRestError(Web3Error::BadResponse(
             "Failed to get logs!".to_string(),
         )))
     }

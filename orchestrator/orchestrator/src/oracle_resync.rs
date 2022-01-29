@@ -1,12 +1,12 @@
-use gravity_utils::types::ValidatorPowerChangeEvent;
+use utils::types::ValidatorPowerChangeEvent;
 use clarity::{Address, Uint256};
-use cosmos_gravity::utils::get_last_event_nonce_with_retry;
+use utils::cosmos::utils::get_last_event_nonce_with_retry;
 use deep_space::address::Address as CosmosAddress;
 use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
-use gravity_utils::get_with_retry::get_block_number_with_retry;
-use gravity_utils::get_with_retry::RETRY_TIME;
-use gravity_utils::types::event_signatures::*;
-use gravity_utils::types::{SendToCosmosEvent};
+use utils::get_with_retry::get_block_number_with_retry;
+use utils::get_with_retry::RETRY_TIME;
+use utils::types::event_signatures::*;
+use utils::types::{SendToCosmosEvent};
 use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use web30::client::Web3;
