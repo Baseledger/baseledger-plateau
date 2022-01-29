@@ -2,18 +2,16 @@ package types
 
 import (
 	"encoding/binary"
-	"errors"
 	fmt "fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // EthereumClaim represents a claim on ethereum state
 type EthereumClaim interface {
-	// All Ethereum claims that we relay from the Gravity contract and into the module
+	// All Ethereum claims that we relay from the Baseledger contract and into the module
 	// have a nonce that is monotonically increasing and unique, since this nonce is
 	// issued by the Ethereum contract it is immutable and must be agreed on by all validators
 	// any disagreement on what claim goes to what nonce means someone is lying.
@@ -52,29 +50,6 @@ func UInt64Bytes(n uint64) []byte {
 // UInt64FromBytes create uint from binary big endian representation
 func UInt64FromBytes(s []byte) uint64 {
 	return binary.BigEndian.Uint64(s)
-}
-
-// IBCAddressFromBech32 decodes an IBC-compatible Address from a Bech32
-// encoded string
-// TODO: This is very similar to the sdk's GetFromBech32 method, but makes no
-// assertions about the bech32 prefix (aka "human readable part"), when Gravity
-// IBC Forwarding is completed, this function should return invalid prefix errors
-func IBCAddressFromBech32(bech32str string) ([]byte, error) {
-	if len(bech32str) == 0 {
-		return nil, errors.New("Bech32 empty")
-	}
-
-	_, bz, err := bech32.DecodeAndConvert(bech32str)
-	if err != nil {
-		return nil, err
-	}
-
-	err = sdk.VerifyAddressFormat(bz)
-	if err != nil {
-		return nil, err
-	}
-
-	return bz, nil
 }
 
 // GetPrefixFromBech32 returns the human readable part of a bech32 string (excluding the 1 byte)
