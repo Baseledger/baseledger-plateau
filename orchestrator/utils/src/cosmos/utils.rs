@@ -1,6 +1,6 @@
 use crate::cosmos::query::get_last_event_nonce_for_validator;
 use deep_space::Address as CosmosAddress;
-use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use crate::get_with_retry::RETRY_TIME;
 use tokio::time::sleep;
 use tonic::transport::Channel;
@@ -9,7 +9,7 @@ use clarity::Uint256;
 
 /// gets the Cosmos last event nonce, no matter how long it takes.
 pub async fn get_last_event_nonce_with_retry(
-    client: &mut GravityQueryClient<Channel>,
+    client: &mut BaseledgerQueryClient<Channel>,
     our_cosmos_address: CosmosAddress,
     prefix: String,
 ) -> u64 {

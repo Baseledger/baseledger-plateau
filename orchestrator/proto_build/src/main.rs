@@ -38,7 +38,7 @@ const GRPC_CLIENT_ATTRIBUTES: &[&str] = &[
 const COSMOS_SDK_PROTO_REGEX: &str = "(super::)+cosmos";
 
 /// A temporary directory for proto building
-const TMP_PATH: &str = "/tmp/gravity/";
+const TMP_PATH: &str = "/tmp/baseledger/";
 /// the output directory
 const OUT_PATH: &str = "../baseledger_proto/src/prost/";
 

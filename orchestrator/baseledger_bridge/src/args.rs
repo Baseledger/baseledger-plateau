@@ -1,15 +1,11 @@
-//! Command line argument definitions for Gravity bridge tools
-//! See the clap documentation for how exactly this works, note that doc comments are displayed to the user
-
 use clap::Parser;
 use clarity::Address as EthAddress;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use deep_space::{Coin};
 use std::path::PathBuf;
 
-/// Gravity Bridge tools (gbt) provides tools for interacting with the Althea Gravity bridge for Cosmos based blockchains.
 #[derive(Parser)]
-#[clap(version = env!("CARGO_PKG_VERSION"), author = "Justin Kilpatrick <justin@althea.net>")]
+#[clap(version = env!("CARGO_PKG_VERSION"))]
 pub struct Opts {
     /// Increase the logging verbosity
     #[clap(short, long)]
@@ -17,8 +13,6 @@ pub struct Opts {
     /// Decrease the logging verbosity
     #[clap(short, long)]
     pub quiet: bool,
-    /// The home directory for Gravity Bridge Tools, by default
-    /// $HOME/.althea_gbt/
     #[clap(short, long, parse(from_str))]
     pub home: Option<PathBuf>,
     /// Set the address prefix for the Cosmos chain
@@ -69,9 +63,7 @@ pub enum KeysSubcommand {
     Show,
 }
 
-/// Register delegate keys for the Gravity Orchestrator.
-/// this is a mandatory part of setting up a Gravity Orchestrator
-/// If you would like sign using a ledger see `cosmos tx gravity set-orchestrator-address` instead
+/// Register cosmos key for orchestrator
 #[derive(Parser)]
 pub struct RegisterOrchestratorAddressOpts {
     /// The Cosmos private key of the validator

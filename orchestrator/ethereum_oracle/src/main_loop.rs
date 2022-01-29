@@ -1,6 +1,4 @@
-//! This file contains the main loops for two distinct functions that just happen to reside int his same binary for ease of use. The Ethereum Signer and the Ethereum Oracle are both roles in Gravity
-//! that can only be run by a validator. This single binary the 'Orchestrator' runs not only these two rules but also the untrusted role of a relayer, that does not need any permissions and has it's
-//! own crate and binary so that anyone may run it.
+//! This file contains the main loop for ethereum oracle
 
 use crate::ethereum_event_watcher::get_block_delay;
 use crate::{ethereum_event_watcher::check_for_events, oracle_resync::get_last_checked_block};
@@ -8,7 +6,7 @@ use clarity::{address::Address as EthAddress, Uint256};
 use deep_space::Contact;
 use deep_space::{client::ChainStatus};
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
-use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use std::time::Duration;
 use std::time::Instant;
 use tokio::time::sleep as delay_for;
@@ -35,7 +33,7 @@ pub async fn orchestrator_main_loop(
     cosmos_key: CosmosPrivateKey,
     web3: Web3,
     contact: Contact,
-    grpc_client: GravityQueryClient<Channel>,
+    grpc_client: BaseledgerQueryClient<Channel>,
     baseledger_contract_address: EthAddress,
     user_fee_amount: Coin,
 ) {
@@ -59,7 +57,7 @@ pub async fn eth_oracle_main_loop(
     cosmos_key: CosmosPrivateKey,
     web3: Web3,
     contact: Contact,
-    grpc_client: GravityQueryClient<Channel>,
+    grpc_client: BaseledgerQueryClient<Channel>,
     baseledger_contract_address: EthAddress,
     fee: Coin,
 ) {

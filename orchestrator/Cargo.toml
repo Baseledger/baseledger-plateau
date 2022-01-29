@@ -1,6 +1,6 @@
 [workspace]
-members = ["orchestrator", "utils", "baseledger_proto", "proto_build", "gbt"]
-default-members = ["gbt"]
+members = ["ethereum_oracle", "utils", "baseledger_proto", "proto_build", "baseledger_bridge"]
+default-members = ["baseledger_bridge"]
 
 
 [patch.crates-io]
