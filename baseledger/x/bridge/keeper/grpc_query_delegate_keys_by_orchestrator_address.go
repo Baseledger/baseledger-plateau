@@ -34,5 +34,5 @@ func (k Keeper) DelegateKeysByOrchestratorAddress(goCtx context.Context, req *ty
 		}
 
 	}
-	return nil, sdkerrors.Wrap(errors.New("Could not find keys by eth address"), "No validator")
+	return nil, sdkerrors.Wrap(errors.New("Could not find keys by orchestrator address"), "No validator")
 }

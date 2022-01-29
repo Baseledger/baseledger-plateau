@@ -3,7 +3,6 @@ use deep_space::private_key::PrivateKey;
 use deep_space::Contact;
 use deep_space::Msg;
 use deep_space::{coin::Coin};
-use clarity::{Address as EthAddress};
 use deep_space::address::Address;
 use baseledger_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use baseledger_proto::baseledger::MsgUbtDepositedClaim;
@@ -24,7 +23,6 @@ pub const TIMEOUT: Duration = Duration::from_secs(60);
 /// not currently implemented
 pub async fn set_gravity_delegate_addresses(
     contact: &Contact,
-    delegate_eth_address: EthAddress,
     delegate_cosmos_address: Address,
     private_key: PrivateKey,
     fee: Coin,
@@ -43,7 +41,6 @@ pub async fn set_gravity_delegate_addresses(
     let msg_set_orch_address = MsgSetOrchestratorAddress {
         validator: our_valoper_address.to_string(),
         orchestrator: delegate_cosmos_address.to_string(),
-        eth_address: delegate_eth_address.to_string(),
     };
 
     let msg = Msg::new(

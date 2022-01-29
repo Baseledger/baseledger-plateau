@@ -1,7 +1,6 @@
 //! Handles configuration structs + saving and loading for Gravity bridge tools
 
 use crate::args::InitOpts;
-use clarity::PrivateKey as EthPrivateKey;
 use std::{
     fs::{self, create_dir},
     path::{Path, PathBuf},
@@ -23,7 +22,6 @@ pub const CONFIG_FOLDER: &str = ".gbt";
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Default)]
 pub struct KeyStorage {
     pub orchestrator_phrase: Option<String>,
-    pub ethereum_key: Option<EthPrivateKey>,
 }
 
 /// Checks if the user has setup their config environment
