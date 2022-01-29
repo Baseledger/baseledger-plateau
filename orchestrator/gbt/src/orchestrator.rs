@@ -19,7 +19,6 @@ pub async fn orchestrator(
     let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
     let ethereum_rpc = args.ethereum_rpc;
-    let ethereum_key = args.ethereum_key;
     let cosmos_key = args.cosmos_phrase;
 
     let cosmos_key = if let Some(k) = cosmos_key {
@@ -36,25 +35,6 @@ pub async fn orchestrator(
             error!("You must specify an Orchestrator key phrase!");
             error!("To set an already registered key use 'gbt keys set-orchestrator-key --phrase \"your phrase\"`");
             error!("To run from the command line, with no key storage use 'gbt orchestrator --cosmos-phrase \"your phrase\"' ");
-            error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
-            exit(1);
-        }
-        k.unwrap()
-    };
-    let ethereum_key = if let Some(k) = ethereum_key {
-        k
-    } else {
-        let mut k = None;
-        if config_exists(home_dir) {
-            let keys = load_keys(home_dir);
-            if let Some(stored_key) = keys.ethereum_key {
-                k = Some(stored_key)
-            }
-        }
-        if k.is_none() {
-            error!("You must specify an Ethereum key!");
-            error!("To set an already registered key use 'gbt keys set-ethereum-key -key \"eth private key\"`");
-            error!("To run from the command line, with no key storage use 'gbt orchestrator --ethereum-key your key' ");
             error!("If you have not already generated a key 'gbt keys register-orchestrator-address' will generate one for you");
             exit(1);
         }
@@ -77,12 +57,11 @@ pub async fn orchestrator(
     let contact = connections.contact.clone().unwrap();
     // let web3 = connections.web3.clone().unwrap();
 
-    let public_eth_key = ethereum_key.to_address();
     let public_cosmos_key = cosmos_key.to_address(&contact.get_prefix()).unwrap();
     info!("Starting Gravity Validator companion binary Relayer + Oracle + Eth Signer");
     info!(
-        "Ethereum Address: {} Cosmos Address {}",
-        public_eth_key, public_cosmos_key
+        "Cosmos Address {}",
+        public_cosmos_key
     );
 
     // check if the cosmos node is syncing, if so wait for it
@@ -93,21 +72,20 @@ pub async fn orchestrator(
     // check if the delegate addresses are correctly configured
     check_delegate_addresses(
         &mut grpc,
-        public_eth_key,
         public_cosmos_key,
         &contact.get_prefix(),
     )
     .await;
 
     // TODO skos: this is unsafe to do, but we will pass contract address as args for now
-    let contract_address = args.gravity_contract_address.unwrap();
+    let contract_address = args.baseledger_contract_address.unwrap();
     // TODO skos: check if else branch here is needed...
     // check if we actually have the promised balance of tokens to pay fees
     // check_for_fee(&fee, public_cosmos_key, &contact).await;
     // check_for_eth(public_eth_key, &web3).await;
 
     // get the gravity contract address, if not provided
-    // let contract_address = if let Some(c) = args.gravity_contract_address {
+    // let contract_address = if let Some(c) = args.baseledger_contract_address {
     //     c
     // } else {
     //     let params = get_gravity_params(&mut grpc).await.unwrap();

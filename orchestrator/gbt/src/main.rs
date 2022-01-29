@@ -12,7 +12,6 @@ use clap::Parser;
 use config::{get_home_dir};
 use env_logger::Env;
 use keys::register_orchestrator_address::register_orchestrator_address;
-use keys::set_eth_key;
 use keys::set_orchestrator_key;
 
 mod args;
@@ -46,9 +45,6 @@ async fn main() {
                 .await
             }
             KeysSubcommand::Show => show_keys(&home_dir, &address_prefix),
-            KeysSubcommand::SetEthereumKey(set_eth_key_opts) => {
-                set_eth_key(&home_dir, set_eth_key_opts)
-            }
             KeysSubcommand::SetOrchestratorKey(set_orch_key_opts) => {
                 set_orchestrator_key(&home_dir, set_orch_key_opts)
             }

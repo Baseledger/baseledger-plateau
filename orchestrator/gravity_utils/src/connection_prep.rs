@@ -2,13 +2,11 @@
 //! It's a common problem to have conflicts between ipv4 and ipv6 localhost and this module is first and foremost supposed to resolve that problem
 //! by trying more than one thing to handle potentially misconfigured inputs.
 
-use clarity::Address as EthAddress;
 use deep_space::error::CosmosGrpcError;
 use deep_space::Address as CosmosAddress;
 use deep_space::Contact;
 use deep_space::{client::ChainStatus, Coin};
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
-use baseledger_proto::baseledger::QueryDelegateKeysByEthAddressRequest;
 use baseledger_proto::baseledger::QueryDelegateKeysByOrchestratorAddressRequest;
 use std::process::exit;
 use std::time::Duration;
@@ -18,7 +16,6 @@ use url::Url;
 use web30::client::Web3;
 
 use crate::get_with_retry::get_balances_with_retry;
-use crate::get_with_retry::get_eth_balances_with_retry;
 
 pub struct Connections {
     pub web3: Option<Web3>,
@@ -235,93 +232,21 @@ pub async fn wait_for_cosmos_node_ready(contact: &Contact) {
 /// that both are registered and internally consistent.
 pub async fn check_delegate_addresses(
     client: &mut BaseledgerQueryClient<Channel>,
-    delegate_eth_address: EthAddress,
     delegate_orchestrator_address: CosmosAddress,
     prefix: &str,
 ) {
-    let eth_response = client
-        .delegate_keys_by_eth_address(QueryDelegateKeysByEthAddressRequest {
-            eth_address: delegate_eth_address.to_string(),
-        })
-        .await;
     let orchestrator_response = client
         .delegate_keys_by_orchestrator_address(QueryDelegateKeysByOrchestratorAddressRequest {
             orchestrator_address: delegate_orchestrator_address.to_bech32(prefix).unwrap(),
         })
         .await;
-    trace!("{:?} {:?}", eth_response, orchestrator_response);
-    match (eth_response, orchestrator_response) {
-        (Ok(e), Ok(o)) => {
-            let e = e.into_inner();
-            let o = o.into_inner();
-            let req_delegate_orchestrator_address: CosmosAddress =
-                e.orchestrator_address.parse().unwrap();
-            let req_delegate_eth_address: EthAddress = o.eth_address.parse().unwrap();
-            if req_delegate_eth_address != delegate_eth_address
-                && req_delegate_orchestrator_address != delegate_orchestrator_address
-            {
-                error!("Your Gravity Delegate addresses are both incorrect!");
-                error!("If you are getting this error you must have made at least two validators and mixed up the keys between them");
-                error!(
-                    "You provided {}  Correct Value {}",
-                    delegate_eth_address, req_delegate_eth_address
-                );
-                error!(
-                    "You provided {}  Correct Value {}",
-                    delegate_orchestrator_address, req_delegate_orchestrator_address
-                );
-                error!("In order to resolve this issue locate the key phrase and private key you registered for this validator and run the following commands");
-                error!("`gbt keys set-ethereum-key --key \"eth private key\"`");
-                error!("`gbt keys set-orchestrator-key --phrase \"orchestrator key phrase\"`");
-                error!("If you can not find the private key and phrase for these addresses you will need to create a new validator");
-                error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-                exit(1);
-            } else if req_delegate_eth_address != delegate_eth_address {
-                error!("Your Delegate Ethereum address is incorrect!");
-                error!(
-                    "You provided {}  Correct Value {}",
-                    delegate_eth_address, req_delegate_eth_address
-                );
-                error!("In order to resolve this issue locate the private key you registered for this validator and run the following command");
-                error!("`gbt keys set-ethereum-key --key \"eth private key\"`");
-                error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-                exit(1);
-            } else if req_delegate_orchestrator_address != delegate_orchestrator_address {
-                error!("Your Delegate Orchestrator address is incorrect!");
-                error!(
-                    "You provided {}  Correct Value {}",
-                    delegate_eth_address, req_delegate_eth_address
-                );
-                error!("In order to resolve this issue locate the key phrase you registered for this validator and run the following command");
-                error!("`gbt keys set-orchestrator-key --phrase \"orchestrator key phrase\"`");
-                error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-                exit(1);
-            }
-
-            if e.validator_address != o.validator_address {
-                error!(
-                    "You are using Gravity delegate keys from two different validator addresses!"
-                );
-                error!("If you get this error message I would just blow everything away and start again");
-                error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-                exit(1);
-            }
+    trace!("{:?}", orchestrator_response);
+    match orchestrator_response {
+        Ok(_) => {
+            trace!("Validator found by orch address");
         }
-        (Err(e), Ok(_)) => {
-            error!("Your Gravity Orchestrator Ethereum key is incorrect, please double check you private key. If you can't locate the correct private key you will need to create a new validator {:?}", e);
-            error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-            exit(1);
-        }
-        (Ok(_), Err(e)) => {
+        Err(e) => {
             error!("Your Gravity Orchestrator Cosmos key is incorrect, please double check your phrase. If you can't locate the correct phrase you will need to create a new validator {:?}", e);
-            error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
-            exit(1);
-        }
-        (Err(_), Err(_)) => {
-            error!("Gravity Delegate keys are not set! Please Register your Gravity delegate keys");
-            error!("`gbt keys set-orchestrator-key --phrase \"orchestrator key phrase\"`");
-            error!("`gbt keys set-ethereum-key --key \"eth private key\"`");
-            error!("If you are seeing this error please read this documentation carefully https://github.com/Gravity-Bridge/Gravity-Docs/blob/main/docs/setting-up-a-validator.md#generate-your-delegate-keys");
             exit(1);
         }
     }
@@ -354,17 +279,4 @@ pub async fn check_for_fee(fee: &Coin, address: CosmosAddress, contact: &Contact
     }
     error!("You have specified that fees should be paid in {} but account {} has no balance of that token!", fee.denom, address);
     exit(1);
-}
-
-/// Checks the user has some Ethereum in their address to pay for things
-pub async fn check_for_eth(address: EthAddress, web3: &Web3) {
-    let balance = get_eth_balances_with_retry(address, web3).await;
-    if balance == 0u8.into() {
-        error!("You don't have any Ethereum! You will need to send some to {} for this program to work. Dust will do for basic operations, more info about average relaying costs will be presented as the program runs", address);
-        error!("You can disable relaying by editing your config file in $HOME/.gbt/config");
-        error!(
-            "Even if you disable relaying you still need some dust so that the oracle can function"
-        );
-        exit(1);
-    }
 }

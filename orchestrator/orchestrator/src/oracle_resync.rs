@@ -17,7 +17,7 @@ pub async fn get_last_checked_block(
     grpc_client: GravityQueryClient<Channel>,
     our_cosmos_address: CosmosAddress,
     prefix: String,
-    gravity_contract_address: Address,
+    baseledger_contract_address: Address,
     web3: &Web3,
 ) -> Uint256 {
     let mut grpc_client = grpc_client;
@@ -52,7 +52,7 @@ pub async fn get_last_checked_block(
             .check_for_events(
                 end_search.clone(),
                 Some(current_block.clone()),
-                vec![gravity_contract_address],
+                vec![baseledger_contract_address],
                 vec![SENT_TO_COSMOS_EVENT_SIG],
             )
             .await;
@@ -61,7 +61,7 @@ pub async fn get_last_checked_block(
             .check_for_events(
                 end_search.clone(),
                 Some(current_block.clone()),
-                vec![gravity_contract_address],
+                vec![baseledger_contract_address],
                 vec![VALIDATOR_POWER_CHANGE_EVENT_SIG],
             )
             .await;

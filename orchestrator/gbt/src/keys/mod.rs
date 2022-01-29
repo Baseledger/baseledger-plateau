@@ -1,7 +1,7 @@
 pub mod register_orchestrator_address;
 
 use crate::{
-    args::{SetEthereumKeyOpts, SetOrchestratorKeyOpts},
+    args::{SetOrchestratorKeyOpts},
     config::{config_exists, load_keys, save_keys},
 };
 use deep_space::PrivateKey;
@@ -22,24 +22,6 @@ pub fn show_keys(home_dir: &Path, prefix: &str) {
         }
         None => info!("You do not have an Orchestrator key set"),
     }
-    match keys.ethereum_key {
-        Some(v) => {
-            let address = v.to_address();
-            info!("Your Ethereum key, {}", address);
-        }
-        None => info!("You do not have an Ethereum key set"),
-    }
-}
-
-pub fn set_eth_key(home_dir: &Path, opts: SetEthereumKeyOpts) {
-    if !config_exists(home_dir) {
-        error!("Please run `gbt init` before running this command!");
-        exit(1);
-    }
-    let mut keys = load_keys(home_dir);
-    keys.ethereum_key = Some(opts.key);
-    save_keys(home_dir, keys);
-    info!("Successfully updated Ethereum Key")
 }
 
 pub fn set_orchestrator_key(home_dir: &Path, opts: SetOrchestratorKeyOpts) {
