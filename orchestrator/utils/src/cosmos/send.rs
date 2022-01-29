@@ -7,11 +7,11 @@ use deep_space::address::Address;
 use baseledger_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
 use baseledger_proto::baseledger::MsgUbtDepositedClaim;
 use baseledger_proto::baseledger::MsgValidatorPowerChangedClaim;
-use gravity_utils::types::*;
+use crate::types::*;
 use std::{collections::HashMap, time::Duration};
 use baseledger_proto::baseledger::MsgSetOrchestratorAddress;
 
-use crate::utils::downcast_uint256;
+use crate::cosmos::utils::downcast_uint256;
 
 
 pub const MEMO: &str = "Sent using Althea Gravity Bridge Orchestrator";

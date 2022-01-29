@@ -23,7 +23,7 @@ pub struct Connections {
     pub contact: Option<Contact>,
 }
 
-/// Returns the three major RPC connections required for Gravity
+/// Returns the three major RPC connections required for orchestrator
 /// operation in a error resilient manner. TODO find some way to generalize
 /// this so that it's less ugly
 pub async fn create_rpc_connections(
@@ -243,7 +243,7 @@ pub async fn check_validator_address(
             trace!("Validator found by orch address");
         }
         Err(e) => {
-            error!("Your Gravity Orchestrator Cosmos key is incorrect, please double check your phrase. If you can't locate the correct phrase you will need to create a new validator {:?}", e);
+            error!("Your Orchestrator Cosmos key is incorrect, please double check your phrase. If you can't locate the correct phrase you will need to create a new validator {:?}", e);
             exit(1);
         }
     }
