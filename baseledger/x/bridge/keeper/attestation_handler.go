@@ -99,6 +99,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			invalidAddress = true
 		}
 
+		// TODO: Ognjen - Verify big int overflows in the testing phase
 		avgUbtPrice := CalculateAvgUbtPriceForAttestation(att)
 
 		if avgUbtPrice.Cmp(big.NewInt(0)) == 0 {

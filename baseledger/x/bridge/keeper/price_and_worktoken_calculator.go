@@ -23,14 +23,8 @@ func CalculateAmountOfWorkTokens(depositedUbtAmount *big.Int, averagePrice *big.
 	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
 
 	amountOfWorkTokens := new(big.Int).Quo(depositedEurValueInt, worktokenEurPriceInt)
-	modul0 := new(big.Int).Mod(amountOfWorkTokens, big.NewInt(1000000000000000000))
 
-	if modul0.Cmp(big.NewInt(0)) == +1 {
-		amountOfWorkTokens.Sub(amountOfWorkTokens, modul0)
-		amountOfWorkTokens.Add(amountOfWorkTokens, big.NewInt(1000000000000000000))
-	}
-
-	return amountOfWorkTokens
+	return ceilAmount(amountOfWorkTokens)
 }
 
 func calcMean(prices []sdk.Int) *big.Int {
@@ -61,11 +55,12 @@ func calcStandardDeviation(prices []sdk.Int, mean *big.Int) *big.Int {
 
 func getPricesArrayWithoutOutliers(prices []sdk.Int, mean *big.Int, standardDev *big.Int) []big.Int {
 	var cleansedPriceArray []big.Int
+
+	oneStDevLessFromMean := new(big.Int).Sub(mean, standardDev)
+	oneStDevGreaterFromMean := new(big.Int).Add(mean, standardDev)
+
 	for i := 0; i < len(prices); i++ {
 		ubtPrice := prices[i].BigInt()
-
-		oneStDevLessFromMean := new(big.Int).Sub(mean, standardDev)
-		oneStDevGreaterFromMean := new(big.Int).Add(mean, standardDev)
 
 		if (ubtPrice.Cmp(oneStDevLessFromMean) == +1 || ubtPrice.Cmp(oneStDevLessFromMean) == 0) &&
 			(ubtPrice.Cmp(oneStDevGreaterFromMean) == -1 || ubtPrice.Cmp(oneStDevGreaterFromMean) == 0) {
@@ -86,4 +81,16 @@ func calcAvgPrice(prices []big.Int) *big.Int {
 	arrayLengthBigInt := big.NewInt(int64(len(prices)))
 
 	return new(big.Int).Div(sum, arrayLengthBigInt)
+}
+
+func ceilAmount(amount *big.Int) *big.Int {
+	one := big.NewInt(1000000000000000000)
+	remainder := new(big.Int).Mod(amount, one)
+
+	if remainder.Cmp(big.NewInt(0)) == +1 {
+		amount.Sub(amount, remainder)
+		amount.Add(amount, one)
+	}
+
+	return amount
 }
