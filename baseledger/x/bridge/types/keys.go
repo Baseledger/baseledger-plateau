@@ -17,11 +17,6 @@ const (
 	MemStoreKey = "mem_bridge"
 )
 
-var (
-	// KeyOrchestratorAddress indexes the validator keys for an orchestrator
-	KeyOrchestratorAddress = "KeyOrchestratorAddress"
-)
-
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
