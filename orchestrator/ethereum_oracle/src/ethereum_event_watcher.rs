@@ -200,8 +200,6 @@ async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
 pub async fn get_block_delay(web3: &Web3) -> Uint256 {
     let net_version = get_net_version_with_retry(web3).await;
 
-    print!("NET VERSION {}", net_version);
-
     match net_version {
         // Mainline Ethereum, Ethereum classic, or the Ropsten, Kotti, Mordor testnets
         // all POW Chains
