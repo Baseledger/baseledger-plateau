@@ -1,4 +1,4 @@
-//! Handles configuration structs + saving and loading for Gravity bridge tools
+//! Handles configuration structs + saving and loading for bridge
 
 use crate::args::InitOpts;
 use std::{
@@ -7,15 +7,11 @@ use std::{
     process::exit,
 };
 
-/// The name of the config file, this file is copied
-/// from default-config.toml when generated so that we
-/// can include comments
-pub const CONFIG_NAME: &str = "config.toml";
 /// The name of the keys file, this file is not expected
 /// to be hand edited.
 pub const KEYS_NAME: &str = "keys.json";
 /// The folder name for the config
-pub const CONFIG_FOLDER: &str = ".gbt";
+pub const CONFIG_FOLDER: &str = ".baseledger_bridge";
 
 /// The keys storage struct, including encrypted and un-encrypted local keys
 /// un-encrypted keys provide for orchestrator start and relayer start functions
@@ -26,9 +22,8 @@ pub struct KeyStorage {
 
 /// Checks if the user has setup their config environment
 pub fn config_exists(home_dir: &Path) -> bool {
-    let config_file = home_dir.join(CONFIG_FOLDER).with_file_name(CONFIG_NAME);
     let keys_file = home_dir.join(CONFIG_FOLDER).with_file_name(KEYS_NAME);
-    home_dir.exists() && config_file.exists() && keys_file.exists()
+    home_dir.exists() && keys_file.exists()
 }
 
 /// Creates the config directory and default config file if it does
@@ -36,29 +31,18 @@ pub fn config_exists(home_dir: &Path) -> bool {
 pub fn init_config(_init_ops: InitOpts, home_dir: PathBuf) {
     if home_dir.exists() {
         warn!(
-            "The Gravity bridge tools config folder {} already exists!",
+            "Config folder {} already exists!",
             home_dir.to_str().unwrap()
         );
         warn!("You can delete this folder and run init again, you will lose any keys or other config data!");
     } else {
         create_dir(home_dir.clone()).expect("Failed to create config directory!");
-
-        fs::write(home_dir.join(CONFIG_NAME), get_default_config())
-            .expect("Unable to write config file");
         fs::write(
             home_dir.join(KEYS_NAME),
             toml::to_string(&KeyStorage::default()).unwrap(),
         )
         .expect("Unable to write config file");
     }
-}
-
-/// Loads the default config from the default-config.toml file
-/// done at compile time and is included in the binary
-/// This is done so that we can have hand edited and annotated
-/// config
-fn get_default_config() -> String {
-    include_str!("default-config.toml").to_string()
 }
 
 pub fn get_home_dir(home_arg: Option<PathBuf>) -> PathBuf {
@@ -77,7 +61,7 @@ pub fn load_keys(home_dir: &Path) -> KeyStorage {
     let keys_file = home_dir.join(CONFIG_FOLDER).with_file_name(KEYS_NAME);
     if !keys_file.exists() {
         error!(
-            "Keys file at {} not detected, use `gbt init` to generate a config.",
+            "Keys file at {} not detected, use `baseledger_bridge init` to generate a config.",
             keys_file.to_str().unwrap()
         );
         exit(1);
@@ -98,7 +82,7 @@ pub fn save_keys(home_dir: &Path, updated_keys: KeyStorage) {
     let config_file = home_dir.join(CONFIG_FOLDER).with_file_name(KEYS_NAME);
     if !config_file.exists() {
         info!(
-            "Config file at {} not detected, using defaults, use `gbt init` to generate a config.",
+            "Config file at {} not detected, using defaults, use `baseledger_bridge init` to generate a config.",
             config_file.to_str().unwrap()
         );
     }

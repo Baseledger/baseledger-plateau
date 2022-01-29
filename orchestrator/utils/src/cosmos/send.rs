@@ -14,20 +14,20 @@ use baseledger_proto::baseledger::MsgSetOrchestratorAddress;
 use crate::cosmos::utils::downcast_uint256;
 
 
-pub const MEMO: &str = "Sent using Althea Gravity Bridge Orchestrator";
+pub const MEMO: &str = "Sent using Baseledger Orchestrator";
 pub const TIMEOUT: Duration = Duration::from_secs(60);
 
 /// Send a transaction updating the eth address for the sending
 /// Cosmos address. The sending Cosmos address should be a validator
 /// this can only be called once! Key rotation code is possible but
 /// not currently implemented
-pub async fn set_gravity_delegate_addresses(
+pub async fn set_orchestrator_validator_addresses(
     contact: &Contact,
     delegate_cosmos_address: Address,
     private_key: PrivateKey,
     fee: Coin,
 ) -> Result<TxResponse, CosmosGrpcError> {
-    trace!("Updating Gravity Delegate addresses");
+    trace!("Updating Orchastrator/Validator addresses");
     let our_valoper_address = private_key
         .to_address(&contact.get_prefix())
         .unwrap()
@@ -70,14 +70,6 @@ pub async fn send_ethereum_claims(
 ) -> Result<TxResponse, CosmosGrpcError> {
     let our_address = private_key.to_address(&contact.get_prefix()).unwrap();
 
-    // This sorts oracle messages by event nonce before submitting them. It's not a pretty implementation because
-    // we're missing an intermediary layer of abstraction. We could implement 'EventTrait' and then implement sort
-    // for it, but then when we go to transform 'EventTrait' objects into GravityMsg enum values we'll have all sorts
-    // of issues extracting the inner object from the TraitObject. Likewise we could implement sort of GravityMsg but that
-    // would require a truly horrendous (nearly 100 line) match statement to deal with all combinations. That match statement
-    // could be reduced by adding two traits to sort against but really this is the easiest option.
-    //
-    // We index the events by event nonce in an unordered hashmap and then play them back in order into a vec
     let mut unordered_msgs = HashMap::new();
     
     for deposit in deposits {

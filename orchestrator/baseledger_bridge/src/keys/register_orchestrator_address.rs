@@ -7,7 +7,7 @@ use crate::config::load_keys;
 use crate::config::save_keys;
 use crate::config::KeyStorage;
 use crate::utils::TIMEOUT;
-use utils::cosmos::send::set_gravity_delegate_addresses;
+use utils::cosmos::send::set_orchestrator_validator_addresses;
 use deep_space::{mnemonic::Mnemonic, private_key::PrivateKey as CosmosPrivateKey};
 use utils::connection_prep::check_for_fee;
 use utils::connection_prep::{create_rpc_connections, wait_for_cosmos_node_ready};
@@ -24,7 +24,7 @@ pub async fn register_orchestrator_address(
     let mut generated_cosmos = None;
 
     if !args.no_save && !config_exists(&home_dir) {
-        error!("Please run `gbt init` before running this command!");
+        error!("Please run `baseledger_bridge init` before running this command!");
         exit(1);
     }
 
@@ -56,7 +56,7 @@ pub async fn register_orchestrator_address(
     };
 
     let cosmos_address = cosmos_key.to_address(&contact.get_prefix()).unwrap();
-    let res = set_gravity_delegate_addresses(
+    let res = set_orchestrator_validator_addresses(
         &contact,
         cosmos_address,
         validator_key,
@@ -80,7 +80,7 @@ pub async fn register_orchestrator_address(
     }
 
     if !args.no_save {
-        info!("Keys saved! You can now run `gbt orchestrator --fees <your fee value>`");
+        info!("Keys saved! You can now run `baseledger_bridge orchestrator --fees <your fee value>`");
         let phrase = match (generated_cosmos, cosmos_phrase) {
             (Some(v), None) => v.to_string(),
             (None, Some(s)) => s,

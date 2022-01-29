@@ -9,7 +9,7 @@ use std::{path::Path, process::exit};
 
 pub fn show_keys(home_dir: &Path, prefix: &str) {
     if !config_exists(home_dir) {
-        error!("Please run `gbt init` before running this command!");
+        error!("Please run `baseledger_bridge init` before running this command!");
         exit(1);
     }
     let keys = load_keys(home_dir);
@@ -26,7 +26,7 @@ pub fn show_keys(home_dir: &Path, prefix: &str) {
 
 pub fn set_orchestrator_key(home_dir: &Path, opts: SetOrchestratorKeyOpts) {
     if !config_exists(home_dir) {
-        error!("Please run `gbt init` before running this command!");
+        error!("Please run `baseledger_bridge init` before running this command!");
         exit(1);
     }
     let res = PrivateKey::from_phrase(&opts.phrase, "");

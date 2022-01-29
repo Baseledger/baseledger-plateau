@@ -14,7 +14,7 @@ use utils::types::event_signatures::*;
 use deep_space::Contact;
 use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
-use baseledger_proto::baseledger::query_client::QueryClient as GravityQueryClient;
+use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
 use serde_json::Value;
@@ -35,7 +35,7 @@ pub struct CheckedNonces {
 pub async fn check_for_events(
     web3: &Web3,
     contact: &Contact,
-    grpc_client: &mut GravityQueryClient<Channel>,
+    grpc_client: &mut BaseledgerQueryClient<Channel>,
     baseledger_contract_address: EthAddress,
     our_private_key: CosmosPrivateKey,
     fee: Coin,
@@ -200,13 +200,15 @@ async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
 pub async fn get_block_delay(web3: &Web3) -> Uint256 {
     let net_version = get_net_version_with_retry(web3).await;
 
+    print!("NET VERSION {}", net_version);
+
     match net_version {
         // Mainline Ethereum, Ethereum classic, or the Ropsten, Kotti, Mordor testnets
         // all POW Chains
         1 | 3 | 6 | 7 => 13u8.into(),
-        // Dev, our own Gravity Ethereum testnet, and Hardhat respectively
+        // Dev and Hardhat respectively
         // all single signer chains with no chance of any reorgs
-        2018 | 15 | 31337 => 0u8.into(),
+        2018 | 31337 => 0u8.into(),
         // Rinkeby and Goerli use Clique (POA) Consensus, finality takes
         // up to num validators blocks. Number is higher than Ethereum based
         // on experience with operational issues
