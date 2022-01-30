@@ -102,7 +102,7 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "baseledger"
 	Name                 = "baseledger"
 )
 
