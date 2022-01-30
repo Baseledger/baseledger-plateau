@@ -13,7 +13,7 @@ use baseledger_proto::baseledger::MsgSetOrchestratorAddress;
 use num256::Uint256;
 use std::str::FromStr;
 
-use crate::cosmos::utils::downcast_uint256;
+use crate::get_with_retry::downcast_uint256;
 
 
 pub const MEMO: &str = "Sent using Baseledger Orchestrator";
@@ -59,7 +59,6 @@ pub async fn set_orchestrator_validator_addresses(
         )
         .await
 }
-
 
 #[allow(clippy::too_many_arguments)]
 pub async fn send_ethereum_claims(

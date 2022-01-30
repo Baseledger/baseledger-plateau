@@ -1,10 +1,8 @@
 use utils::types::ValidatorPowerChangeEvent;
 use clarity::{Address, Uint256};
-use utils::cosmos::utils::get_last_event_nonce_with_retry;
+use utils::get_with_retry::{get_last_event_nonce_with_retry, RETRY_TIME, get_block_number_with_retry};
 use deep_space::address::Address as CosmosAddress;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
-use utils::get_with_retry::get_block_number_with_retry;
-use utils::get_with_retry::RETRY_TIME;
 use utils::types::event_signatures::*;
 use utils::types::{UbtDepositedEvent};
 use tokio::time::sleep as delay_for;
