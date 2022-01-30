@@ -6,7 +6,7 @@ use utils::connection_prep::{
     check_validator_address, wait_for_cosmos_node_ready,
 };
 use utils::connection_prep::{create_rpc_connections};
-use ethereum_oracle::main_loop::orchestrator_main_loop;
+use ethereum_oracle::main_loop::eth_oracle_main_loop;
 use ethereum_oracle::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;
 use std::process::exit;
@@ -88,13 +88,13 @@ pub async fn orchestrator(
         exit(1);
     };
 
-    orchestrator_main_loop(
+    eth_oracle_main_loop(
         cosmos_key,
-        connections.web3.unwrap(),
-        connections.contact.unwrap(),
-        connections.grpc.unwrap(),
+        connections.web3.unwrap().clone(),
+        connections.contact.unwrap().clone(),
+        connections.grpc.unwrap().clone(),
         contract_address,
-        fee,
+        fee.clone(),
     )
     .await;
 }

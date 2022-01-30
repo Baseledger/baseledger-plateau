@@ -19,7 +19,3 @@ tonic = "0.6"
 num-bigint = "0.4"
 log = "0.4"
 url = "2"
-sha3 = "0.10"
-[dev_dependencies]
-rand = "0.8"
-actix = "0.12"

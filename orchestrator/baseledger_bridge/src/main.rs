@@ -18,7 +18,6 @@ mod args;
 mod config;
 mod keys;
 mod orchestrator;
-mod utils;
 
 #[actix_rt::main]
 async fn main() {
