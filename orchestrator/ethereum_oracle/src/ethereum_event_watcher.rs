@@ -5,7 +5,7 @@ use utils::get_with_retry::get_net_version_with_retry;
 use utils::{
     error::OrchestratorError,
     types::{
-        SendToCosmosEvent,
+        UbtDepositedEvent,
         ValidatorPowerChangeEvent,
     },
 };
@@ -63,7 +63,7 @@ pub async fn check_for_events(
 
     if let (Ok(deposits), Ok(power_changes)) = (deposits, power_changes)
     {
-        let deposits = SendToCosmosEvent::from_logs(&deposits)?;
+        let deposits = UbtDepositedEvent::from_logs(&deposits)?;
         trace!("parsed deposits {:?}", deposits);
 
         let power_changes = ValidatorPowerChangeEvent::from_logs(&power_changes)?;
@@ -81,7 +81,7 @@ pub async fn check_for_events(
         )
         .await?;
 
-        let deposits = SendToCosmosEvent::filter_by_event_nonce(last_event_nonce, &deposits);
+        let deposits = UbtDepositedEvent::filter_by_event_nonce(last_event_nonce, &deposits);
 
         let power_changes = ValidatorPowerChangeEvent::filter_by_event_nonce(last_event_nonce, &power_changes);
 

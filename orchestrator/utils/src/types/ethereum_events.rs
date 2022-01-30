@@ -21,7 +21,7 @@ const ONE_MEGABYTE: usize = 1000usize.pow(3);
 /// A parsed struct representing the Ethereum event fired when someone makes a deposit
 /// on the Baseledger contract
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
-pub struct SendToCosmosEvent {
+pub struct UbtDepositedEvent {
     /// The token contract address for the deposit
     pub erc20: EthAddress,
     /// The Ethereum Sender
@@ -46,7 +46,7 @@ pub struct SendToCosmosEvent {
 /// struct for holding the data encoded fields
 /// of a send to Cosmos event for unit testing
 #[derive(Eq, PartialEq, Debug)]
-struct SendToCosmosEventData {
+struct UbtDepositedEventData {
     /// The Cosmos destination, None for an invalid deposit address
     pub destination: String,
     /// The amount of the erc20 token that is being sent
@@ -92,8 +92,8 @@ struct ValidatorPowerChangeEventData {
     pub event_nonce: Uint256,
 }
 
-impl SendToCosmosEvent {
-    pub fn from_log(input: &Log) -> Result<SendToCosmosEvent, OrchestratorError> {
+impl UbtDepositedEvent {
+    pub fn from_log(input: &Log) -> Result<UbtDepositedEvent, OrchestratorError> {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
             let erc20 = EthAddress::from_slice(&erc20_data[12..32])?;
@@ -113,7 +113,7 @@ impl SendToCosmosEvent {
                 ));
             };
 
-            let data = SendToCosmosEvent::decode_data_bytes(&input.data)?;
+            let data = UbtDepositedEvent::decode_data_bytes(&input.data)?;
             if data.event_nonce > u64::MAX.into() || block_height > u64::MAX.into() {
                 Err(OrchestratorError::InvalidEventLogError(
                     "Event nonce overflow, probably incorrect parsing".to_string(),
@@ -131,7 +131,7 @@ impl SendToCosmosEvent {
                         None
                     }
                 };
-                Ok(SendToCosmosEvent {
+                Ok(UbtDepositedEvent {
                     erc20,
                     sender,
                     destination: data.destination,
@@ -147,10 +147,10 @@ impl SendToCosmosEvent {
             ))
         }
     }
-    fn decode_data_bytes(data: &[u8]) -> Result<SendToCosmosEventData, OrchestratorError> {
+    fn decode_data_bytes(data: &[u8]) -> Result<UbtDepositedEventData, OrchestratorError> {
         if data.len() < 4 * 32 {
             return Err(OrchestratorError::InvalidEventLogError(
-                "too short for SendToCosmosEventData".to_string(),
+                "too short for UbtDepositedEventData".to_string(),
             ));
         }
 
@@ -188,7 +188,7 @@ impl SendToCosmosEvent {
             } else {
                 warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the community pool", event_nonce);
             }
-            return Ok(SendToCosmosEventData {
+            return Ok(UbtDepositedEventData {
                 destination: String::new(),
                 event_nonce,
                 amount,
@@ -199,23 +199,23 @@ impl SendToCosmosEvent {
 
         if dest.as_bytes().len() > ONE_MEGABYTE {
             warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the community pool", event_nonce);
-            Ok(SendToCosmosEventData {
+            Ok(UbtDepositedEventData {
                 destination: String::new(),
                 event_nonce,
                 amount,
             })
         } else {
-            Ok(SendToCosmosEventData {
+            Ok(UbtDepositedEventData {
                 destination: dest,
                 event_nonce,
                 amount,
             })
         }
     }
-    pub fn from_logs(input: &[Log]) -> Result<Vec<SendToCosmosEvent>, OrchestratorError> {
+    pub fn from_logs(input: &[Log]) -> Result<Vec<UbtDepositedEvent>, OrchestratorError> {
         let mut res = Vec::new();
         for item in input {
-            res.push(SendToCosmosEvent::from_log(item)?);
+            res.push(UbtDepositedEvent::from_log(item)?);
         }
         Ok(res)
     }
@@ -371,17 +371,3 @@ impl ValidatorPowerChangeEvent {
         ret
     }
 }
-
-/// Function used for debug printing hex dumps
-/// of ethereum events with each uint256 on a new
-/// line
-fn _debug_print_data(input: &[u8]) {
-    let count = input.len() / 32;
-    println!("data hex dump");
-    for i in 0..count {
-        println!("0x{}", bytes_to_hex_str(&input[(i * 32)..((i * 32) + 32)]))
-    }
-    println!("end dump");
-}
-
-// TODO skos: move tests here as well

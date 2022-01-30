@@ -6,7 +6,7 @@ use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryCl
 use utils::get_with_retry::get_block_number_with_retry;
 use utils::get_with_retry::RETRY_TIME;
 use utils::types::event_signatures::*;
-use utils::types::{SendToCosmosEvent};
+use utils::types::{UbtDepositedEvent};
 use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use web30::client::Web3;
@@ -48,7 +48,7 @@ pub async fn get_last_checked_block(
         } else {
             current_block.clone() - BLOCKS_TO_SEARCH.into()
         };
-        let send_to_cosmos_events = web3
+        let ubt_deposited_events = web3
             .check_for_events(
                 end_search.clone(),
                 Some(current_block.clone()),
@@ -66,13 +66,13 @@ pub async fn get_last_checked_block(
             )
             .await;
 
-        if send_to_cosmos_events.is_err() || power_changes_events.is_err()
+        if ubt_deposited_events.is_err() || power_changes_events.is_err()
         {
             error!("Failed to get blockchain events while resyncing, is your Eth node working? If you see only one of these it's fine",);
             delay_for(RETRY_TIME).await;
             continue;
         }
-        let send_to_cosmos_events = send_to_cosmos_events.unwrap();
+        let ubt_deposited_events = ubt_deposited_events.unwrap();
         let power_changes_events = power_changes_events.unwrap();
 
         for event in power_changes_events {
@@ -92,8 +92,8 @@ pub async fn get_last_checked_block(
             }
         }
 
-        for event in send_to_cosmos_events {
-            match SendToCosmosEvent::from_log(&event) {
+        for event in ubt_deposited_events {
+            match UbtDepositedEvent::from_log(&event) {
                 Ok(send) => {
                     trace!(
                         "{} send event nonce {} last event nonce",
