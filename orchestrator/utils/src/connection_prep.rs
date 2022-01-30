@@ -5,7 +5,7 @@
 use deep_space::error::CosmosGrpcError;
 use deep_space::Address as CosmosAddress;
 use deep_space::Contact;
-use deep_space::{client::ChainStatus, Coin};
+use deep_space::{client::ChainStatus};
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use baseledger_proto::baseledger::QueryValidatorAddressByOrchestratorAddressRequest;
 use std::process::exit;
@@ -14,8 +14,6 @@ use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use url::Url;
 use web30::client::Web3;
-
-use crate::get_with_retry::get_balances_with_retry;
 
 pub struct Connections {
     pub web3: Option<Web3>,
@@ -249,31 +247,14 @@ pub async fn check_validator_address(
     }
 }
 
-/// Checks if a given Coin, used for fees is in the provided address in a sufficient quantity
-pub async fn check_for_fee(fee: &Coin, address: CosmosAddress, contact: &Contact) {
-    // if we decide to pay no fees it doesn't matter, but we do need some coin balance
-    if fee.amount == 0u8.into() {
-        if let Err(CosmosGrpcError::NoToken) = contact.get_account_info(address).await {
-            error!("Your Orchestrator address has no tokens of any kind. Even if you are paying zero fees this account needs to be 'initialized' by depositing tokens");
-            error!(
-                "Send the smallest possible unit of any token to {} to resolve this error",
-                address
-            );
-            exit(1);
-        }
-        return;
+// we won't use fees, but keeping check for at least some tokens on account (revisit this)
+pub async fn check_for_tokens(address: CosmosAddress, contact: &Contact) {
+    if let Err(CosmosGrpcError::NoToken) = contact.get_account_info(address).await {
+        error!("Your Orchestrator address has no tokens of any kind. We are not using fees, but this account needs to be 'initialized' by depositing tokens");
+        error!(
+            "Send the smallest possible unit of any token to {} to resolve this error",
+            address
+        );
+        exit(1);
     }
-    let balances = get_balances_with_retry(address, contact).await;
-    for balance in balances {
-        if balance.denom.contains(&fee.denom) {
-            if balance.amount < fee.amount {
-                error!("You have specified a fee that is greater than your balance of that coin! {}{} > {}{} ", fee.amount, fee.denom, balance.amount, balance.denom);
-                exit(1);
-            } else {
-                return;
-            }
-        }
-    }
-    error!("You have specified that fees should be paid in {} but account {} has no balance of that token!", fee.denom, address);
-    exit(1);
 }

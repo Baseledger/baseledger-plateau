@@ -5,7 +5,7 @@ use crate::{ethereum_event_watcher::check_for_events, oracle_resync::get_last_ch
 use clarity::{address::Address as EthAddress, Uint256};
 use deep_space::Contact;
 use deep_space::{client::ChainStatus};
-use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
+use deep_space::{private_key::PrivateKey as CosmosPrivateKey};
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use std::time::Duration;
 use std::time::Instant;
@@ -28,7 +28,6 @@ pub async fn eth_oracle_main_loop(
     contact: Contact,
     grpc_client: BaseledgerQueryClient<Channel>,
     baseledger_contract_address: EthAddress,
-    fee: Coin,
 ) {
     let our_cosmos_address = cosmos_key.to_address(&contact.get_prefix()).unwrap();
     let long_timeout_web30 = Web3::new(&web3.get_url(), Duration::from_secs(120));
@@ -96,7 +95,6 @@ pub async fn eth_oracle_main_loop(
             &mut grpc_client,
             baseledger_contract_address,
             cosmos_key,
-            fee.clone(),
             last_checked_block.clone(),
             block_delay.clone(),
         )

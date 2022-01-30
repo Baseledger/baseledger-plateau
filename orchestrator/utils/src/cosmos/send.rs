@@ -10,6 +10,8 @@ use baseledger_proto::baseledger::MsgValidatorPowerChangedClaim;
 use crate::types::*;
 use std::{collections::HashMap, time::Duration};
 use baseledger_proto::baseledger::MsgSetOrchestratorAddress;
+use num256::Uint256;
+use std::str::FromStr;
 
 use crate::cosmos::utils::downcast_uint256;
 
@@ -25,7 +27,6 @@ pub async fn set_orchestrator_validator_addresses(
     contact: &Contact,
     delegate_cosmos_address: Address,
     private_key: PrivateKey,
-    fee: Coin,
 ) -> Result<TxResponse, CosmosGrpcError> {
     trace!("Updating Orchastrator/Validator addresses");
     let our_valoper_address = private_key
@@ -47,11 +48,12 @@ pub async fn set_orchestrator_validator_addresses(
         "/Baseledger.baseledger.bridge.MsgSetOrchestratorAddress",
         msg_set_orch_address,
     );
+
     contact
         .send_message(
             &[msg],
             Some(MEMO.to_string()),
-            &[fee],
+            &[get_zero_fee_coin()],
             Some(TIMEOUT),
             private_key,
         )
@@ -65,7 +67,6 @@ pub async fn send_ethereum_claims(
     private_key: PrivateKey,
     deposits: Vec<UbtDepositedEvent>,
     power_changes: Vec<ValidatorPowerChangeEvent>,
-    fee: Coin,
     ubt_price: f32,
 ) -> Result<TxResponse, CosmosGrpcError> {
     let our_address = private_key.to_address(&contact.get_prefix()).unwrap();
@@ -115,6 +116,14 @@ pub async fn send_ethereum_claims(
     }
 
     Ok(contact
-        .send_message(&msgs, None, &[fee], Some(TIMEOUT), private_key)
+        .send_message(&msgs, None, &[get_zero_fee_coin()], Some(TIMEOUT), private_key)
         .await?)
+}
+
+// we won't have fees for these transactions
+fn get_zero_fee_coin() -> Coin {
+    return Coin {
+        amount: Uint256::from_str("0").unwrap(),
+        denom: "work".to_owned()
+    };
 }
