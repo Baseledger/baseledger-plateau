@@ -1,5 +1,3 @@
-//! Basic utility functions to stubbornly get data
-use clarity::Address as EthAddress;
 use clarity::Uint256;
 use deep_space::{address::Address as CosmosAddress, Coin, Contact};
 use std::time::Duration;
@@ -15,17 +13,6 @@ pub async fn get_block_number_with_retry(web3: &Web3) -> Uint256 {
         error!("Failed to get latest block! Is your Eth node working?");
         delay_for(RETRY_TIME).await;
         res = web3.eth_block_number().await;
-    }
-    res.unwrap()
-}
-
-/// gets the current Ethereum block number, no matter how long it takes
-pub async fn get_eth_balances_with_retry(address: EthAddress, web3: &Web3) -> Uint256 {
-    let mut res = web3.eth_get_balance(address).await;
-    while res.is_err() {
-        error!("Failed to get Eth balances! Is your Eth node working?");
-        delay_for(RETRY_TIME).await;
-        res = web3.eth_get_balance(address).await;
     }
     res.unwrap()
 }

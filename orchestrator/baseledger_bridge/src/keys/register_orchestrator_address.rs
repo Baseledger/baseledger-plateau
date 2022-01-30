@@ -1,16 +1,18 @@
 use std::path::PathBuf;
 use std::process::exit;
+use std::time::Duration;
 
 use crate::args::RegisterOrchestratorAddressOpts;
 use crate::config::config_exists;
 use crate::config::load_keys;
 use crate::config::save_keys;
 use crate::config::KeyStorage;
-use crate::utils::TIMEOUT;
 use utils::cosmos::send::set_orchestrator_validator_addresses;
 use deep_space::{mnemonic::Mnemonic, private_key::PrivateKey as CosmosPrivateKey};
 use utils::connection_prep::check_for_fee;
 use utils::connection_prep::{create_rpc_connections, wait_for_cosmos_node_ready};
+
+pub const TIMEOUT: Duration = Duration::from_secs(60);
 
 pub async fn register_orchestrator_address(
     args: RegisterOrchestratorAddressOpts,

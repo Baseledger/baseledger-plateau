@@ -13,41 +13,10 @@ use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use web30::client::Web3;
 
-// TODO: this import should probably be somewhere globally, recheck and remove
-use log::trace;
-use log::info;
-use log::error;
-use log::warn;
 /// The execution speed governing all loops in this file
 /// which is to say all loops started by Orchestrator main
 /// loop except the relayer loop
 pub const ETH_ORACLE_LOOP_SPEED: Duration = Duration::from_secs(13);
-
-/// This loop combines the three major roles required to make
-/// up the 'Orchestrator', all three of these are async loops
-/// meaning they will occupy the same thread, but since they do
-/// very little actual cpu bound work and spend the vast majority
-/// of all execution time sleeping this shouldn't be an issue at all.
-#[allow(clippy::too_many_arguments)]
-pub async fn orchestrator_main_loop(
-    cosmos_key: CosmosPrivateKey,
-    web3: Web3,
-    contact: Contact,
-    grpc_client: BaseledgerQueryClient<Channel>,
-    baseledger_contract_address: EthAddress,
-    user_fee_amount: Coin,
-) {
-    let fee = user_fee_amount;
-
-    eth_oracle_main_loop(
-        cosmos_key,
-        web3.clone(),
-        contact.clone(),
-        grpc_client.clone(),
-        baseledger_contract_address,
-        fee.clone(),
-    ).await;
-}
 
 const DELAY: Duration = Duration::from_secs(5);
 
@@ -167,26 +136,3 @@ pub async fn eth_oracle_main_loop(
         }
     }
 }
-
-
-// Checks for fee errors on our confirm submission transactions, a failure here
-// can be fatal and cause slashing so we want to warn the user and exit. There is
-// no point in running if we can't perform our most important function
-// fn check_for_fee_error(res: Result<TxResponse, CosmosGrpcError>, fee: &Coin) {
-//     if let Err(CosmosGrpcError::InsufficientFees { fee_info }) = res {
-//         match fee_info {
-//             FeeInfo::InsufficientFees { min_fees } => {
-//                 error!(
-//                     "Your specified fee value {} is too small please use at least {}",
-//                     fee,
-//                     Coin::display_list(&min_fees)
-//                 );
-//                 error!("Correct fee argument immediately! You will be slashed within a few hours if you fail to do so");
-//                 exit(1);
-//             }
-//             FeeInfo::InsufficientGas { .. } => {
-//                 panic!("Hardcoded gas amounts insufficient!");
-//             }
-//         }
-//     }
-// }

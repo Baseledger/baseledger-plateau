@@ -19,11 +19,6 @@ use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethere
 
 use serde_json::Value;
 
-// TODO: this import should probably be somewhere globally, recheck and remove
-use log::trace;
-use log::info;
-use log::error;
-
 use std::env;
 
 pub struct CheckedNonces {
