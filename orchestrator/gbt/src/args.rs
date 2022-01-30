@@ -50,7 +50,7 @@ pub struct OrchestratorOpts {
     /// The Cosmos Denom and amount to pay Cosmos chain fees
     #[clap(short, long, parse(try_from_str))]
     pub fees: Coin,
-    /// The address fo the Baseledger contract on Ethereum
+    /// The address for the Baseledger contract on Ethereum
     #[clap(short, long, parse(try_from_str))]
     pub baseledger_contract_address: Option<EthAddress>,
 }

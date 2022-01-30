@@ -14171,18 +14171,6 @@ definitions:
               type: array
               items:
                 type: string
-  Baseledger.baseledger.bridge.QueryDelegateKeysByEthAddressResponse:
-    type: object
-    properties:
-      validatorAddress:
-        type: string
-      orchestratorAddress:
-        type: string
-  Baseledger.baseledger.bridge.QueryDelegateKeysByOrchestratorAddressResponse:
-    type: object
-    properties:
-      validatorAddress:
-        type: string
   Baseledger.baseledger.bridge.QueryLastEventNonceByAddressResponse:
     type: object
     properties:
