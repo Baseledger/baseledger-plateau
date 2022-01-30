@@ -22,14 +22,6 @@ var (
 	// LastObservedEventNonceKey indexes the latest event nonce
 	LastObservedEventNonceKey = "LastObservedEventNonceKey"
 
-	// EthAddressByValidatorKey indexes cosmos validator account addresses
-	// i.e. gravity1ahx7f8wyertuus9r20284ej0asrs085ceqtfnm
-	EthAddressByValidatorKey = "EthAddressValidatorKey"
-
-	// ValidatorByEthAddressKey indexes ethereum addresses
-	// i.e. 0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B
-	ValidatorByEthAddressKey = "ValidatorByEthAddressKey"
-
 	// Last average UBT price from a valid attestation
 	// used as a fallback mechanism in case price unavailable during attestation execution
 	LastAttestationAvgUbtPrice = "LastAttestationAvgUbtPrice"
