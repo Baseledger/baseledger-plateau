@@ -30,7 +30,7 @@ library SafeMath {
 }
 
 contract BaseledgerTest {
-  event SendToCosmosEvent(
+  event UbtDepositedEvent(
 		address indexed _tokenContract,
 		address indexed _sender,
 		string _destination,
@@ -65,7 +65,7 @@ contract BaseledgerTest {
     token.transferFrom(msg.sender, address(this), amount);
     state_lastEventNonce = state_lastEventNonce + 1;
 
-		emit SendToCosmosEvent(
+		emit UbtDepositedEvent(
 			tokenAddress,
 			msg.sender,
 			destination,

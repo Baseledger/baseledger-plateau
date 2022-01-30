@@ -63,7 +63,7 @@ pub async fn set_orchestrator_validator_addresses(
 pub async fn send_ethereum_claims(
     contact: &Contact,
     private_key: PrivateKey,
-    deposits: Vec<SendToCosmosEvent>,
+    deposits: Vec<UbtDepositedEvent>,
     power_changes: Vec<ValidatorPowerChangeEvent>,
     fee: Coin,
     ubt_price: f32,
