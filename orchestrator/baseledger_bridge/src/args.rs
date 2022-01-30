@@ -1,7 +1,6 @@
 use clap::Parser;
 use clarity::Address as EthAddress;
 use deep_space::PrivateKey as CosmosPrivateKey;
-use deep_space::{Coin};
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -72,9 +71,6 @@ pub struct RegisterOrchestratorAddressOpts {
     /// (Optional) The Cosmos gRPC server that will be used to submit the transaction
     #[clap(long, default_value = "http://localhost:9090")]
     pub cosmos_grpc: String,
-    /// The Cosmos Denom and amount to pay Cosmos chain fees
-    #[clap(short, long, parse(try_from_str))]
-    pub fees: Coin,
     /// Do not save keys to disk for later use with `orchestrator start`
     #[clap(long)]
     pub no_save: bool,
