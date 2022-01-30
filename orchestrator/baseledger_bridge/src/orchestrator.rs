@@ -10,14 +10,13 @@ use ethereum_oracle::main_loop::eth_oracle_main_loop;
 use ethereum_oracle::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;
 use std::process::exit;
-use utils::connection_prep::check_for_fee;
+use utils::connection_prep::check_for_tokens;
 
 pub async fn orchestrator(
     args: OrchestratorOpts,
     address_prefix: String,
     home_dir: &Path,
 ) {
-    let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
     let ethereum_rpc = args.ethereum_rpc;
     let cosmos_key = args.cosmos_phrase;
@@ -78,8 +77,8 @@ pub async fn orchestrator(
     )
     .await;
 
-    // check if we actually have the promised balance of tokens to pay fees
-    check_for_fee(&fee, public_cosmos_key, &contact).await;
+    // check if we actually have some tokens on account
+    check_for_tokens(public_cosmos_key, &contact).await;
 
     let contract_address = if let Some(c) = args.baseledger_contract_address {
         c
@@ -94,7 +93,6 @@ pub async fn orchestrator(
         connections.contact.unwrap().clone(),
         connections.grpc.unwrap().clone(),
         contract_address,
-        fee.clone(),
     )
     .await;
 }

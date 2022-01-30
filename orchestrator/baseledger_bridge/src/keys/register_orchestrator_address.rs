@@ -9,7 +9,7 @@ use crate::config::save_keys;
 use crate::config::KeyStorage;
 use utils::cosmos::send::set_orchestrator_validator_addresses;
 use deep_space::{mnemonic::Mnemonic, private_key::PrivateKey as CosmosPrivateKey};
-use utils::connection_prep::check_for_fee;
+use utils::connection_prep::check_for_tokens;
 use utils::connection_prep::{create_rpc_connections, wait_for_cosmos_node_ready};
 
 pub const TIMEOUT: Duration = Duration::from_secs(60);
@@ -19,7 +19,6 @@ pub async fn register_orchestrator_address(
     prefix: String,
     home_dir: PathBuf,
 ) {
-    let fee = args.fees;
     let cosmos_grpc = args.cosmos_grpc;
     let validator_key = args.validator_phrase;
     let cosmos_phrase = args.cosmos_phrase;
@@ -35,7 +34,7 @@ pub async fn register_orchestrator_address(
     wait_for_cosmos_node_ready(&contact).await;
 
     let validator_addr = validator_key.to_address(&contact.get_prefix()).unwrap();
-    check_for_fee(&fee, validator_addr, &contact).await;
+    check_for_tokens(validator_addr, &contact).await;
 
     // Set the cosmos key to either the cli value, the value in the config, or a generated
     // value if the config has not been setup
@@ -62,7 +61,6 @@ pub async fn register_orchestrator_address(
         &contact,
         cosmos_address,
         validator_key,
-        fee.clone(),
     )
     .await
     .expect("Failed to update delegate address");
@@ -81,8 +79,9 @@ pub async fn register_orchestrator_address(
         );
     }
 
+    // TODO: should we hardcode baseledger_contract_address since that won't change?
     if !args.no_save {
-        info!("Keys saved! You can now run `baseledger_bridge orchestrator --fees <your fee value>`");
+        info!("Keys saved! You can now run `baseledger_bridge orchestrator --ethereum_rpc <eth_rpc_value> --baseledger-contract-address <baseledger_contract_address>`");
         let phrase = match (generated_cosmos, cosmos_phrase) {
             (Some(v), None) => v.to_string(),
             (None, Some(s)) => s,

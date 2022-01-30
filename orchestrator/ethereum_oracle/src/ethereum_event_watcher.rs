@@ -12,7 +12,7 @@ use utils::{
 use utils::get_with_retry::get_block_number_with_retry;
 use utils::types::event_signatures::*;
 use deep_space::Contact;
-use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
+use deep_space::{private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
@@ -33,7 +33,6 @@ pub async fn check_for_events(
     grpc_client: &mut BaseledgerQueryClient<Channel>,
     baseledger_contract_address: EthAddress,
     our_private_key: CosmosPrivateKey,
-    fee: Coin,
     starting_block: Uint256,
     block_delay: Uint256,
 ) -> Result<CheckedNonces, OrchestratorError> {
@@ -110,7 +109,6 @@ pub async fn check_for_events(
                 our_private_key,
                 deposits,
                 power_changes,
-                fee,
                 ubt_price,
             )
             .await?;
