@@ -1,18 +1,25 @@
-poc-contract is a folder with contracts, contains erc-20 and test contract for deposit that is throwing event.
+# Readme
 
-Folder orchestrator is simplified copied from gravity-bridge (https://github.com/Gravity-Bridge/Gravity-Bridge), i tried to not use anything that is not needed for first version.
+## Modules overview and licence disclaimer
 
-Orchestrator folder structure (kept same names as gravity, we will rename when we only left what’s needed and maybe change structure a bit)
+### Proof module
+This module is similar to Baseledger Lakewood (https://github.com/Baseledger/baseledger-lakewood) and it is used for storing proofs. Everyone who executes proof storing transactions would need to pay Work tokens fee, that are depending on payload size (details on this will follow). This module also exposes custom cosmos-sdk client for signing and broadcasting transactions within REST endpoint, just by sending proof as a string, and it uses preconfigured keys stored in node file keyring (https://docs.cosmos.network/master/run-node/keyring.html).
 
-baseledger_bridge - cli program to start ethereum oracle
+### Bridge module
+This module is forked from Gravity Bridge (https://github.com/Gravity-Bridge/Gravity-Bridge). Unlike Gravity Bridge, it is one way bridge (Ethereum => Cosmos), and it is listening and handling our application-specific events.
+Even though purpose is different and it is not separate chain, but only a module, structure and flow of bridge is following Gravity Bridge good practices: there is orchestrator (only with ethereum oracle in our case) that validators will need to run, that is listening to events and sending claim transactions, that are then voted within attestations.
+Also, compared to Gravity Bridge, we are using starport (https://github.com/tendermint/starport) to scaffold cosmos module.
 
-baseledger_proto - this is auto generated from cosmos proto files, i just copied this from gravity repo, do not review this at the moment, our will hopefully be much smaller, just type definitions, for example i needed this for grpc client types
+Overview of changes compared to Gravity Bridge are:
+- one way bridge (Ethereum => Cosmos)
+- different smart contract (we do not use Gravity.sol)
+- different events
+- removed everything that we don't need (relayer, ethereum key etc) - only thing left is ethereum oracle for listening to baseledger specific events
+- simplified module structure in orchestrator due to simplified overall code
+- cosmos module was generated using starport
+...
 
-utils - various utils needed, only copied some (util methods for connection to ethereum and cosmos, types, error types etc)
-
-ethereum_oracle - main thing for us atm, there is loop listening to ethereum events, it is started as cli command
-
-Biggest difference to gravity bridge is that gravity is doing more things not needed by us (at least atm) like relaying stuff to ethereum, transaction batching to ethereum, listening to all those events (we only listen to SendToCosmosEvent so everything else is removed) etc.
+## Quick developer start (work in progress)
 
 To make this work locally apart from starport rust is needed to be installed and then call
 

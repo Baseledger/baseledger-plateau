@@ -1,3 +1,7 @@
+# this is a fork of gravity-bridge https://github.com/Gravity-Bridge/Gravity-Bridge
+# where authors = ["Justin Kilpatrick <justin@althea.net>"]
+# for more details on changes please check readme
+
 [workspace]
 members = ["ethereum_oracle", "utils", "baseledger_proto", "proto_build", "baseledger_bridge"]
 default-members = ["baseledger_bridge"]
