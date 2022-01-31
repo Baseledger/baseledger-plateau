@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -39,7 +40,7 @@ func signAndBroadcastTransactionHandler(clientCtx client.Context) http.HandlerFu
 			return
 		}
 
-		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String())
+		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String(), req.Payload)
 
 		if err != nil {
 			fmt.Printf("check balance failed %v\n", err)
@@ -84,7 +85,7 @@ func signAndBroadcastTransactionHandler(clientCtx client.Context) http.HandlerFu
 	}
 }
 
-func checkBalanceHandler(clientCtx client.Context) http.HandlerFunc {
+func checkBalanceHandler(clientCtx client.Context, payload string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		clientCtx, err := BuildClientCtx(clientCtx)
 
@@ -93,7 +94,7 @@ func checkBalanceHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String())
+		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String(), payload)
 
 		if err != nil {
 			fmt.Printf("check balance failed %v\n", err)
@@ -113,7 +114,7 @@ func checkBalanceHandler(clientCtx client.Context) http.HandlerFunc {
 	}
 }
 
-func checkTokenBalance(address string) (bool, error) {
+func checkTokenBalance(address string, payload string) (bool, error) {
 	grpcConn, err := grpc.Dial(
 		"127.0.0.1:9090",
 		// The SDK doesn't support any transport security mechanism.
@@ -136,7 +137,14 @@ func checkTokenBalance(address string) (bool, error) {
 	}
 
 	logger.Infof("found acc balance %v\n", res.Balance.Amount)
-	return res.Balance.Amount.IsPositive(), nil
+
+	payloadFee, err := common.CalcWorkTokenFeeBasedOnPayloadSize(payload)
+
+	if err != nil {
+		return false, errors.New("Error while calculating fee")
+	}
+
+	return res.Balance.Amount.GTE(payloadFee.AmountOf("work")), nil
 }
 
 func parseSignAndBroadcastTransactionRequest(w http.ResponseWriter, r *http.Request, clientCtx client.Context) *signAndBroadcastTransactionRequest {
