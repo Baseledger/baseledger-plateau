@@ -22,14 +22,19 @@ func (k msgServer) CreateBaseledgerTransaction(goCtx context.Context, msg *types
 		panic(err)
 	}
 
-	coinFee, err := sdk.ParseCoinsNormalized(common.WorkTokenFee)
+	coinFee, err := common.CalcWorkTokenFeeBasedOnPayloadSize(msg.Payload)
 	if err != nil {
-		panic(err)
+		k.Logger(ctx).Error("Calculating fee error",
+			"err", err.Error(),
+			"creator address", txCreatorAddress.String(),
+			"fee", coinFee.String())
+		return nil, err
 	}
 
 	err = k.bankKeeper.SendCoins(ctx, txCreatorAddress, faucetAccAddress, coinFee)
 	if err != nil {
 		k.Logger(ctx).Error("Send coins to faucet error",
+			"err", err.Error(),
 			"creator address", txCreatorAddress.String(),
 			"faucet address", faucetAccAddress.String(),
 			"fee", coinFee.String())
