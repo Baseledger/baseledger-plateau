@@ -9,7 +9,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
             token_price = v;
             println!("Token price is: {:?}", v);
         },
-        Err(_) => { println!("Error"); },
+        Err(e) => { println!("Error: {:?}", e) };,
     }
 
     if token_price == 0f32 {
@@ -19,7 +19,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(_) => { println!("Error"); },
+            Err(e) => { println!("Error: {:?}", e) };,
         }
     }
 
@@ -30,7 +30,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(_) => { println!("Error"); },
+            Err(e) => { println!("Error: {:?}", e) };,
         }
     }
 
@@ -41,7 +41,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(_) => { println!("Error"); },
+            Err(e) => { println!("Error: {:?}", e) };,
         }
     }
 
