@@ -1,3 +1,4 @@
+use crate::{ubt_price_fetcher::fetch_ubt_price};
 use clarity::{Address as EthAddress, Uint256};
 use web30::client::Web3;
 use web30::jsonrpc::error::Web3Error;
@@ -12,14 +13,10 @@ use utils::{
 use utils::get_with_retry::get_block_number_with_retry;
 use utils::types::event_signatures::*;
 use deep_space::Contact;
-use deep_space::{private_key::PrivateKey as CosmosPrivateKey};
+use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
-
-use serde_json::Value;
-
-use std::env;
 
 pub struct CheckedNonces {
     pub block_number: Uint256,
@@ -91,8 +88,7 @@ pub async fn check_for_events(
             )
         }
 
-        // TODO: BAS-123
-        let ubt_price = get_ubt_price().await.unwrap();
+        let ubt_price = fetch_ubt_price().await.unwrap();
         
         if !power_changes.is_empty() {
             info!(
@@ -142,26 +138,6 @@ pub async fn check_for_events(
             "Failed to get logs!".to_string(),
         )))
     }
-}
-
-async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
-    let token = env::var("COINMARKETCAP_API_TOKEN").unwrap();
-    let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&convert=EUR&CMC_PRO_API_KEY=";
-
-    let full_url = format!("{}\n{}", url, token);
-    println!("Full url: {}", full_url);
-    
-    let res = reqwest::get(full_url).await?;
-    println!("Status: {}", res.status());
-    
-    let body = res.text().await?;
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["data"]["UBT"]["quote"]["EUR"]["price"].to_string();
-    let price_decimal: f32 = price_str.parse().unwrap();
-    println!("price decimal:\n{}", price_decimal);
-
-    return Ok(price_decimal)
 }
 
 /// The number of blocks behind the 'latest block' on Ethereum our event checking should be.
