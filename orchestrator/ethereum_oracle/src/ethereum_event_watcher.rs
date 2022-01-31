@@ -1,3 +1,4 @@
+use crate::{ubt_price_fetcher::fetch_ubt_price};
 use clarity::{Address as EthAddress, Uint256};
 use web30::client::Web3;
 use web30::jsonrpc::error::Web3Error;
@@ -17,14 +18,10 @@ use tonic::transport::Channel;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
 
-use serde_json::Value;
-
 // TODO: this import should probably be somewhere globally, recheck and remove
 use log::trace;
 use log::info;
 use log::error;
-
-use std::env;
 
 pub struct CheckedNonces {
     pub block_number: Uint256,
@@ -97,8 +94,7 @@ pub async fn check_for_events(
             )
         }
 
-        // TODO: BAS-123
-        let ubt_price = get_ubt_price().await.unwrap();
+        let ubt_price = fetch_ubt_price().await.unwrap();
         
         if !power_changes.is_empty() {
             info!(
@@ -149,150 +145,6 @@ pub async fn check_for_events(
             "Failed to get logs!".to_string(),
         )))
     }
-}
-
-async fn get_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
-    let mut token_price = 0f32;
-    let coinmarketcap_result = fetch_from_coinmarket_cap().await;
-    match coinmarketcap_result {
-        Ok(v) => {
-            token_price = v;
-            println!("Coinmarket cap token price is: {:?}", v);
-        },
-        Err(_) => { println!("Coinmarket cap error"); },
-    }
-
-    if token_price == 0f32 {
-        let coingecko_result = fetch_from_coingecko().await;
-        match coingecko_result {
-            Ok(v) => {
-                token_price = v;
-                println!("Coingecko token price is: {:?}", token_price);
-            },
-            Err(_) => { println!("Coin gecko error"); },
-        }
-    }
-
-    if token_price == 0f32 {
-        let coinapi_result = fetch_from_coinpaprika().await;
-        match coinapi_result {
-            Ok(v) => {
-                token_price = v;
-                println!("Coinpaprika token price is: {:?}", token_price);
-            },
-            Err(_) => { println!("Coinpaprika error"); },
-        }
-    }
-
-    if token_price == 0f32 {
-        let coinapi_result = fetch_from_coinapi().await;
-        match coinapi_result {
-            Ok(v) => {
-                token_price = v;
-                println!("Coinapi token price is: {:?}", token_price);
-            },
-            Err(_) => { println!("Coinapi error"); },
-        }
-    }
-
-    return Ok(token_price);
-}
-
-async fn fetch_from_coinmarket_cap() -> Result<f32, Box<dyn std::error::Error>> {
-    let api_key = env::var("COINMARKETCAP_API_TOKEN").unwrap();
-    let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&convert=EUR&CMC_PRO_API_KEY=";
-
-    let full_url = format!("{}\n{}", url, api_key);
-    let res = reqwest::get(full_url).await?;
-    println!("Status: {}", res.status());
-
-    let body = res.text().await?;
-    println!("Body: {}", body.to_string());
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["data"]["UBT"]["quote"]["EUR"]["price"].to_string();
-    
-    let mut price_decimal = 0f32;
-
-    let price_decimal_result = price_str.parse();
-    match price_decimal_result {
-        Ok(res) => price_decimal = res,
-        Err(error) => println!("Problem parsing coinmarketcap price: {:?}", error),
-    };
-
-    return Ok(price_decimal);
-}
-
-async fn fetch_from_coingecko() -> Result<f32, Box<dyn std::error::Error>> {
-    let url = "https://api.coingecko.com/api/v3/simple/price?ids=unibright&vs_currencies=EUR";
-    let res = reqwest::get(url).await?;
-    println!("Status: {}", res.status());
-
-    let body = res.text().await?;
-    println!("Body: {}", body.to_string());
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["unibright"]["eur"].to_string();
-
-    let mut price_decimal = 0f32;
-
-    let price_decimal_result = price_str.parse();
-    match price_decimal_result {
-        Ok(res) => price_decimal = res,
-        Err(error) => println!("Problem parsing coingecko price: {:?}", error),
-    };
-
-    return Ok(price_decimal);
-}
-
-async fn fetch_from_coinpaprika() -> Result<f32, Box<dyn std::error::Error>> {
-    let url = "https://api.coinpaprika.com/v1/price-converter?base_currency_id=ubt-unibright&quote_currency_id=eur-euro&amount=1";
-    let res = reqwest::get(url).await?;
-    println!("Status: {}", res.status());
-
-    let body = res.text().await?;
-    println!("Body: {}", body.to_string());
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["price"].to_string();
-
-    let mut price_decimal = 0f32;
-
-    let price_decimal_result = price_str.parse();
-    match price_decimal_result {
-        Ok(res) => price_decimal = res,
-        Err(error) => println!("Problem parsing coinpaprika price: {:?}", error),
-    };
-
-    return Ok(price_decimal);
-}
-
-async fn fetch_from_coinapi() -> Result<f32, Box<dyn std::error::Error>> {
-    let api_key = env::var("COINAPI_API_TOKEN").unwrap();
-    let url = "https://rest.coinapi.io/v1/exchangerate/UBT/EUR";
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header("X-CoinAPI-Key", api_key)
-        .send()
-        .await?;
-    println!("Status: {}", res.status());
-    
-    let body = res.text().await?;
-    println!("Body: {}", body.to_string());
-
-    let v: Value = serde_json::from_str(&body)?;
-    let price_str = &v["rate"].to_string();
-
-    let mut price_decimal = 0f32;
-
-    let price_decimal_result = price_str.parse();
-    match price_decimal_result {
-        Ok(res) => price_decimal = res,
-        Err(error) => println!("Problem parsing coingecko price: {:?}", error),
-    };
-
-    return Ok(price_decimal);
 }
 
 /// The number of blocks behind the 'latest block' on Ethereum our event checking should be.
