@@ -41,6 +41,7 @@ cargo run -- keys set-orchestrator-key --phrase="<STARPORT_BOB_PHRASE>"
 cargo run -- keys register-orchestrator-address --fees="0token" --validator-phrase="<STARPORT_ALICE_PHRASE>"
 
 export COINMARKETCAP_API_TOKEN=<token>
+export COINAPI_API_TOKEN=<token>
 
 cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --baseledger-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
 ```
