@@ -269,14 +269,3 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 	}
 	return nil
 }
-
-func calculateAmountOfWorkTokens(depositedUbtAmount sdk.Int, averagePrice sdk.Int) sdk.Int {
-	// TODO: BAS-121 - Move this hardcoded value to config or somewhere
-	// TODO: Ognjen - Verify calculation
-	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
-	worktokenEurPriceInt := sdk.NewIntFromBigInt(worktokenEurPrice.BigInt())
-
-	depositedEurValueInt := depositedUbtAmount.Mul(averagePrice)
-
-	return depositedEurValueInt.Quo(worktokenEurPriceInt)
-}
