@@ -26,16 +26,19 @@ func CalcWorkTokenFeeBasedOnPayloadSize(payload string) (sdk.Coins, error) {
 
 	workTokenAmount := 1
 
-	if len(payload) > 128 && len(payload) <= 256 {
-		workTokenAmount = workTokenAmount * 2
-	}
-
-	if len(payload) > 256 && len(payload) <= 512 {
-		workTokenAmount = workTokenAmount * 6
-	}
-
-	if len(payload) > 512 && len(payload) <= 1024 {
+	if len(payload) > 512 {
 		workTokenAmount = workTokenAmount * 16
+		return sdk.ParseCoinsNormalized(fmt.Sprintf("%dwork", workTokenAmount))
+	}
+
+	if len(payload) > 256 {
+		workTokenAmount = workTokenAmount * 6
+		return sdk.ParseCoinsNormalized(fmt.Sprintf("%dwork", workTokenAmount))
+	}
+
+	if len(payload) > 128 {
+		workTokenAmount = workTokenAmount * 2
+		return sdk.ParseCoinsNormalized(fmt.Sprintf("%dwork", workTokenAmount))
 	}
 
 	return sdk.ParseCoinsNormalized(fmt.Sprintf("%dwork", workTokenAmount))
