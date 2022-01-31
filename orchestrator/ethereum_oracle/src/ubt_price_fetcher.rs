@@ -1,7 +1,7 @@
 use serde_json::Value;
 use std::env;
 
-async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
+pub async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
     let mut token_price = 0f32;
     let coinmarketcap_result = fetch_from_coinmarket_cap().await;
     match coinmarketcap_result {
@@ -9,7 +9,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
             token_price = v;
             println!("Token price is: {:?}", v);
         },
-        Err(e) => { println!("Error: {:?}", e) };,
+        Err(e) => { println!("Error: {:?}", e) },
     }
 
     if token_price == 0f32 {
@@ -19,7 +19,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(e) => { println!("Error: {:?}", e) };,
+            Err(e) => { println!("Error: {:?}", e) },
         }
     }
 
@@ -30,7 +30,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(e) => { println!("Error: {:?}", e) };,
+            Err(e) => { println!("Error: {:?}", e) },
         }
     }
 
@@ -41,7 +41,7 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
                 token_price = v;
                 println!("Token price is: {:?}", v);
             },
-            Err(e) => { println!("Error: {:?}", e) };,
+            Err(e) => { println!("Error: {:?}", e) },
         }
     }
 
@@ -51,12 +51,11 @@ async fn fetch_ubt_price() -> Result<f32, Box<dyn std::error::Error>> {
 async fn fetch_from_coinmarket_cap() -> Result<f32, Box<dyn std::error::Error>> {
     println!("Fetching coinmarketcap price");
     
-    let api_key_var_name = "COINMARKETCAP_API_TOKEN");
-    let token = "";
-    match env::var(api_key_var_name) {
-        Ok(v) => token = v,
-        Err(e) => panic!("${} is not set ({})", api_key_var_name, e)
-    }
+    let api_key_var_name = "COINMARKETCAP_API_TOKEN";
+    let token = match env::var(api_key_var_name) {
+        Ok(v) => v,
+        Err(e) => panic!("${} is not set ({})", api_key_var_name, e),
+    };
 
     let url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=UBT&convert=EUR&CMC_PRO_API_KEY=";
     let full_url = format!("{}\n{}", url, token);
@@ -97,12 +96,11 @@ async fn fetch_from_coinapi() -> Result<f32, Box<dyn std::error::Error>> {
     println!("Fetching coinapi price");
     let url = "https://rest.coinapi.io/v1/exchangerate/UBT/EUR";
 
-    let api_key_var_name = "COINAPI_API_TOKEN");
-    let token = "";
-    match env::var(api_key_var_name) {
-        Ok(v) => token = v,
+    let api_key_var_name = "COINAPI_API_TOKEN";
+    let token = match env::var(api_key_var_name) {
+        Ok(v) => v,
         Err(e) => panic!("${} is not set ({})", api_key_var_name, e)
-    }
+    };
     
     let client = reqwest::Client::new();
     let res = client

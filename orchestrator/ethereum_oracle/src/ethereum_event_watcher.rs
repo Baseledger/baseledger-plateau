@@ -13,7 +13,7 @@ use utils::{
 use utils::get_with_retry::get_block_number_with_retry;
 use utils::types::event_signatures::*;
 use deep_space::Contact;
-use deep_space::{coin::Coin, private_key::PrivateKey as CosmosPrivateKey};
+use deep_space::{private_key::PrivateKey as CosmosPrivateKey};
 use tonic::transport::Channel;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::cosmos::{query::get_last_event_nonce_for_validator, send::send_ethereum_claims};
