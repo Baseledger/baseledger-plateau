@@ -1,8 +1,11 @@
+# this is a fork of gravity-bridge https://github.com/Gravity-Bridge/Gravity-Bridge
+# where authors = ["Justin Kilpatrick <justin@althea.net>"]
+# for more details on changes please check readme
+
 [package]
 name = "baseledger_bridge"
 version = "1.0.10"
 edition = "2018"
-license = "Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

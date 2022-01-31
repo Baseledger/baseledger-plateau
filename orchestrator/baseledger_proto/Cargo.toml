@@ -1,3 +1,7 @@
+# this is a fork of gravity-bridge https://github.com/Gravity-Bridge/Gravity-Bridge
+# where authors = ["Justin Kilpatrick <justin@althea.net>"]
+# for more details on changes please check readme
+
 [package]
 name = "baseledger_proto"
 version = "0.1.0"
