@@ -1,4 +1,6 @@
-# Readme
+# Baseledger
+
+*Baseledger is currently under development. Below is short overview of current work.*
 
 ## Modules overview and licence disclaimer
 
