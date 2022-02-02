@@ -206,7 +206,7 @@ func (k Keeper) TryAttestation(ctx sdk.Context, att *types.Attestation) {
 				if claim.GetEventNonce() != lastEventNonce+1 {
 					panic("attempting to apply events to state out of order")
 				}
-				k.setLastObservedEventNonce(ctx, claim.GetEventNonce())
+				k.SetLastObservedEventNonce(ctx, claim.GetEventNonce())
 				// TODO: Ognjen - Last observed eth height is used for gravity bridge functionality
 				// which is not used by us atm (cleanupTimedOutBatches, cleanupTimedOutLogicCalls)
 				// reintroduce if this functionly proves to be necessary or delete the line
@@ -319,8 +319,8 @@ func (k Keeper) GetLastObservedEventNonce(ctx sdk.Context) uint64 {
 	return types.UInt64FromBytes(bytes)
 }
 
-// setLastObservedEventNonce sets the latest observed event nonce
-func (k Keeper) setLastObservedEventNonce(ctx sdk.Context, nonce uint64) {
+// SetLastObservedEventNonce sets the latest observed event nonce
+func (k Keeper) SetLastObservedEventNonce(ctx sdk.Context, nonce uint64) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(types.LastObservedEventNonceKey), types.UInt64Bytes(nonce))
 }
