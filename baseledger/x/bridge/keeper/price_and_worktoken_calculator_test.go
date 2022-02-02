@@ -80,7 +80,7 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithoutMod__ReturnsCorrect
 	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
 
 	// Assert
-	expectedWorktokenAmount, _ := new(big.Int).SetString("1000000000000000000000", 0) // 1000
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1000", 0)
 	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
 }
 
@@ -93,7 +93,7 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithMod__ReturnsCeiledAmou
 	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
 
 	// Assert
-	expectedWorktokenAmount, _ := new(big.Int).SetString("1001000000000000000000", 0) // 1001
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1001", 0)
 	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
 }
 
@@ -106,6 +106,6 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithModVariation__ReturnsC
 	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
 
 	// Assert
-	expectedWorktokenAmount, _ := new(big.Int).SetString("1000000000000000000000", 0) // 1000
+	expectedWorktokenAmount, _ := new(big.Int).SetString("1000", 0)
 	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
 }
