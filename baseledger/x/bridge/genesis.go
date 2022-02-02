@@ -57,6 +57,30 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 			}
 		}
 	}
+
+	// reset delegate keys in state
+	if hasDuplicates(genState.OrchestratorAddresses) {
+		panic("Duplicate delegate key found in Genesis!")
+	}
+	for _, keys := range genState.OrchestratorAddresses {
+		err := keys.ValidateBasic()
+		if err != nil {
+			panic("Invalid delegate key in Genesis!")
+		}
+		val, err := sdk.ValAddressFromBech32(keys.Validator)
+		if err != nil {
+			panic(err)
+		}
+
+		orch, err := sdk.AccAddressFromBech32(keys.Orchestrator)
+		if err != nil {
+			panic(err)
+		}
+
+		// set the orchestrator address
+		k.SetOrchestratorValidator(ctx, val, orch)
+	}
+
 }
 
 // ExportGenesis returns the capability module's exported genesis.
@@ -64,6 +88,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 	genesis.Params = k.GetParams(ctx)
 	genesis.LastObservedNonce = k.GetLastObservedEventNonce(ctx)
+	genesis.OrchestratorAddresses = k.GetDelegateKeys(ctx)
 
 	attestationMap, attestationKeys := k.GetAttestationMapping(ctx)
 
@@ -74,4 +99,14 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	}
 
 	return genesis
+}
+
+func hasDuplicates(d []types.MsgSetOrchestratorAddress) bool {
+	orchMap := make(map[string]struct{}, len(d))
+	// creates a hashmap then ensures that the hashmap and the array
+	// have the same length, this acts as an O(n) duplicates check
+	for i := range d {
+		orchMap[d[i].Orchestrator] = struct{}{}
+	}
+	return len(orchMap) != len(d)
 }
