@@ -57,11 +57,17 @@ func BuildClientCtx(clientCtx client.Context) (*client.Context, error) {
 	return &clientCtx, nil
 }
 
-// TODO: change test keyring with other (file?) - new ticket for this
 func NewKeyringInstance() (keyring.Keyring, error) {
 	input := &bytes.Buffer{}
-	fmt.Fprintln(input, viper.GetString("KEYRING_PASSWORD"))
 	kr, err := keyring.New("baseledger", "file", viper.GetString("KEYRING_DIR"), input)
+
+	// just for dev convenience because test keyring is set up by default
+	// this way we can skip adding keys in file keyring during development
+	useTestKeyRing := viper.GetBool("DEV")
+	if useTestKeyRing {
+		fmt.Printf("WTF\n")
+		kr, err = keyring.New("baseledger", "test", viper.GetString("KEYRING_DIR"), nil)
+	}
 
 	if err != nil {
 		logger.Errorf("error fetching test keyring %v\n", err.Error())
