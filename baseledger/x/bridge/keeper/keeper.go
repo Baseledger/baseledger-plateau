@@ -71,6 +71,25 @@ func NewKeeper(
 	return k
 }
 
+/////////////////////////////
+//       PARAMETERS        //
+/////////////////////////////
+
+// TODO: Ognjen
+// GetWorktokenEurPrice returns the EUR price of a single worktoken. This is the price
+// used during calculation of how many worktokens to send to a UBT depositor in the brigde contract.
+//
+// This parameter can be changed through a governance param change proposal.
+func (k Keeper) GetWorktokenEurPrice(ctx sdk.Context) string {
+	var a string
+	k.paramstore.Get(ctx, types.ParamsStoreKeyWorktokenEurPrice, &a)
+	return a
+}
+
+func (k Keeper) SetWorktokenEurPrice(ctx sdk.Context, v string) {
+	k.paramstore.Set(ctx, types.ParamsStoreKeyWorktokenEurPrice, v)
+}
+
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }

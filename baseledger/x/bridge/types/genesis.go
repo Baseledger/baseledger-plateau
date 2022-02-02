@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 // this line is used by starport scaffolding # genesis/types/import
@@ -12,6 +13,14 @@ const DefaultIndex uint64 = 1
 var (
 	// AttestationVotesPowerThreshold threshold of votes power to succeed
 	AttestationVotesPowerThreshold = sdk.NewInt(66)
+
+	// ParamsStoreKeyWorktokenEurPrice storesd the price of 1 worktoken in EUR
+	ParamsStoreKeyWorktokenEurPrice = []byte("WorktokenEurPrice")
+
+	// Ensure that params implements the proper interface
+	_ paramtypes.ParamSet = &Params{
+		WorktokenEurPrice: "",
+	}
 )
 
 // DefaultGenesis returns the default Capability genesis state
