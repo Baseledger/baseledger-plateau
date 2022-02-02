@@ -5,8 +5,14 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
 
+// worktoken_eur_price:
+// the price of a single worktoken in EUR. Used in the calculation
+// of the amount of worktoken to be sent to the depositer of UBT tokens
+
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
+
+  string worktoken_eur_price                  = 1;
   
 }
