@@ -48,7 +48,7 @@ func (p Params) Equal(p2 Params) bool {
 // Validate validates the set of params
 func (p Params) Validate() error {
 	if err := validateWorktokenEurPrice(p.WorktokenEurPrice); err != nil {
-		return sdkerrors.Wrap(err, "bridge chain id")
+		return sdkerrors.Wrap(err, "worktoken eur price")
 	}
 
 	return nil
