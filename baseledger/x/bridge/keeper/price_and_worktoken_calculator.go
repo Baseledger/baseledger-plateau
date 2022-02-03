@@ -16,13 +16,10 @@ func CalculateAvgUbtPriceForAttestation(att types.Attestation) *big.Int {
 	return calcAvgPrice(cleansedPriceArray)
 }
 
-func CalculateAmountOfWorkTokens(depositedUbtAmount *big.Int, averagePrice *big.Int) *big.Int {
-	// TODO: BAS-121 - Move this hardcoded value to config or somewhere
-	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
-	worktokenEurPriceInt := worktokenEurPrice.BigInt()
+func CalculateAmountOfWorkTokens(worktokenEurPrice *big.Int, depositedUbtAmount *big.Int, averagePrice *big.Int) *big.Int {
 	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
 
-	amountOfWorkTokens := new(big.Int).Quo(depositedEurValueInt, worktokenEurPriceInt)
+	amountOfWorkTokens := new(big.Int).Quo(depositedEurValueInt, worktokenEurPrice)
 
 	amountOfWorkTokensCeiled := ceilAmount(amountOfWorkTokens)
 

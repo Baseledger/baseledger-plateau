@@ -93,7 +93,8 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			a.keeper.SetLastAttestationAverageUbtPrice(ctx, avgUbtPrice)
 		}
 
-		amountOfWorkTokensToSend := CalculateAmountOfWorkTokens(claim.Amount.BigInt(), avgUbtPrice)
+		worktokenEurPrice, _ := sdk.NewDecFromStr(a.keeper.GetWorktokenEurPrice(ctx))
+		amountOfWorkTokensToSend := CalculateAmountOfWorkTokens(worktokenEurPrice.BigInt(), claim.Amount.BigInt(), avgUbtPrice)
 
 		// TODO: Ognjen - remove logging if obsolete after implementation
 		a.keeper.Logger(ctx).Info("Worktokens are ready to be sent",
