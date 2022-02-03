@@ -1,0 +1,13 @@
+    {
+        "title": "Parameter change for worktoken eur price",
+        "description": "If passed, this will change the worktoken eur price used in the calculation",
+        "changes": [
+            {
+                "subspace": "bridge",
+                "key": "WorktokenEurPrice",
+                "value": "0.2"
+            }
+        ],
+        "denom": "stake",
+        "amount": "10000000"
+    }

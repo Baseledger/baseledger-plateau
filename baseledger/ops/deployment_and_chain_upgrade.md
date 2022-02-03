@@ -75,7 +75,7 @@ It is critically important for validator operators to back-up the .baseledgerd/d
     baseledgerd config broadcast-mode block
     baseledgerd init test --chain-id test --overwrite
 
-Set voting time to 20s in genesis.json
+Set voting time to 20s in /root/.baseledger/config/genesis.json
 
     baseledgerd keys add validator
     baseledgerd add-genesis-account validator 5000000000stake --keyring-backend test
@@ -105,3 +105,37 @@ Open a new terminal and submit an upgrade propoposal
     baseledgerd tx gov vote 1 yes --from validator --yes
 
 This will create a proposal which is voted pass. when the current version of the node reaches this height, it will halt consensus on all nodes, create a upgrade-info.json that will be read by cosmosvisor and will trigger a switch of the sym link to upgrade folder. Start of the chain will trigger migrations defined in the new app and the chain will continue consensus. 
+
+
+## Example local test of parameter change proposal
+
+    baseledgerd unsafe-reset-all
+    baseledgerd config chain-id test
+    baseledgerd config keyring-backend test
+    baseledgerd config broadcast-mode block
+    baseledgerd init test --chain-id test --overwrite
+
+Set voting time to 20s in /root/.baseledger/config/genesis.json
+
+    baseledgerd keys add validator
+    baseledgerd add-genesis-account validator 5000000000stake --keyring-backend test
+    baseledgerd gentx validator 1000000stake --chain-id test
+    baseledgerd collect-gentxs
+    baseledgerd start
+
+
+Open a new terminal and submit a param change propoposal
+
+    copy the ./params.json to the folder where you are running the command
+
+    baseledgerd tx gov submit-proposal param-change param.json  --from validator     --yes
+
+    baseledgerd tx gov deposit 1 10000000stake --from validator --yes
+
+    baseledgerd tx gov vote 1 yes --from validator --yes
+
+Misc
+
+    baseledgerd query bridge params - see the current value of the param
+
+    baseledgerd query gov proposals - see status of proposals
