@@ -25,7 +25,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the bridge module's genesis state.
 type GenesisState struct {
-	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	Params                           Params                         `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	OrchestratorValidatorAddressList []OrchestratorValidatorAddress `protobuf:"bytes,5,rep,name=orchestratorValidatorAddressList,proto3" json:"orchestratorValidatorAddressList"`
 	// this line is used by starport scaffolding # genesis/proto/state
 	Attestations                     []Attestation                  `protobuf:"bytes,2,rep,name=attestations,proto3" json:"attestations"`
 	LastObservedNonce                uint64                         `protobuf:"varint,3,opt,name=last_observed_nonce,json=lastObservedNonce,proto3" json:"last_observed_nonce,omitempty"`
@@ -70,6 +71,13 @@ func (m *GenesisState) GetParams() Params {
 		return m.Params
 	}
 	return Params{}
+}
+
+func (m *GenesisState) GetOrchestratorValidatorAddressList() []OrchestratorValidatorAddress {
+	if m != nil {
+		return m.OrchestratorValidatorAddressList
+	}
+	return nil
 }
 
 func (m *GenesisState) GetAttestations() []Attestation {

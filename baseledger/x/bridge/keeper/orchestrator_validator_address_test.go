@@ -19,7 +19,6 @@ func createNOrchestratorValidatorAddress(keeper *keeper.Keeper, ctx sdk.Context,
 	items := make([]types.OrchestratorValidatorAddress, n)
 	for i := range items {
 		items[i].OrchestratorAddress = strconv.Itoa(i)
-
 		keeper.SetOrchestratorValidatorAddress(ctx, items[i])
 	}
 	return items
