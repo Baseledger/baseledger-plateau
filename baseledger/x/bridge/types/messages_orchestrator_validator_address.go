@@ -33,11 +33,11 @@ func (msg *MsgCreateOrchestratorValidatorAddress) Type() string {
 }
 
 func (msg *MsgCreateOrchestratorValidatorAddress) GetSigners() []sdk.AccAddress {
-	validatorAddress, err := sdk.AccAddressFromBech32(msg.ValidatorAddress)
+	validatorAddress, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{validatorAddress}
+	return []sdk.AccAddress{sdk.AccAddress(validatorAddress)}
 }
 
 func (msg *MsgCreateOrchestratorValidatorAddress) GetSignBytes() []byte {
@@ -45,10 +45,12 @@ func (msg *MsgCreateOrchestratorValidatorAddress) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgCreateOrchestratorValidatorAddress) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.ValidatorAddress)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validatorAddress address (%s)", err)
+func (msg *MsgCreateOrchestratorValidatorAddress) ValidateBasic() (err error) {
+	if _, err = sdk.ValAddressFromBech32(msg.ValidatorAddress); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.ValidatorAddress)
+	}
+	if _, err = sdk.AccAddressFromBech32(msg.OrchestratorAddress); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.OrchestratorAddress)
 	}
 	return nil
 }
