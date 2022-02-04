@@ -59,16 +59,16 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	bridgeGenesis := types.GenesisState{
 		OrchestratorValidatorAddressList: []types.OrchestratorValidatorAddress{
-		{
-			ValidatorAddress: sample.AccAddress(),
-OrchestratorAddress: "0",
-},
-		{
-			ValidatorAddress: sample.AccAddress(),
-OrchestratorAddress: "1",
-},
-	},
-	// this line is used by starport scaffolding # simapp/module/genesisState
+			{
+				ValidatorAddress:    sample.AccAddress(),
+				OrchestratorAddress: "0",
+			},
+			{
+				ValidatorAddress:    sample.AccAddress(),
+				OrchestratorAddress: "1",
+			},
+		},
+		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&bridgeGenesis)
 }
@@ -108,11 +108,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgSetOrchestratorAddress = defaultWeightMsgSetOrchestratorAddress
 		},
 	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgSetOrchestratorAddress,
-		bridgesimulation.SimulateMsgSetOrchestratorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
 	var weightMsgValidatorPowerChangedClaim int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgValidatorPowerChangedClaim, &weightMsgValidatorPowerChangedClaim, nil,
 		func(_ *rand.Rand) {

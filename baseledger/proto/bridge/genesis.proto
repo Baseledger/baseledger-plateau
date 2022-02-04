@@ -16,6 +16,5 @@ message GenesisState {
   repeated OrchestratorValidatorAddress orchestratorValidatorAddressList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
   repeated Attestation               attestations        = 2 [(gogoproto.nullable) = false];
-  repeated MsgSetOrchestratorAddress orchestrator_addresses       = 3 [(gogoproto.nullable) = false];
-  uint64 last_observed_nonce = 4;
+  uint64 last_observed_nonce = 3;
 }

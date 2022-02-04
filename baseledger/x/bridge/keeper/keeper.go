@@ -2,14 +2,12 @@ package keeper
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/Baseledger/baseledger/x/bridge/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -113,48 +111,6 @@ func (k Keeper) UnpackAttestationClaim(att *types.Attestation) (types.EthereumCl
 	} else {
 		return msg, nil
 	}
-}
-
-func (k Keeper) GetDelegateKeys(ctx sdk.Context) []types.MsgSetOrchestratorAddress {
-	store := ctx.KVStore(k.storeKey)
-
-	prefix := []byte(types.KeyOrchestratorAddress)
-	iter := store.Iterator(prefixRange(prefix))
-	defer iter.Close()
-
-	orchAddresses := make(map[string]string)
-
-	for ; iter.Valid(); iter.Next() {
-		key := iter.Key()[len(types.KeyOrchestratorAddress):]
-		value := iter.Value()
-		orchAddress := sdk.AccAddress(key)
-		if err := sdk.VerifyAddressFormat(orchAddress); err != nil {
-			panic(sdkerrors.Wrapf(err, "invalid orchAddress in key %v", orchAddresses))
-		}
-		valAddress := sdk.ValAddress(value)
-		if err := sdk.VerifyAddressFormat(valAddress); err != nil {
-			panic(sdkerrors.Wrapf(err, "invalid val address stored for orchestrator %s", valAddress.String()))
-		}
-
-		orchAddresses[valAddress.String()] = orchAddress.String()
-	}
-
-	var result []types.MsgSetOrchestratorAddress
-
-	for valAddr, orch := range orchAddresses {
-		result = append(result, types.MsgSetOrchestratorAddress{
-			Orchestrator: orch,
-			Validator:    valAddr,
-		})
-	}
-
-	// we iterated over a map, so now we have to sort to ensure the
-	// output here is deterministic
-	sort.Slice(result[:], func(i, j int) bool {
-		return result[i].Orchestrator < result[j].Orchestrator
-	})
-
-	return result
 }
 
 // prefixRange turns a prefix into a (start, end) range. The start is the given prefix value and

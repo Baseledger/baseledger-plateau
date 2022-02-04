@@ -9,12 +9,11 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUbtDepositedClaim{}, "bridge/UbtDepositedClaim", nil)
-	cdc.RegisterConcrete(&MsgSetOrchestratorAddress{}, "bridge/SetOrchestratorAddress", nil)
 	cdc.RegisterConcrete(&MsgValidatorPowerChangedClaim{}, "bridge/ValidatorPowerChangedClaim", nil)
 	cdc.RegisterConcrete(&MsgCreateOrchestratorValidatorAddress{}, "bridge/CreateOrchestratorValidatorAddress", nil)
-cdc.RegisterConcrete(&MsgUpdateOrchestratorValidatorAddress{}, "bridge/UpdateOrchestratorValidatorAddress", nil)
-cdc.RegisterConcrete(&MsgDeleteOrchestratorValidatorAddress{}, "bridge/DeleteOrchestratorValidatorAddress", nil)
-// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&MsgUpdateOrchestratorValidatorAddress{}, "bridge/UpdateOrchestratorValidatorAddress", nil)
+	cdc.RegisterConcrete(&MsgDeleteOrchestratorValidatorAddress{}, "bridge/DeleteOrchestratorValidatorAddress", nil)
+	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -22,17 +21,14 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUbtDepositedClaim{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgSetOrchestratorAddress{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgValidatorPowerChangedClaim{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-	&MsgCreateOrchestratorValidatorAddress{},
-	&MsgUpdateOrchestratorValidatorAddress{},
-	&MsgDeleteOrchestratorValidatorAddress{},
-)
-// this line is used by starport scaffolding # 3
+		&MsgCreateOrchestratorValidatorAddress{},
+		&MsgUpdateOrchestratorValidatorAddress{},
+		&MsgDeleteOrchestratorValidatorAddress{},
+	)
+	// this line is used by starport scaffolding # 3
 
 	// TODO skos: is this good protoName?
 	registry.RegisterInterface(
