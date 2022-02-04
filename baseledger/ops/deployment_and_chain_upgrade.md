@@ -110,16 +110,16 @@ This will create a proposal which is voted pass. when the current version of the
 ## Example local test of parameter change proposal
 
     baseledgerd unsafe-reset-all
-    baseledgerd config chain-id test
+    baseledgerd config chain-id baseledger
     baseledgerd config keyring-backend test
     baseledgerd config broadcast-mode block
-    baseledgerd init test --chain-id test --overwrite
+    baseledgerd init baseledger --chain-id baseledger --overwrite
 
 Set voting time to 20s in /root/.baseledger/config/genesis.json
 
     baseledgerd keys add validator
     baseledgerd add-genesis-account validator 5000000000stake --keyring-backend test
-    baseledgerd gentx validator 1000000stake --chain-id test
+    baseledgerd gentx validator 1000000stake --chain-id baseledger
     baseledgerd collect-gentxs
     baseledgerd start
 

@@ -18,9 +18,7 @@ var (
 	ParamsStoreKeyWorktokenEurPrice = []byte("WorktokenEurPrice")
 
 	// Ensure that params implements the proper interface
-	_ paramtypes.ParamSet = &Params{
-		WorktokenEurPrice: "",
-	}
+	_ paramtypes.ParamSet = &Params{}
 )
 
 // DefaultGenesis returns the default Capability genesis state
