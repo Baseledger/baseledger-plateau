@@ -36,6 +36,18 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgValidatorPowerChangedClaim int = 100
 
+	opWeightMsgCreateOrchestratorValidatorAddress = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateOrchestratorValidatorAddress int = 100
+
+	opWeightMsgUpdateOrchestratorValidatorAddress = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgUpdateOrchestratorValidatorAddress int = 100
+
+	opWeightMsgDeleteOrchestratorValidatorAddress = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteOrchestratorValidatorAddress int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -46,7 +58,17 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 		accs[i] = acc.Address.String()
 	}
 	bridgeGenesis := types.GenesisState{
-		// this line is used by starport scaffolding # simapp/module/genesisState
+		OrchestratorValidatorAddressList: []types.OrchestratorValidatorAddress{
+		{
+			ValidatorAddress: sample.AccAddress(),
+OrchestratorAddress: "0",
+},
+		{
+			ValidatorAddress: sample.AccAddress(),
+OrchestratorAddress: "1",
+},
+	},
+	// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&bridgeGenesis)
 }
@@ -100,6 +122,39 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgValidatorPowerChangedClaim,
 		bridgesimulation.SimulateMsgValidatorPowerChangedClaim(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCreateOrchestratorValidatorAddress int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateOrchestratorValidatorAddress, &weightMsgCreateOrchestratorValidatorAddress, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateOrchestratorValidatorAddress = defaultWeightMsgCreateOrchestratorValidatorAddress
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateOrchestratorValidatorAddress,
+		bridgesimulation.SimulateMsgCreateOrchestratorValidatorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgUpdateOrchestratorValidatorAddress int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateOrchestratorValidatorAddress, &weightMsgUpdateOrchestratorValidatorAddress, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateOrchestratorValidatorAddress = defaultWeightMsgUpdateOrchestratorValidatorAddress
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateOrchestratorValidatorAddress,
+		bridgesimulation.SimulateMsgUpdateOrchestratorValidatorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgDeleteOrchestratorValidatorAddress int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteOrchestratorValidatorAddress, &weightMsgDeleteOrchestratorValidatorAddress, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteOrchestratorValidatorAddress = defaultWeightMsgDeleteOrchestratorValidatorAddress
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeleteOrchestratorValidatorAddress,
+		bridgesimulation.SimulateMsgDeleteOrchestratorValidatorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

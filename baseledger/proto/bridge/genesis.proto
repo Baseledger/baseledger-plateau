@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "bridge/params.proto";
 import "bridge/attestation.proto";
 import "bridge/tx.proto";
+import "bridge/orchestrator_validator_address.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
@@ -12,6 +13,7 @@ option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
 // GenesisState defines the bridge module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
+  repeated OrchestratorValidatorAddress orchestratorValidatorAddressList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
   repeated Attestation               attestations        = 2 [(gogoproto.nullable) = false];
   repeated MsgSetOrchestratorAddress orchestrator_addresses       = 3 [(gogoproto.nullable) = false];

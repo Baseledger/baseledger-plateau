@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "bridge/params.proto";
 import "bridge/attestation.proto";
+import "bridge/orchestrator_validator_address.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
@@ -30,6 +31,16 @@ service Query {
 // Queries a list of Attestations items.
 	rpc Attestations(QueryAttestationsRequest) returns (QueryAttestationsResponse) {
 		option (google.api.http).get = "/Baseledger/baseledger/bridge/attestations/{limit}";
+	}
+
+// Queries a OrchestratorValidatorAddress by index.
+	rpc OrchestratorValidatorAddress(QueryGetOrchestratorValidatorAddressRequest) returns (QueryGetOrchestratorValidatorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledger/bridge/orchestrator_validator_address/{orchestratorAddress}";
+	}
+
+	// Queries a list of OrchestratorValidatorAddress items.
+	rpc OrchestratorValidatorAddressAll(QueryAllOrchestratorValidatorAddressRequest) returns (QueryAllOrchestratorValidatorAddressResponse) {
+		option (google.api.http).get = "/Baseledger/baseledger/bridge/orchestrator_validator_address";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -66,6 +77,24 @@ message QueryAttestationsRequest {
 
 message QueryAttestationsResponse {
   repeated Attestation attestations = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetOrchestratorValidatorAddressRequest {
+	  string orchestratorAddress = 1;
+
+}
+
+message QueryGetOrchestratorValidatorAddressResponse {
+	OrchestratorValidatorAddress orchestratorValidatorAddress = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllOrchestratorValidatorAddressRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllOrchestratorValidatorAddressResponse {
+	repeated OrchestratorValidatorAddress orchestratorValidatorAddress = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
