@@ -43,7 +43,7 @@ pub async fn set_orchestrator_validator_addresses(
     };
 
     let msg = Msg::new(
-        "/Baseledger.baseledger.OrchestratorValidatorAddress",
+        "/Baseledger.baseledger.bridge.MsgCreateOrchestratorValidatorAddress",
         msg_set_orch_address,
     );
 
