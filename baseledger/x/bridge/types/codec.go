@@ -11,7 +11,10 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUbtDepositedClaim{}, "bridge/UbtDepositedClaim", nil)
 	cdc.RegisterConcrete(&MsgSetOrchestratorAddress{}, "bridge/SetOrchestratorAddress", nil)
 	cdc.RegisterConcrete(&MsgValidatorPowerChangedClaim{}, "bridge/ValidatorPowerChangedClaim", nil)
-	// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&MsgCreateOrchestratorValidatorAddress{}, "bridge/CreateOrchestratorValidatorAddress", nil)
+cdc.RegisterConcrete(&MsgUpdateOrchestratorValidatorAddress{}, "bridge/UpdateOrchestratorValidatorAddress", nil)
+cdc.RegisterConcrete(&MsgDeleteOrchestratorValidatorAddress{}, "bridge/DeleteOrchestratorValidatorAddress", nil)
+// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -24,7 +27,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgValidatorPowerChangedClaim{},
 	)
-	// this line is used by starport scaffolding # 3
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+	&MsgCreateOrchestratorValidatorAddress{},
+	&MsgUpdateOrchestratorValidatorAddress{},
+	&MsgDeleteOrchestratorValidatorAddress{},
+)
+// this line is used by starport scaffolding # 3
 
 	// TODO skos: is this good protoName?
 	registry.RegisterInterface(

@@ -1,6 +1,7 @@
 syntax = "proto3";
 package Baseledger.baseledger.bridge;
 import "gogoproto/gogo.proto";
+import "bridge/orchestrator_validator_address.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
@@ -10,6 +11,9 @@ service Msg {
       rpc UbtDepositedClaim(MsgUbtDepositedClaim) returns (MsgUbtDepositedClaimResponse);
   rpc SetOrchestratorAddress(MsgSetOrchestratorAddress) returns (MsgSetOrchestratorAddressResponse);
   rpc ValidatorPowerChangedClaim(MsgValidatorPowerChangedClaim) returns (MsgValidatorPowerChangedClaimResponse);
+  rpc CreateOrchestratorValidatorAddress(MsgCreateOrchestratorValidatorAddress) returns (MsgCreateOrchestratorValidatorAddressResponse);
+  rpc UpdateOrchestratorValidatorAddress(MsgUpdateOrchestratorValidatorAddress) returns (MsgUpdateOrchestratorValidatorAddressResponse);
+  rpc DeleteOrchestratorValidatorAddress(MsgDeleteOrchestratorValidatorAddress) returns (MsgDeleteOrchestratorValidatorAddressResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -53,5 +57,25 @@ message MsgValidatorPowerChangedClaim {
 
 message MsgValidatorPowerChangedClaimResponse {
 }
+
+message MsgCreateOrchestratorValidatorAddress {
+  string validatorAddress = 1;
+  string orchestratorAddress = 2;
+
+}
+message MsgCreateOrchestratorValidatorAddressResponse {}
+
+message MsgUpdateOrchestratorValidatorAddress {
+  string validatorAddress = 1;
+  string orchestratorAddress = 2;
+
+}
+message MsgUpdateOrchestratorValidatorAddressResponse {}
+
+message MsgDeleteOrchestratorValidatorAddress {
+  string validatorAddress = 1;
+  string orchestratorAddress = 2;
+}
+message MsgDeleteOrchestratorValidatorAddressResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
