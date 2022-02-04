@@ -31,9 +31,8 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		OrchestratorValidatorAddressList: []OrchestratorValidatorAddress{},
 		// this line is used by starport scaffolding # genesis/types/default
-		Params:                DefaultParams(),
-		Attestations:          []Attestation{},
-		OrchestratorAddresses: []MsgSetOrchestratorAddress{},
+		Params:       DefaultParams(),
+		Attestations: []Attestation{},
 	}
 }
 

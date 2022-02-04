@@ -9,7 +9,6 @@ option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
 // Msg defines the Msg service.
 service Msg {
       rpc UbtDepositedClaim(MsgUbtDepositedClaim) returns (MsgUbtDepositedClaimResponse);
-  rpc SetOrchestratorAddress(MsgSetOrchestratorAddress) returns (MsgSetOrchestratorAddressResponse);
   rpc ValidatorPowerChangedClaim(MsgValidatorPowerChangedClaim) returns (MsgValidatorPowerChangedClaimResponse);
   rpc CreateOrchestratorValidatorAddress(MsgCreateOrchestratorValidatorAddress) returns (MsgCreateOrchestratorValidatorAddressResponse);
   rpc UpdateOrchestratorValidatorAddress(MsgUpdateOrchestratorValidatorAddress) returns (MsgUpdateOrchestratorValidatorAddressResponse);
@@ -32,14 +31,6 @@ message MsgUbtDepositedClaim {
 }
 
 message MsgUbtDepositedClaimResponse {
-}
-
-message MsgSetOrchestratorAddress {
-  string validator = 1;
-  string orchestrator = 2;
-}
-
-message MsgSetOrchestratorAddressResponse {
 }
 
 message MsgValidatorPowerChangedClaim {

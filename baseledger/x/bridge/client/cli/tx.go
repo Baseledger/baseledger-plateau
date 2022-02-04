@@ -31,12 +31,11 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdUbtDepositedClaim())
-	cmd.AddCommand(CmdSetOrchestratorAddress())
 	cmd.AddCommand(CmdValidatorPowerChangedClaim())
 	cmd.AddCommand(CmdCreateOrchestratorValidatorAddress())
 	cmd.AddCommand(CmdUpdateOrchestratorValidatorAddress())
 	cmd.AddCommand(CmdDeleteOrchestratorValidatorAddress())
-// this line is used by starport scaffolding # 1
+	// this line is used by starport scaffolding # 1
 
 	return cmd
 }
