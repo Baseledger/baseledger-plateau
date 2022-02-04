@@ -75,7 +75,6 @@ func NewKeeper(
 //       PARAMETERS        //
 /////////////////////////////
 
-// TODO: Ognjen
 // GetWorktokenEurPrice returns the EUR price of a single worktoken. This is the price
 // used during calculation of how many worktokens to send to a UBT depositor in the brigde contract.
 //
