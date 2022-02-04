@@ -7,7 +7,6 @@ use deep_space::Address as CosmosAddress;
 use deep_space::Contact;
 use deep_space::{client::ChainStatus};
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
-use baseledger_proto::baseledger::QueryValidatorAddressByOrchestratorAddressRequest;
 use std::process::exit;
 use std::time::Duration;
 use tokio::time::sleep as delay_for;
@@ -221,29 +220,6 @@ pub async fn wait_for_cosmos_node_ready(contact: &Contact) {
             ),
         }
         delay_for(WAIT_TIME).await;
-    }
-}
-
-/// This function checks if orchestrator and validator addresses were set
-pub async fn check_validator_address(
-    client: &mut BaseledgerQueryClient<Channel>,
-    delegate_orchestrator_address: CosmosAddress,
-    prefix: &str,
-) {
-    let orchestrator_response = client
-        .validator_address_by_orchestrator_address(QueryValidatorAddressByOrchestratorAddressRequest {
-            orchestrator_address: delegate_orchestrator_address.to_bech32(prefix).unwrap(),
-        })
-        .await;
-    trace!("{:?}", orchestrator_response);
-    match orchestrator_response {
-        Ok(_) => {
-            trace!("Validator found by orch address");
-        }
-        Err(e) => {
-            error!("Your Orchestrator Cosmos key is incorrect, please double check your phrase. If you can't locate the correct phrase you will need to create a new validator {:?}", e);
-            exit(1);
-        }
     }
 }
 
