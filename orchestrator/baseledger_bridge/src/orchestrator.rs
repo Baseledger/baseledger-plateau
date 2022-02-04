@@ -3,9 +3,9 @@ use crate::config::config_exists;
 use crate::config::load_keys;
 use deep_space::PrivateKey as CosmosPrivateKey;
 use utils::connection_prep::{
-    check_validator_address, wait_for_cosmos_node_ready,
+    create_rpc_connections, wait_for_cosmos_node_ready,
 };
-use utils::connection_prep::{create_rpc_connections};
+use utils::cosmos::query::check_validator_address;
 use ethereum_oracle::main_loop::eth_oracle_main_loop;
 use ethereum_oracle::main_loop::{ETH_ORACLE_LOOP_SPEED};
 use std::path::Path;
