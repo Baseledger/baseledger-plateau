@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestOrchestratorValidatorAddressQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.BridgeKeeper(t)
+	keeper, ctx := keepertest.BaseledgerbridgeKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNOrchestratorValidatorAddress(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -70,7 +70,7 @@ func TestOrchestratorValidatorAddressQuerySingle(t *testing.T) {
 }
 
 func TestOrchestratorValidatorAddressQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.BridgeKeeper(t)
+	keeper, ctx := keepertest.BaseledgerbridgeKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNOrchestratorValidatorAddress(keeper, ctx, 5)
 
