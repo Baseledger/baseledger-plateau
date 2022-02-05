@@ -17,19 +17,16 @@ func (k Keeper) LastEventNonceByAddress(goCtx context.Context, req *types.QueryL
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	var ret types.QueryLastEventNonceByAddressResponse
-	addr, err := sdk.AccAddressFromBech32(req.Address)
+	_, err := sdk.AccAddressFromBech32(req.Address)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, req.Address)
 	}
-	validator, found := k.GetOrchestratorValidator(ctx, addr)
-	if !found {
+	orchValAddr := k.GetOrchestratorValidator(ctx, req.Address)
+	if orchValAddr == nil {
 		return nil, sdkerrors.Wrap(errors.New("Validator not found"), "address")
 	}
-	if err := sdk.VerifyAddressFormat(validator.GetOperator()); err != nil {
-		return nil, sdkerrors.Wrap(err, "invalid validator address")
-	}
-	lastEventNonce := k.GetLastEventNonceByValidator(ctx, validator.GetOperator())
-	ret.EventNonce = lastEventNonce
+
+	var ret types.QueryLastEventNonceByAddressResponse
+	ret.EventNonce = k.GetLastEventNonceByValidator(ctx, orchValAddr.GetOperator())
 	return &ret, nil
 }

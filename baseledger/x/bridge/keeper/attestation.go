@@ -22,9 +22,9 @@ func (k Keeper) Attest(
 	if err := sdk.VerifyAddressFormat(claim.GetClaimer()); err != nil {
 		return nil, sdkerrors.Wrap(err, "invalid claimer address")
 	}
-	val, found := k.GetOrchestratorValidator(ctx, claim.GetClaimer())
-	if !found {
-		panic("Could not find ValAddr for delegate key, should be checked by now")
+	val := k.GetOrchestratorValidator(ctx, claim.GetClaimer().String())
+	if val == nil {
+		panic("Could not find val for delegate key, should be checked by now")
 	}
 
 	valAddr := val.GetOperator()
