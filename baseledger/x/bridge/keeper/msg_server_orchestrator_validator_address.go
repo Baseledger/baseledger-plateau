@@ -30,6 +30,14 @@ func (k msgServer) CreateOrchestratorValidatorAddress(goCtx context.Context, msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "validator not found")
 	}
 
+	list := k.Keeper.GetAllOrchestratorValidatorAddress(ctx)
+
+	for i := range list {
+		if list[i].ValidatorAddress == msg.ValidatorAddress {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "validator already set")
+		}
+	}
+
 	var orchestratorValidatorAddress = types.OrchestratorValidatorAddress{
 		ValidatorAddress:    msg.ValidatorAddress,
 		OrchestratorAddress: msg.OrchestratorAddress,
