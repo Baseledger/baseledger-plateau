@@ -26,7 +26,7 @@ func createNOrchestratorValidatorAddress(keeper *keeper.Keeper, ctx sdk.Context,
 }
 
 func TestOrchestratorValidatorAddressGet(t *testing.T) {
-	keeper, ctx := keepertest.BridgeKeeper(t)
+	keeper, ctx := keepertest.BaseledgerbridgeKeeper(t)
 	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetOrchestratorValidatorAddress(ctx,
@@ -40,7 +40,7 @@ func TestOrchestratorValidatorAddressGet(t *testing.T) {
 	}
 }
 func TestOrchestratorValidatorAddressGetAll(t *testing.T) {
-	keeper, ctx := keepertest.BridgeKeeper(t)
+	keeper, ctx := keepertest.BaseledgerbridgeKeeper(t)
 	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
