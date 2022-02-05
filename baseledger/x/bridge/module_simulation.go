@@ -136,21 +136,12 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgUpdateOrchestratorValidatorAddress = defaultWeightMsgUpdateOrchestratorValidatorAddress
 		},
 	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgUpdateOrchestratorValidatorAddress,
-		bridgesimulation.SimulateMsgUpdateOrchestratorValidatorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
 	var weightMsgDeleteOrchestratorValidatorAddress int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteOrchestratorValidatorAddress, &weightMsgDeleteOrchestratorValidatorAddress, nil,
 		func(_ *rand.Rand) {
 			weightMsgDeleteOrchestratorValidatorAddress = defaultWeightMsgDeleteOrchestratorValidatorAddress
 		},
 	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgDeleteOrchestratorValidatorAddress,
-		bridgesimulation.SimulateMsgDeleteOrchestratorValidatorAddress(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
 

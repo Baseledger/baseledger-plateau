@@ -4,10 +4,10 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/Baseledger/baseledger/x/bridge/keeper"
-	"github.com/Baseledger/baseledger/x/bridge/types"
 	keepertest "github.com/Baseledger/baseledger/testutil/keeper"
 	"github.com/Baseledger/baseledger/testutil/nullify"
+	"github.com/Baseledger/baseledger/x/bridge/keeper"
+	"github.com/Baseledger/baseledger/x/bridge/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +19,7 @@ func createNOrchestratorValidatorAddress(keeper *keeper.Keeper, ctx sdk.Context,
 	items := make([]types.OrchestratorValidatorAddress, n)
 	for i := range items {
 		items[i].OrchestratorAddress = strconv.Itoa(i)
-        
+
 		keeper.SetOrchestratorValidatorAddress(ctx, items[i])
 	}
 	return items
@@ -30,8 +30,7 @@ func TestOrchestratorValidatorAddressGet(t *testing.T) {
 	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetOrchestratorValidatorAddress(ctx,
-		    item.OrchestratorAddress,
-            
+			item.OrchestratorAddress,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -40,22 +39,6 @@ func TestOrchestratorValidatorAddressGet(t *testing.T) {
 		)
 	}
 }
-func TestOrchestratorValidatorAddressRemove(t *testing.T) {
-	keeper, ctx := keepertest.BridgeKeeper(t)
-	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)
-	for _, item := range items {
-		keeper.RemoveOrchestratorValidatorAddress(ctx,
-		    item.OrchestratorAddress,
-            
-		)
-		_, found := keeper.GetOrchestratorValidatorAddress(ctx,
-		    item.OrchestratorAddress,
-            
-		)
-		require.False(t, found)
-	}
-}
-
 func TestOrchestratorValidatorAddressGetAll(t *testing.T) {
 	keeper, ctx := keepertest.BridgeKeeper(t)
 	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)

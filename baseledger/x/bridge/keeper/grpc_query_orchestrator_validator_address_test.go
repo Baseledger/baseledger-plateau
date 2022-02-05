@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-    "strconv"
+	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/Baseledger/baseledger/x/bridge/types"
-	"github.com/Baseledger/baseledger/testutil/nullify"
 	keepertest "github.com/Baseledger/baseledger/testutil/keeper"
+	"github.com/Baseledger/baseledger/testutil/nullify"
+	"github.com/Baseledger/baseledger/x/bridge/types"
 )
 
 // Prevent strconv unused error
@@ -29,28 +29,25 @@ func TestOrchestratorValidatorAddressQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc:     "First",
-			request:  &types.QueryGetOrchestratorValidatorAddressRequest{
-			    OrchestratorAddress: msgs[0].OrchestratorAddress,
-                
+			desc: "First",
+			request: &types.QueryGetOrchestratorValidatorAddressRequest{
+				OrchestratorAddress: msgs[0].OrchestratorAddress,
 			},
 			response: &types.QueryGetOrchestratorValidatorAddressResponse{OrchestratorValidatorAddress: msgs[0]},
 		},
 		{
-			desc:     "Second",
-			request:  &types.QueryGetOrchestratorValidatorAddressRequest{
-			    OrchestratorAddress: msgs[1].OrchestratorAddress,
-                
+			desc: "Second",
+			request: &types.QueryGetOrchestratorValidatorAddressRequest{
+				OrchestratorAddress: msgs[1].OrchestratorAddress,
 			},
 			response: &types.QueryGetOrchestratorValidatorAddressResponse{OrchestratorValidatorAddress: msgs[1]},
 		},
 		{
-			desc:    "KeyNotFound",
+			desc: "KeyNotFound",
 			request: &types.QueryGetOrchestratorValidatorAddressRequest{
-			    OrchestratorAddress:strconv.Itoa(100000),
-                
+				OrchestratorAddress: strconv.Itoa(100000),
 			},
-			err:     status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.InvalidArgument, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -94,9 +91,9 @@ func TestOrchestratorValidatorAddressQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.OrchestratorValidatorAddress), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.OrchestratorValidatorAddress),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.OrchestratorValidatorAddress),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -107,9 +104,9 @@ func TestOrchestratorValidatorAddressQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.OrchestratorValidatorAddress), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.OrchestratorValidatorAddress),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.OrchestratorValidatorAddress),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})

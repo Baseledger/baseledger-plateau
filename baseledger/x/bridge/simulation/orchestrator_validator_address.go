@@ -27,106 +27,14 @@ func SimulateMsgCreateOrchestratorValidatorAddress(
 
 		i := r.Int()
 		msg := &types.MsgCreateOrchestratorValidatorAddress{
-			ValidatorAddress: simAccount.Address.String(),
+			ValidatorAddress:    simAccount.Address.String(),
 			OrchestratorAddress: strconv.Itoa(i),
 		}
 
-		_, found := k.GetOrchestratorValidatorAddress(ctx , msg.OrchestratorAddress)
+		_, found := k.GetOrchestratorValidatorAddress(ctx, msg.OrchestratorAddress)
 		if found {
 			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "OrchestratorValidatorAddress already exist"), nil, nil
 		}
-
-		txCtx := simulation.OperationInput{
-			R:               r,
-			App:             app,
-			TxGen:           simappparams.MakeTestEncodingConfig().TxConfig,
-			Cdc:             nil,
-			Msg:             msg,
-			MsgType:         msg.Type(),
-			Context:         ctx,
-			SimAccount:      simAccount,
-			ModuleName:      types.ModuleName,
-			CoinsSpentInMsg: sdk.NewCoins(),
-			AccountKeeper:   ak,
-			Bankkeeper:      bk,
-		}
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
-	}
-}
-
-func SimulateMsgUpdateOrchestratorValidatorAddress(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	k keeper.Keeper,
-) simtypes.Operation {
-	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
-	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		var (
-			simAccount = simtypes.Account{}
-			orchestratorValidatorAddress = types.OrchestratorValidatorAddress{}
-			msg = &types.MsgUpdateOrchestratorValidatorAddress{}
-			allOrchestratorValidatorAddress = k.GetAllOrchestratorValidatorAddress(ctx)
-			found = false
-		)
-		for _, obj := range allOrchestratorValidatorAddress {
-			simAccount, found = FindAccount(accs, obj.ValidatorAddress)
-			if found {
-				orchestratorValidatorAddress = obj
-				break
-			}
-		}
-		if !found {
-			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "orchestratorValidatorAddress validatorAddress not found"), nil, nil
-		}
-		msg.ValidatorAddress = simAccount.Address.String()
-		
-		msg.OrchestratorAddress = orchestratorValidatorAddress.OrchestratorAddress
-
-		txCtx := simulation.OperationInput{
-			R:               r,
-			App:             app,
-			TxGen:           simappparams.MakeTestEncodingConfig().TxConfig,
-			Cdc:             nil,
-			Msg:             msg,
-			MsgType:         msg.Type(),
-			Context:         ctx,
-			SimAccount:      simAccount,
-			ModuleName:      types.ModuleName,
-			CoinsSpentInMsg: sdk.NewCoins(),
-			AccountKeeper:   ak,
-			Bankkeeper:      bk,
-		}
-		return simulation.GenAndDeliverTxWithRandFees(txCtx)
-	}
-}
-
-func SimulateMsgDeleteOrchestratorValidatorAddress(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	k keeper.Keeper,
-) simtypes.Operation {
-	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
-	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		var (
-			simAccount = simtypes.Account{}
-			orchestratorValidatorAddress = types.OrchestratorValidatorAddress{}
-			msg = &types.MsgUpdateOrchestratorValidatorAddress{}
-			allOrchestratorValidatorAddress = k.GetAllOrchestratorValidatorAddress(ctx)
-			found = false
-		)
-		for _, obj := range allOrchestratorValidatorAddress {
-			simAccount, found = FindAccount(accs, obj.ValidatorAddress)
-			if found {
-				orchestratorValidatorAddress = obj
-				break
-			}
-		}
-		if !found {
-			return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "orchestratorValidatorAddress validatorAddress not found"), nil, nil
-		}
-		msg.ValidatorAddress = simAccount.Address.String()
-		
-		msg.OrchestratorAddress = orchestratorValidatorAddress.OrchestratorAddress
 
 		txCtx := simulation.OperationInput{
 			R:               r,
