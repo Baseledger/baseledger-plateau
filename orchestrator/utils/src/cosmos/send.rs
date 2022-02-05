@@ -5,7 +5,7 @@ use deep_space::Msg;
 use deep_space::{coin::Coin};
 use deep_space::address::Address;
 use baseledger_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
-use baseledger_proto::baseledger::{MsgUbtDepositedClaim, MsgValidatorPowerChangedClaim, OrchestratorValidatorAddress};
+use baseledger_proto::baseledger::{MsgUbtDepositedClaim, MsgValidatorPowerChangedClaim, MsgCreateOrchestratorValidatorAddress};
 use crate::types::*;
 use std::{collections::HashMap, time::Duration};
 use num256::Uint256;
@@ -37,9 +37,9 @@ pub async fn set_orchestrator_validator_addresses(
         .to_bech32(format!("{}valoper", contact.get_prefix()))
         .unwrap();
 
-    let msg_set_orch_address = OrchestratorValidatorAddress {
-        validator_address: our_valoper_address.to_string(),
+    let msg_set_orch_address = MsgCreateOrchestratorValidatorAddress {
         orchestrator_address: delegate_cosmos_address.to_string(),
+        validator_address: our_valoper_address.to_string()
     };
 
     let msg = Msg::new(
