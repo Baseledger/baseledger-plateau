@@ -14276,11 +14276,7 @@ definitions:
           type: string
   Baseledger.baseledger.bridge.MsgCreateOrchestratorValidatorAddressResponse:
     type: object
-  Baseledger.baseledger.bridge.MsgDeleteOrchestratorValidatorAddressResponse:
-    type: object
   Baseledger.baseledger.bridge.MsgUbtDepositedClaimResponse:
-    type: object
-  Baseledger.baseledger.bridge.MsgUpdateOrchestratorValidatorAddressResponse:
     type: object
   Baseledger.baseledger.bridge.MsgValidatorPowerChangedClaimResponse:
     type: object

@@ -66,18 +66,6 @@ func (k Keeper) GetOrchestratorValidator(ctx sdk.Context, orchestratorAddress st
 	return validator
 }
 
-// RemoveOrchestratorValidatorAddress removes a orchestratorValidatorAddress from the store
-func (k Keeper) RemoveOrchestratorValidatorAddress(
-	ctx sdk.Context,
-	orchestratorAddress string,
-
-) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrchestratorValidatorAddressKeyPrefix))
-	store.Delete(types.OrchestratorValidatorAddressKey(
-		orchestratorAddress,
-	))
-}
-
 // GetAllOrchestratorValidatorAddress returns all orchestratorValidatorAddress
 func (k Keeper) GetAllOrchestratorValidatorAddress(ctx sdk.Context) (list []types.OrchestratorValidatorAddress) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrchestratorValidatorAddressKeyPrefix))

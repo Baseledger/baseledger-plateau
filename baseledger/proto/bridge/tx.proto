@@ -11,8 +11,6 @@ service Msg {
       rpc UbtDepositedClaim(MsgUbtDepositedClaim) returns (MsgUbtDepositedClaimResponse);
   rpc ValidatorPowerChangedClaim(MsgValidatorPowerChangedClaim) returns (MsgValidatorPowerChangedClaimResponse);
   rpc CreateOrchestratorValidatorAddress(MsgCreateOrchestratorValidatorAddress) returns (MsgCreateOrchestratorValidatorAddressResponse);
-  rpc UpdateOrchestratorValidatorAddress(MsgUpdateOrchestratorValidatorAddress) returns (MsgUpdateOrchestratorValidatorAddressResponse);
-  rpc DeleteOrchestratorValidatorAddress(MsgDeleteOrchestratorValidatorAddress) returns (MsgDeleteOrchestratorValidatorAddressResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -55,18 +53,3 @@ message MsgCreateOrchestratorValidatorAddress {
 
 }
 message MsgCreateOrchestratorValidatorAddressResponse {}
-
-message MsgUpdateOrchestratorValidatorAddress {
-  string validatorAddress = 1;
-  string orchestratorAddress = 2;
-
-}
-message MsgUpdateOrchestratorValidatorAddressResponse {}
-
-message MsgDeleteOrchestratorValidatorAddress {
-  string validatorAddress = 1;
-  string orchestratorAddress = 2;
-}
-message MsgDeleteOrchestratorValidatorAddressResponse {}
-
-// this line is used by starport scaffolding # proto/tx/message
