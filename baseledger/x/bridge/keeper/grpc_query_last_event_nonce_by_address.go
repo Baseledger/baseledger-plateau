@@ -26,7 +26,7 @@ func (k Keeper) LastEventNonceByAddress(goCtx context.Context, req *types.QueryL
 		return nil, sdkerrors.Wrap(errors.New("Validator not found"), "address")
 	}
 
-	var ret types.QueryLastEventNonceByAddressResponse
-	ret.EventNonce = k.GetLastEventNonceByValidator(ctx, orchValAddr.GetOperator())
-	return &ret, nil
+	return &types.QueryLastEventNonceByAddressResponse{
+		EventNonce: k.GetLastEventNonceByValidator(ctx, orchValAddr.GetOperator()),
+	}, nil
 }
