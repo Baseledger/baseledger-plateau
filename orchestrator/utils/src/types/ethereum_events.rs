@@ -18,20 +18,28 @@ use web30::types::Log;
 /// ERC20 names and deposit destination strings
 const ONE_MEGABYTE: usize = 1000usize.pow(3);
 
-/// A parsed struct representing the Ethereum event fired when someone makes a deposit
-/// on the Baseledger contract
+/*
+    UBTSplitter event:
+    event UbtDeposited(
+        address indexed token,
+        address indexed sender,
+        string baseledgerDestinationAddress,
+        uint256 tokenAmount,
+        uint256 lastEventNonce
+    );
+*/
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
-pub struct UbtDepositedEvent {
-    /// The token contract address for the deposit
-    pub erc20: EthAddress,
-    /// The Ethereum Sender
+pub struct UbtDeposited {
+    /// UBT contract address (TODO: do we need it?)
+    pub token: EthAddress,
+    /// Sender of UBT deposit
     pub sender: EthAddress,
-    /// The Cosmos destination, this is a raw value from the Ethereum contract
+    /// Baseledger destination address - this is a raw value from the Ethereum contract
     /// and therefore could be provided by an attacker. If the string is valid
     /// utf-8 it will be included here, if it is invalid utf8 we will provide
     /// an empty string. Values over 1mb of text are not permitted and will also
     /// be presented as empty
-    pub destination: String,
+    pub baseledger_destination_address: String,
     /// the validated destination is the destination string parsed and interpreted
     /// as a valid Bech32 Cosmos address, if this is not possible the value is none
     pub validated_destination: Option<CosmosAddress>,
@@ -46,9 +54,9 @@ pub struct UbtDepositedEvent {
 /// struct for holding the data encoded fields
 /// of a send to Cosmos event for unit testing
 #[derive(Eq, PartialEq, Debug)]
-struct UbtDepositedEventData {
-    /// The Cosmos destination, None for an invalid deposit address
-    pub destination: String,
+struct UbtDepositedData {
+    /// Baseledger destination address, None for an invalid deposit address
+    pub baseledger_destination_address: String,
     /// The amount of the erc20 token that is being sent
     pub amount: Uint256,
     /// The transaction's nonce, used to make sure there can be no accidental duplication
@@ -92,11 +100,11 @@ struct ValidatorPowerChangeEventData {
     pub event_nonce: Uint256,
 }
 
-impl UbtDepositedEvent {
-    pub fn from_log(input: &Log) -> Result<UbtDepositedEvent, OrchestratorError> {
+impl UbtDeposited {
+    pub fn from_log(input: &Log) -> Result<UbtDeposited, OrchestratorError> {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
-            let erc20 = EthAddress::from_slice(&erc20_data[12..32])?;
+            let token = EthAddress::from_slice(&erc20_data[12..32])?;
             let sender = EthAddress::from_slice(&sender_data[12..32])?;
             let block_height = if let Some(bn) = input.block_number.clone() {
                 if bn > u64::MAX.into() {
@@ -113,28 +121,28 @@ impl UbtDepositedEvent {
                 ));
             };
 
-            let data = UbtDepositedEvent::decode_data_bytes(&input.data)?;
+            let data = UbtDeposited::decode_data_bytes(&input.data)?;
             if data.event_nonce > u64::MAX.into() || block_height > u64::MAX.into() {
                 Err(OrchestratorError::InvalidEventLogError(
                     "Event nonce overflow, probably incorrect parsing".to_string(),
                 ))
             } else {
                 let event_nonce: u64 = data.event_nonce.to_string().parse().unwrap();
-                let validated_destination = match data.destination.parse() {
+                let validated_destination = match data.baseledger_destination_address.parse() {
                     Ok(v) => Some(v),
                     Err(_) => {
-                        if data.destination.len() < 1000 {
-                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.destination);
+                        if data.baseledger_destination_address.len() < 1000 {
+                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.baseledger_destination_address);
                         } else {
                             warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the community pool", event_nonce);
                         }
                         None
                     }
                 };
-                Ok(UbtDepositedEvent {
-                    erc20,
+                Ok(UbtDeposited {
+                    token,
                     sender,
-                    destination: data.destination,
+                    baseledger_destination_address: data.baseledger_destination_address,
                     validated_destination,
                     amount: data.amount,
                     event_nonce,
@@ -147,10 +155,10 @@ impl UbtDepositedEvent {
             ))
         }
     }
-    fn decode_data_bytes(data: &[u8]) -> Result<UbtDepositedEventData, OrchestratorError> {
+    fn decode_data_bytes(data: &[u8]) -> Result<UbtDepositedData, OrchestratorError> {
         if data.len() < 4 * 32 {
             return Err(OrchestratorError::InvalidEventLogError(
-                "too short for UbtDepositedEventData".to_string(),
+                "too short for UbtDepositedData".to_string(),
             ));
         }
 
@@ -188,8 +196,8 @@ impl UbtDepositedEvent {
             } else {
                 warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the community pool", event_nonce);
             }
-            return Ok(UbtDepositedEventData {
-                destination: String::new(),
+            return Ok(UbtDepositedData {
+                baseledger_destination_address: String::new(),
                 event_nonce,
                 amount,
             });
@@ -199,23 +207,23 @@ impl UbtDepositedEvent {
 
         if dest.as_bytes().len() > ONE_MEGABYTE {
             warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the community pool", event_nonce);
-            Ok(UbtDepositedEventData {
-                destination: String::new(),
+            Ok(UbtDepositedData {
+                baseledger_destination_address: String::new(),
                 event_nonce,
                 amount,
             })
         } else {
-            Ok(UbtDepositedEventData {
-                destination: dest,
+            Ok(UbtDepositedData {
+                baseledger_destination_address: dest,
                 event_nonce,
                 amount,
             })
         }
     }
-    pub fn from_logs(input: &[Log]) -> Result<Vec<UbtDepositedEvent>, OrchestratorError> {
+    pub fn from_logs(input: &[Log]) -> Result<Vec<UbtDeposited>, OrchestratorError> {
         let mut res = Vec::new();
         for item in input {
-            res.push(UbtDepositedEvent::from_log(item)?);
+            res.push(UbtDeposited::from_log(item)?);
         }
         Ok(res)
     }

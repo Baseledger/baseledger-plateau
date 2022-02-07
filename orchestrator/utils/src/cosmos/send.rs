@@ -62,7 +62,7 @@ pub async fn set_orchestrator_validator_addresses(
 pub async fn send_ethereum_claims(
     contact: &Contact,
     private_key: PrivateKey,
-    deposits: Vec<UbtDepositedEvent>,
+    deposits: Vec<UbtDeposited>,
     power_changes: Vec<ValidatorPowerChangeEvent>,
     ubt_price: f32,
 ) -> Result<TxResponse, CosmosGrpcError> {
@@ -77,9 +77,9 @@ pub async fn send_ethereum_claims(
             creator: our_address.to_string(),
             event_nonce: deposit.event_nonce,
             block_height: downcast_uint256(deposit.block_height).unwrap(),
-            token_contract: deposit.erc20.to_string(),
+            token_contract: deposit.token.to_string(),
             amount: deposit.amount.to_string(),
-            cosmos_receiver: deposit.destination,
+            cosmos_receiver: deposit.baseledger_destination_address,
             ethereum_sender: deposit.sender.to_string(),
             ubt_price: ubt_price.to_string(),
         };
