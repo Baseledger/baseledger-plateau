@@ -12,9 +12,9 @@ import (
 func (k msgServer) ValidatorPowerChangedClaim(goCtx context.Context, msg *types.MsgValidatorPowerChangedClaim) (*types.MsgValidatorPowerChangedClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.checkOrchestratorValidatorInSet(ctx, msg.Creator)
-	if err != nil {
-		return nil, sdkerrors.Wrap(err, "Could not check orchestrator validator inset")
+	val := k.GetOrchestratorValidator(ctx, msg.Creator)
+	if val == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "Validator not found")
 	}
 
 	any, err := codectypes.NewAnyWithValue(msg)

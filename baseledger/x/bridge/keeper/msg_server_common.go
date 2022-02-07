@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"errors"
-
 	"github.com/Baseledger/baseledger/x/bridge/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -33,20 +31,6 @@ func (k msgServer) claimHandlerCommon(ctx sdk.Context, msgAny *codectypes.Any, m
 	// 		sdk.NewAttribute(types.AttributeKeyAttestationID, string(types.GetAttestationKey(msg.GetEventNonce(), hash))),
 	// 	),
 	// )
-
-	return nil
-}
-
-func (k msgServer) checkOrchestratorValidatorInSet(ctx sdk.Context, orchestrator string) error {
-	_, err := sdk.AccAddressFromBech32(orchestrator)
-	if err != nil {
-		return sdkerrors.Wrap(err, "orchestrator acc address invalid")
-	}
-
-	orchVal := k.GetOrchestratorValidator(ctx, orchestrator)
-	if orchVal == nil {
-		return sdkerrors.Wrap(errors.New("Validator not found"), "address")
-	}
 
 	return nil
 }
