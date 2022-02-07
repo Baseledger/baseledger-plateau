@@ -4,7 +4,7 @@ use utils::get_with_retry::{get_last_event_nonce_with_retry, RETRY_TIME, get_blo
 use deep_space::address::Address as CosmosAddress;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::types::event_signatures::*;
-use utils::types::{UbtDepositedEvent};
+use utils::types::{UbtDeposited};
 use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use web30::client::Web3;
@@ -91,7 +91,7 @@ pub async fn get_last_checked_block(
         }
 
         for event in ubt_deposited_events {
-            match UbtDepositedEvent::from_log(&event) {
+            match UbtDeposited::from_log(&event) {
                 Ok(send) => {
                     trace!(
                         "{} send event nonce {} last event nonce",
