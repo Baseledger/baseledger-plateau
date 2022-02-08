@@ -55,9 +55,15 @@ func (p Params) Validate() error {
 }
 
 func validateWorktokenEurPrice(i interface{}) error {
-	if _, err := sdk.NewDecFromStr(fmt.Sprint(i)); err != nil {
+	value, err := sdk.NewDecFromStr(fmt.Sprint(i))
+	if err != nil {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
+
+	if value.LTE(sdk.ZeroDec()) {
+		return fmt.Errorf("invalid parameter value: %T", i)
+	}
+
 	return nil
 }
 
