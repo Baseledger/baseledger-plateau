@@ -219,9 +219,9 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	BaseledgerbridgeKeeper bridgemodulekeeper.Keeper
+	BridgeKeeper bridgemodulekeeper.Keeper
 
-	BaseledgerKeeper proofModulekeeper.Keeper
+	ProofKeeper proofModulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -358,7 +358,7 @@ func New(
 		&stakingKeeper, govRouter,
 	)
 
-	app.BaseledgerbridgeKeeper = *bridgemodulekeeper.NewKeeper(
+	app.BridgeKeeper = *bridgemodulekeeper.NewKeeper(
 		appCodec,
 		keys[bridgemoduletypes.StoreKey],
 		keys[bridgemoduletypes.MemStoreKey],
@@ -367,17 +367,17 @@ func New(
 		&app.DistrKeeper,
 		&stakingKeeper,
 	)
-	bridgemodule := bridgemodule.NewAppModule(appCodec, app.BaseledgerbridgeKeeper, app.AccountKeeper, app.BankKeeper)
+	bridgemodule := bridgemodule.NewAppModule(appCodec, app.BridgeKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.BaseledgerKeeper = *proofModulekeeper.NewKeeper(
+	app.ProofKeeper = *proofModulekeeper.NewKeeper(
 		appCodec,
 		keys[proofModuletypes.StoreKey],
 		keys[proofModuletypes.MemStoreKey],
 		app.GetSubspace(proofModuletypes.ModuleName),
-
+		app.BridgeKeeper,
 		app.BankKeeper,
 	)
-	proofModule := proofModule.NewAppModule(appCodec, app.BaseledgerKeeper, app.AccountKeeper, app.BankKeeper)
+	proofModule := proofModule.NewAppModule(appCodec, app.ProofKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -658,7 +658,6 @@ func GetMaccPerms() map[string][]string {
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
-
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)

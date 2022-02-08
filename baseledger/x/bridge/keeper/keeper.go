@@ -89,6 +89,19 @@ func (k Keeper) SetWorktokenEurPrice(ctx sdk.Context, v string) {
 	k.paramstore.Set(ctx, types.ParamsStoreKeyWorktokenEurPrice, v)
 }
 
+// GetBaseledgerFaucetAddress returns faucet address used to send work and stake tokens
+//
+// This parameter can be changed through a governance param change proposal.
+func (k Keeper) GetBaseledgerFaucetAddress(ctx sdk.Context) string {
+	var a string
+	k.paramstore.Get(ctx, types.ParamsStoreKeyBaseledgerFaucetAddress, &a)
+	return a
+}
+
+func (k Keeper) SetBaseledgerFaucetAddress(ctx sdk.Context, v string) {
+	k.paramstore.Set(ctx, types.ParamsStoreKeyBaseledgerFaucetAddress, v)
+}
+
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }

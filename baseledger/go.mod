@@ -21,6 +21,8 @@ require (
 require (
 	github.com/golang/protobuf v1.5.2
 	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3 // indirect
+	github.com/regen-network/cosmos-proto v0.3.1 // indirect
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/viper v1.10.1
 	gopkg.in/yaml.v2 v2.4.0

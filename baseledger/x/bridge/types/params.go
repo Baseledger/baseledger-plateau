@@ -15,7 +15,8 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{
-		WorktokenEurPrice: "",
+		WorktokenEurPrice:       "",
+		BaseledgerFaucetAddress: "",
 	})
 }
 
@@ -27,7 +28,8 @@ func NewParams() Params {
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
 	return Params{
-		WorktokenEurPrice: "0.1",
+		WorktokenEurPrice:       "0.1",
+		BaseledgerFaucetAddress: "baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0",
 	}
 }
 
@@ -35,6 +37,7 @@ func DefaultParams() Params {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(ParamsStoreKeyWorktokenEurPrice, &p.WorktokenEurPrice, validateWorktokenEurPrice),
+		paramtypes.NewParamSetPair(ParamsStoreKeyBaseledgerFaucetAddress, &p.BaseledgerFaucetAddress, validateBaseledgerFaucetAddress),
 	}
 }
 
@@ -51,6 +54,10 @@ func (p Params) Validate() error {
 		return sdkerrors.Wrap(err, "worktoken eur price")
 	}
 
+	if err := validateBaseledgerFaucetAddress(p.BaseledgerFaucetAddress); err != nil {
+		return sdkerrors.Wrap(err, "baseledger faucet address")
+	}
+
 	return nil
 }
 
@@ -62,6 +69,16 @@ func validateWorktokenEurPrice(i interface{}) error {
 
 	if value.LTE(sdk.ZeroDec()) {
 		return fmt.Errorf("invalid parameter value: %T", i)
+	}
+
+	return nil
+}
+
+func validateBaseledgerFaucetAddress(i interface{}) error {
+	_, err := sdk.AccAddressFromBech32(fmt.Sprint(i))
+
+	if err != nil {
+		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	return nil
