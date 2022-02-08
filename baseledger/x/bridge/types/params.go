@@ -14,10 +14,7 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
-	return paramtypes.NewKeyTable().RegisterParamSet(&Params{
-		WorktokenEurPrice:       "",
-		BaseledgerFaucetAddress: "",
-	})
+	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 // NewParams creates a new Params instance
