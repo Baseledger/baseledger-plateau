@@ -121,7 +121,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			return sdkerrors.Wrap(types.ErrIntOverflowAttestation, "invalid supply after UbtDeposit attestation")
 		}
 
-		faucetAddress, err := sdk.AccAddressFromBech32(baseledgercommon.UbtFaucetAddress)
+		faucetAddress, err := sdk.AccAddressFromBech32(a.keeper.GetBaseledgerFaucetAddress(ctx))
 
 		if err != nil {
 			panic("Faucet address invalid")
@@ -218,7 +218,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			return sdkerrors.Wrap(err, "can not find validator specified on claim")
 		}
 
-		faucetAddress, err := sdk.AccAddressFromBech32(baseledgercommon.UbtFaucetAddress)
+		faucetAddress, err := sdk.AccAddressFromBech32(a.keeper.GetBaseledgerFaucetAddress(ctx))
 		if err != nil {
 			panic("Faucet address invalid")
 		}
