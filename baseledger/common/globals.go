@@ -10,7 +10,6 @@ import (
 const StakeTokenDenom = "stake"
 const WorkTokenDenom = "work"
 const WorkTokenFee = "1work"
-const UbtFaucetAddress = "baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0"
 
 /* Current formula, subject to change, decide either through code update or somehow using params
    If we decide to update this using params, also modify rest endpoint

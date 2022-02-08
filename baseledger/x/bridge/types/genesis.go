@@ -14,8 +14,11 @@ var (
 	// AttestationVotesPowerThreshold threshold of votes power to succeed
 	AttestationVotesPowerThreshold = sdk.NewInt(66)
 
-	// ParamsStoreKeyWorktokenEurPrice storesd the price of 1 worktoken in EUR
+	// ParamsStoreKeyWorktokenEurPrice stores the price of 1 worktoken in EUR
 	ParamsStoreKeyWorktokenEurPrice = []byte("WorktokenEurPrice")
+
+	// ParamsStoreKeyBaseledgerFaucetAddress stores the faucet address used to send stake and work tokens
+	ParamsStoreKeyBaseledgerFaucetAddress = []byte("BaseledgerFaucetAddress")
 
 	// Ensure that params implements the proper interface
 	_ paramtypes.ParamSet = &Params{}

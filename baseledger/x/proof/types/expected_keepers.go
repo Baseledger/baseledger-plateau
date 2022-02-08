@@ -17,3 +17,8 @@ type BankKeeper interface {
 	SendCoins(ctx sdk.Context, fromAddr sdk.AccAddress, toAddr sdk.AccAddress, amt sdk.Coins) error
 	// Methods imported from bank should be defined here
 }
+
+// BridgeKeeper defines the expected interface needed to retrieve baseledger faucet address param value.
+type BridgeKeeper interface {
+	GetBaseledgerFaucetAddress(ctx sdk.Context) string
+}

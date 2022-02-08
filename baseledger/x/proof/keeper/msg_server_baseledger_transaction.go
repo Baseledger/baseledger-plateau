@@ -15,8 +15,7 @@ func (k msgServer) CreateBaseledgerTransaction(goCtx context.Context, msg *types
 
 	txCreatorAddress, err := sdk.AccAddressFromBech32(msg.Creator)
 
-	// faucet address needs to be hard coded like this, otherwise some node could change configuration and send to arbitrary acc
-	faucetAccAddress, err := sdk.AccAddressFromBech32(common.UbtFaucetAddress)
+	faucetAccAddress, err := sdk.AccAddressFromBech32(k.bridgeKeeper.GetBaseledgerFaucetAddress(ctx))
 
 	if err != nil {
 		panic(err)
