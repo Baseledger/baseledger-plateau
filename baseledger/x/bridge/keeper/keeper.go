@@ -79,10 +79,9 @@ func NewKeeper(
 // used during calculation of how many worktokens to send to a UBT depositor in the brigde contract.
 //
 // This parameter can be changed through a governance param change proposal.
-func (k Keeper) GetWorktokenEurPrice(ctx sdk.Context) string {
-	var a string
+func (k Keeper) GetWorktokenEurPrice(ctx sdk.Context) (a string) {
 	k.paramstore.Get(ctx, types.ParamsStoreKeyWorktokenEurPrice, &a)
-	return a
+	return
 }
 
 func (k Keeper) SetWorktokenEurPrice(ctx sdk.Context, v string) {
@@ -92,10 +91,9 @@ func (k Keeper) SetWorktokenEurPrice(ctx sdk.Context, v string) {
 // GetBaseledgerFaucetAddress returns faucet address used to send work and stake tokens
 //
 // This parameter can be changed through a governance param change proposal.
-func (k Keeper) GetBaseledgerFaucetAddress(ctx sdk.Context) string {
-	var a string
+func (k Keeper) GetBaseledgerFaucetAddress(ctx sdk.Context) (a string) {
 	k.paramstore.Get(ctx, types.ParamsStoreKeyBaseledgerFaucetAddress, &a)
-	return a
+	return
 }
 
 func (k Keeper) SetBaseledgerFaucetAddress(ctx sdk.Context, v string) {
