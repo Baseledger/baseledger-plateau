@@ -75,9 +75,10 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithoutMod__ReturnsCorrect
 	// Arrange
 	depositedUbtAmount, _ := new(big.Int).SetString("100000000000000000000", 0) // 100
 	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)          // 1
+	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
 
 	// Act
-	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(worktokenEurPrice.BigInt(), depositedUbtAmount, avgUbtPrice)
 
 	// Assert
 	expectedWorktokenAmount, _ := new(big.Int).SetString("1000", 0)
@@ -88,9 +89,10 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithMod__ReturnsCeiledAmou
 	// Arrange
 	depositedUbtAmount, _ := new(big.Int).SetString("100010000000000000000", 0) // 100.01
 	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)          // 1
+	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
 
 	// Act
-	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(worktokenEurPrice.BigInt(), depositedUbtAmount, avgUbtPrice)
 
 	// Assert
 	expectedWorktokenAmount, _ := new(big.Int).SetString("1001", 0)
@@ -101,9 +103,10 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithModVariation__ReturnsC
 	// Arrange
 	depositedUbtAmount, _ := new(big.Int).SetString("99990000000000000000", 0) // 99.99
 	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0)         // 1
+	worktokenEurPrice, _ := sdk.NewDecFromStr("0.1")
 
 	// Act
-	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(depositedUbtAmount, avgUbtPrice)
+	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(worktokenEurPrice.BigInt(), depositedUbtAmount, avgUbtPrice)
 
 	// Assert
 	expectedWorktokenAmount, _ := new(big.Int).SetString("1000", 0)
