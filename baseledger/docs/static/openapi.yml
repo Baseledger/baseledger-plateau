@@ -621,6 +621,8 @@ paths:
                 properties:
                   worktokenEurPrice:
                     type: string
+                  baseledgerFaucetAddress:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -13988,6 +13990,8 @@ definitions:
     properties:
       worktokenEurPrice:
         type: string
+      baseledgerFaucetAddress:
+        type: string
     description: Params defines the parameters for the module.
   Baseledger.baseledger.bridge.QueryAttestationsResponse:
     type: object
@@ -14191,6 +14195,8 @@ definitions:
         type: object
         properties:
           worktokenEurPrice:
+            type: string
+          baseledgerFaucetAddress:
             type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   Baseledger.baseledger.bridge.QueryValidatorAddressByOrchestratorAddressResponse:

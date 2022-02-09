@@ -374,8 +374,8 @@ func New(
 		keys[proofModuletypes.StoreKey],
 		keys[proofModuletypes.MemStoreKey],
 		app.GetSubspace(proofModuletypes.ModuleName),
-		app.BridgeKeeper,
 		app.BankKeeper,
+		app.BridgeKeeper,
 	)
 	proofModule := proofModule.NewAppModule(appCodec, app.ProofKeeper, app.AccountKeeper, app.BankKeeper)
 
