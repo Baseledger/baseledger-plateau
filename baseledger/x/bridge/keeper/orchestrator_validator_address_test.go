@@ -44,6 +44,6 @@ func TestOrchestratorValidatorAddressGetAll(t *testing.T) {
 	items := createNOrchestratorValidatorAddress(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllOrchestratorValidatorAddress(ctx)),
+		nullify.Fill(keeper.GetAllOrchestratorValidatorAddresses(ctx)),
 	)
 }

@@ -11,7 +11,7 @@ import (
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
-	// Set all the orchestratorValidatorAddress
+	// Set all the orchestratorValidatorAddresses
 	for _, elem := range genState.OrchestratorValidatorAddressList {
 		k.SetOrchestratorValidatorAddress(ctx, elem)
 	}
@@ -78,7 +78,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genesis.Attestations = append(genesis.Attestations, attestationMap[key]...)
 	}
 
-	genesis.OrchestratorValidatorAddressList = k.GetAllOrchestratorValidatorAddress(ctx)
+	genesis.OrchestratorValidatorAddressList = k.GetAllOrchestratorValidatorAddresses(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis
