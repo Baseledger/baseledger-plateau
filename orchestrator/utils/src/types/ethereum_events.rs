@@ -19,7 +19,7 @@ use web30::types::Log;
 const ONE_MEGABYTE: usize = 1000usize.pow(3);
 
 /*
-    UBTSplitter event:
+    UBTSplitter event
     event UbtDeposited(
         address indexed token,
         address indexed sender,
@@ -63,25 +63,36 @@ struct UbtDepositedData {
     pub event_nonce: Uint256,
 }
 
-/// A parsed struct representing the Ethereum event fired when someone makes a deposit
-/// on the Baseledger contract
+/*
+    UBTSplitter event
+    event PayeeUpdated(
+        address indexed token,
+        address indexed revenueAddress,
+        string baseledgerValidatorAddress,
+        uint256 shares,
+        uint256 lastEventNonce,
+        address stakingAddress,
+        uint256 timestamp
+    );
+
+*/
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
-pub struct ValidatorPowerChangeEvent {
-    /// The token contract address for the deposit
-    pub erc20: EthAddress,
-    /// The Ethereum Sender
-    pub sender: EthAddress,
-    /// The Cosmos destination, this is a raw value from the Ethereum contract
+pub struct PayeeUpdated {
+    /// UBT contract address (TODO: do we need it?)
+    pub token: EthAddress,
+    /// Payee (validator) that shares should be updated
+    pub revenue_address: EthAddress,
+    /// The baseledger destination, valoper validator address, this is a raw value from the Ethereum contract
     /// and therefore could be provided by an attacker. If the string is valid
     /// utf-8 it will be included here, if it is invalid utf8 we will provide
     /// an empty string. Values over 1mb of text are not permitted and will also
     /// be presented as empty
-    pub destination: String,
+    pub baseledger_validator_address: String,
     /// the validated destination is the destination string parsed and interpreted
     /// as a valid Bech32 Cosmos address, if this is not possible the value is none
     pub validated_destination: Option<CosmosAddress>,
-    /// The amount of the erc20 token that is being sent
-    pub amount: Uint256,
+    /// The amount of the shares to update validator staking
+    pub shares: Uint256,
     /// The transaction's nonce, used to make sure there can be no accidental duplication
     pub event_nonce: u64,
     /// The block height this event occurred at
@@ -91,11 +102,10 @@ pub struct ValidatorPowerChangeEvent {
 /// struct for holding the data encoded fields
 /// of a send to Cosmos event for unit testing
 #[derive(Eq, PartialEq, Debug)]
-struct ValidatorPowerChangeEventData {
-    /// The Cosmos destination, None for an invalid deposit address
-    pub destination: String,
+struct PayeeUpdatedData {
+    pub baseledger_validator_address: String,
     /// The amount of the erc20 token that is being sent
-    pub amount: Uint256,
+    pub shares: Uint256,
     /// The transaction's nonce, used to make sure there can be no accidental duplication
     pub event_nonce: Uint256,
 }
@@ -170,7 +180,6 @@ impl UbtDeposited {
         let destination_str_len_end = 4 * 32;
         let destination_str_len =
             Uint256::from_bytes_be(&data[destination_str_len_start..destination_str_len_end]);
-
         if destination_str_len > u32::MAX.into() {
             return Err(OrchestratorError::InvalidEventLogError(
                 "denom length overflow, probably incorrect parsing".to_string(),
@@ -240,12 +249,12 @@ impl UbtDeposited {
     }
 }
 
-impl ValidatorPowerChangeEvent {
-    pub fn from_log(input: &Log) -> Result<ValidatorPowerChangeEvent, OrchestratorError> {
+impl PayeeUpdated {
+    pub fn from_log(input: &Log) -> Result<PayeeUpdated, OrchestratorError> {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
-            let erc20 = EthAddress::from_slice(&erc20_data[12..32])?;
-            let sender = EthAddress::from_slice(&sender_data[12..32])?;
+            let token = EthAddress::from_slice(&erc20_data[12..32])?;
+            let revenue_address = EthAddress::from_slice(&sender_data[12..32])?;
             let block_height = if let Some(bn) = input.block_number.clone() {
                 if bn > u64::MAX.into() {
                     return Err(OrchestratorError::InvalidEventLogError(
@@ -261,30 +270,30 @@ impl ValidatorPowerChangeEvent {
                 ));
             };
 
-            let data = ValidatorPowerChangeEvent::decode_data_bytes(&input.data)?;
+            let data = PayeeUpdated::decode_data_bytes(&input.data)?;
             if data.event_nonce > u64::MAX.into() || block_height > u64::MAX.into() {
                 Err(OrchestratorError::InvalidEventLogError(
                     "Event nonce overflow, probably incorrect parsing".to_string(),
                 ))
             } else {
                 let event_nonce: u64 = data.event_nonce.to_string().parse().unwrap();
-                let validated_destination = match data.destination.parse() {
+                let validated_destination = match data.baseledger_validator_address.parse() {
                     Ok(v) => Some(v),
                     Err(_) => {
-                        if data.destination.len() < 1000 {
-                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.destination);
+                        if data.baseledger_validator_address.len() < 1000 {
+                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.baseledger_validator_address);
                         } else {
                             warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the community pool", event_nonce);
                         }
                         None
                     }
                 };
-                Ok(ValidatorPowerChangeEvent {
-                    erc20,
-                    sender,
-                    destination: data.destination,
+                Ok(PayeeUpdated {
+                    token,
+                    revenue_address,
+                    baseledger_validator_address: data.baseledger_validator_address,
                     validated_destination,
-                    amount: data.amount,
+                    shares: data.shares,
                     event_nonce,
                     block_height,
                 })
@@ -295,10 +304,10 @@ impl ValidatorPowerChangeEvent {
             ))
         }
     }
-    fn decode_data_bytes(data: &[u8]) -> Result<ValidatorPowerChangeEventData, OrchestratorError> {
+    fn decode_data_bytes(data: &[u8]) -> Result<PayeeUpdatedData, OrchestratorError> {
         if data.len() < 4 * 32 {
             return Err(OrchestratorError::InvalidEventLogError(
-                "too short for ValidatorPowerChangeEventData".to_string(),
+                "too short for PayeeUpdatedData".to_string(),
             ));
         }
 
@@ -336,10 +345,10 @@ impl ValidatorPowerChangeEvent {
             } else {
                 warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the community pool", event_nonce);
             }
-            return Ok(ValidatorPowerChangeEventData {
-                destination: String::new(),
+            return Ok(PayeeUpdatedData {
+                baseledger_validator_address: String::new(),
                 event_nonce,
-                amount,
+                shares: amount,
             });
         }
         // whitespace can not be a valid part of a bech32 address, so we can safely trim it
@@ -347,23 +356,23 @@ impl ValidatorPowerChangeEvent {
 
         if dest.as_bytes().len() > ONE_MEGABYTE {
             warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the community pool", event_nonce);
-            Ok(ValidatorPowerChangeEventData {
-                destination: String::new(),
+            Ok(PayeeUpdatedData {
+                baseledger_validator_address: String::new(),
                 event_nonce,
-                amount,
+                shares: amount,
             })
         } else {
-            Ok(ValidatorPowerChangeEventData {
-                destination: dest,
+            Ok(PayeeUpdatedData {
+                baseledger_validator_address: dest,
                 event_nonce,
-                amount,
+                shares: amount,
             })
         }
     }
-    pub fn from_logs(input: &[Log]) -> Result<Vec<ValidatorPowerChangeEvent>, OrchestratorError> {
+    pub fn from_logs(input: &[Log]) -> Result<Vec<PayeeUpdated>, OrchestratorError> {
         let mut res = Vec::new();
         for item in input {
-            res.push(ValidatorPowerChangeEvent::from_log(item)?);
+            res.push(PayeeUpdated::from_log(item)?);
         }
         Ok(res)
     }

@@ -63,7 +63,7 @@ pub async fn send_ethereum_claims(
     contact: &Contact,
     private_key: PrivateKey,
     deposits: Vec<UbtDeposited>,
-    power_changes: Vec<ValidatorPowerChangeEvent>,
+    power_changes: Vec<PayeeUpdated>,
     ubt_price: f32,
 ) -> Result<TxResponse, CosmosGrpcError> {
     let our_address = private_key.to_address(&contact.get_prefix()).unwrap();
@@ -92,10 +92,10 @@ pub async fn send_ethereum_claims(
             creator: our_address.to_string(),
             event_nonce: power_change.event_nonce,
             block_height: downcast_uint256(power_change.block_height).unwrap(),
-            token_contract: power_change.erc20.to_string(),
-            amount: power_change.amount.to_string(),
-            cosmos_receiver: power_change.destination,
-            ethereum_sender: power_change.sender.to_string(),
+            token_contract: power_change.token.to_string(),
+            amount: power_change.shares.to_string(),
+            cosmos_receiver: power_change.baseledger_validator_address,
+            ethereum_sender: power_change.revenue_address.to_string(),
         };
         let msg = Msg::new("/Baseledger.baseledger.bridge.MsgValidatorPowerChangedClaim", claim);
         assert!(unordered_msgs.insert(power_change.event_nonce, msg).is_none());
