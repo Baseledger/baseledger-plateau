@@ -41,7 +41,7 @@ pub async fn check_for_events(
             starting_block.clone(),
             Some(latest_block.clone()),
             vec![baseledger_contract_address],
-            vec![SENT_TO_COSMOS_EVENT_SIG],
+            vec![UBT_DEPOSITED_EVENT_SIG],
         )
         .await;
     trace!("Deposits {:?}", deposits);
@@ -82,8 +82,8 @@ pub async fn check_for_events(
 
         if !deposits.is_empty() {
             info!(
-                "Oracle observed deposit with sender {}, destination {:?}, amount {}, and event nonce {}",
-                deposits[0].sender, deposits[0].validated_destination, deposits[0].amount, deposits[0].event_nonce
+                "Oracle observed deposit with payee_address {}, destination {:?}, amount {}, and event nonce {}",
+                deposits[0].payee_address, deposits[0].validated_destination, deposits[0].amount, deposits[0].event_nonce
             )
         }
 
@@ -91,8 +91,8 @@ pub async fn check_for_events(
         
         if !power_changes.is_empty() {
             info!(
-                "Oracle observed power change with sender {}, destination {:?}, amount {}, and event nonce {}",
-                power_changes[0].sender, power_changes[0].validated_destination, power_changes[0].amount, power_changes[0].event_nonce
+                "Oracle observed power change with payee_address {}, destination {:?}, amount {}, and event nonce {}",
+                power_changes[0].payee_address, power_changes[0].validated_destination, power_changes[0].amount, power_changes[0].event_nonce
             )
         }
 

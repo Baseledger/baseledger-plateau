@@ -50,7 +50,7 @@ pub async fn get_last_checked_block(
                 end_search.clone(),
                 Some(current_block.clone()),
                 vec![baseledger_contract_address],
-                vec![SENT_TO_COSMOS_EVENT_SIG],
+                vec![UBT_DEPOSITED_EVENT_SIG],
             )
             .await;
         

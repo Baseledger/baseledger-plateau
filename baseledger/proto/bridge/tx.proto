@@ -24,7 +24,7 @@ message MsgUbtDepositedClaim {
     (gogoproto.nullable)   = false
   ];
   string ethereumSender = 6;
-  string cosmosReceiver = 7;
+  string baseledgerReceiverAccountAddress = 7;
   string ubtPrice       = 8;
 }
 
@@ -40,8 +40,8 @@ message MsgValidatorPowerChangedClaim {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable)   = false
   ];
-  string ethereumSender = 6;
-  string cosmosReceiver = 7;
+  string revenueAddress = 6;
+  string baseledgerReceiverValidatorAddress = 7;
 }
 
 message MsgValidatorPowerChangedClaimResponse {

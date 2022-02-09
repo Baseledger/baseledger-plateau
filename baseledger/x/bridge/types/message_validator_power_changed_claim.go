@@ -12,15 +12,15 @@ const TypeMsgValidatorPowerChangedClaim = "validator_power_changed_claim"
 
 var _ sdk.Msg = &MsgValidatorPowerChangedClaim{}
 
-func NewMsgValidatorPowerChangedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, ethereumSender string, cosmosReceiver string) *MsgValidatorPowerChangedClaim {
+func NewMsgValidatorPowerChangedClaim(creator string, eventNonce uint64, blockHeight uint64, tokenContract string, amount sdk.Int, revenueAddress string, baseledgerValidatorAddress string) *MsgValidatorPowerChangedClaim {
 	return &MsgValidatorPowerChangedClaim{
-		Creator:        creator,
-		EventNonce:     eventNonce,
-		BlockHeight:    blockHeight,
-		TokenContract:  tokenContract,
-		Amount:         amount,
-		EthereumSender: ethereumSender,
-		CosmosReceiver: cosmosReceiver,
+		Creator:                            creator,
+		EventNonce:                         eventNonce,
+		BlockHeight:                        blockHeight,
+		TokenContract:                      tokenContract,
+		Amount:                             amount,
+		RevenueAddress:                     revenueAddress,
+		BaseledgerReceiverValidatorAddress: baseledgerValidatorAddress,
 	}
 }
 
@@ -52,7 +52,7 @@ func (msg *MsgValidatorPowerChangedClaim) GetType() ClaimType {
 
 // ValidateBasic performs stateless checks
 func (msg *MsgValidatorPowerChangedClaim) ValidateBasic() error {
-	if err := ValidateEthAddress(msg.EthereumSender); err != nil {
+	if err := ValidateEthAddress(msg.RevenueAddress); err != nil {
 		return sdkerrors.Wrap(err, "eth sender")
 	}
 	if err := ValidateEthAddress(msg.TokenContract); err != nil {
@@ -61,7 +61,7 @@ func (msg *MsgValidatorPowerChangedClaim) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "orchestrator")
 	}
-	if _, err := sdk.ValAddressFromBech32(msg.CosmosReceiver); err != nil {
+	if _, err := sdk.ValAddressFromBech32(msg.BaseledgerReceiverValidatorAddress); err != nil {
 		return sdkerrors.Wrap(err, "cosmos receiver")
 	}
 	if msg.EventNonce == 0 {
@@ -95,6 +95,6 @@ func (msg *MsgValidatorPowerChangedClaim) GetUbtPriceAsInt() sdk.Int {
 // note that the Orchestrator is the only field excluded from this hash, this is because that value is used higher up in the store
 // structure for who has made what claim and is verified by the msg ante-handler for signatures
 func (msg *MsgValidatorPowerChangedClaim) ClaimHash() ([]byte, error) {
-	path := fmt.Sprintf("%d/%d/%s/%s/%s/%s", msg.EventNonce, msg.BlockHeight, msg.TokenContract, msg.Amount, msg.EthereumSender, msg.CosmosReceiver)
+	path := fmt.Sprintf("%d/%d/%s/%s/%s/%s", msg.EventNonce, msg.BlockHeight, msg.TokenContract, msg.Amount, msg.RevenueAddress, msg.BaseledgerReceiverValidatorAddress)
 	return tmhash.Sum([]byte(path)), nil
 }
