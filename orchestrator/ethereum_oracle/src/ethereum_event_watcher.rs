@@ -7,7 +7,7 @@ use utils::{
     error::OrchestratorError,
     types::{
         UbtDeposited,
-        ValidatorPowerChangeEvent,
+        PayeeUpdated,
     },
 };
 use utils::get_with_retry::get_block_number_with_retry;
@@ -62,7 +62,7 @@ pub async fn check_for_events(
         let deposits = UbtDeposited::from_logs(&deposits)?;
         trace!("parsed deposits {:?}", deposits);
 
-        let power_changes = ValidatorPowerChangeEvent::from_logs(&power_changes)?;
+        let power_changes = PayeeUpdated::from_logs(&power_changes)?;
         trace!("parsed power_changes {:?}", power_changes);
 
         // note that starting block overlaps with our last checked block, because we have to deal with
@@ -79,7 +79,7 @@ pub async fn check_for_events(
 
         let deposits = UbtDeposited::filter_by_event_nonce(last_event_nonce, &deposits);
 
-        let power_changes = ValidatorPowerChangeEvent::filter_by_event_nonce(last_event_nonce, &power_changes);
+        let power_changes = PayeeUpdated::filter_by_event_nonce(last_event_nonce, &power_changes);
 
         if !deposits.is_empty() {
             info!(
@@ -93,7 +93,7 @@ pub async fn check_for_events(
         if !power_changes.is_empty() {
             info!(
                 "Oracle observed power change with sender {}, destination {:?}, amount {}, and event nonce {}",
-                power_changes[0].sender, power_changes[0].validated_destination, power_changes[0].amount, power_changes[0].event_nonce
+                power_changes[0].revenue_address, power_changes[0].validated_destination, power_changes[0].shares, power_changes[0].event_nonce
             )
         }
 

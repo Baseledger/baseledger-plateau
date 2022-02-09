@@ -1,4 +1,4 @@
-use utils::types::ValidatorPowerChangeEvent;
+use utils::types::PayeeUpdated;
 use clarity::{Address, Uint256};
 use utils::get_with_retry::{get_last_event_nonce_with_retry, RETRY_TIME, get_block_number_with_retry};
 use deep_space::address::Address as CosmosAddress;
@@ -74,7 +74,7 @@ pub async fn get_last_checked_block(
         let power_changes_events = power_changes_events.unwrap();
 
         for event in power_changes_events {
-            match ValidatorPowerChangeEvent::from_log(&event) {
+            match PayeeUpdated::from_log(&event) {
                 Ok(send) => {
                     trace!(
                         "{} send event nonce {} last event nonce",
