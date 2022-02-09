@@ -3,7 +3,6 @@ package rest
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 
