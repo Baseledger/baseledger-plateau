@@ -142,9 +142,9 @@ impl UbtDeposited {
                     Ok(v) => Some(v),
                     Err(_) => {
                         if data.baseledger_destination_address.len() < 1000 {
-                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.baseledger_destination_address);
+                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the faucet account", event_nonce, data.baseledger_destination_address);
                         } else {
-                            warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the community pool", event_nonce);
+                            warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the faucet account", event_nonce);
                         }
                         None
                     }
@@ -201,9 +201,9 @@ impl UbtDeposited {
         let dest = String::from_utf8(destination.to_vec());
         if dest.is_err() {
             if destination.len() < 1000 {
-                warn!("Event nonce {} sends tokens to {} which is invalid utf-8, these funds will be allocated to the community pool", event_nonce, bytes_to_hex_str(destination));
+                warn!("Event nonce {} sends tokens to {} which is invalid utf-8, these funds will be allocated to the faucet account", event_nonce, bytes_to_hex_str(destination));
             } else {
-                warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the community pool", event_nonce);
+                warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the faucet account", event_nonce);
             }
             return Ok(UbtDepositedData {
                 baseledger_destination_address: String::new(),
@@ -215,7 +215,7 @@ impl UbtDeposited {
         let dest = dest.unwrap().trim().to_string();
 
         if dest.as_bytes().len() > ONE_MEGABYTE {
-            warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the community pool", event_nonce);
+            warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the faucet account", event_nonce);
             Ok(UbtDepositedData {
                 baseledger_destination_address: String::new(),
                 event_nonce,
@@ -281,9 +281,9 @@ impl PayeeUpdated {
                     Ok(v) => Some(v),
                     Err(_) => {
                         if data.baseledger_validator_address.len() < 1000 {
-                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the community pool", event_nonce, data.baseledger_validator_address);
+                            warn!("Event nonce {} sends tokens to {} which is invalid bech32, these funds will be allocated to the faucet account", event_nonce, data.baseledger_validator_address);
                         } else {
-                            warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the community pool", event_nonce);
+                            warn!("Event nonce {} sends tokens to a destination which is invalid bech32, these funds will be allocated to the faucet account", event_nonce);
                         }
                         None
                     }
@@ -319,7 +319,6 @@ impl PayeeUpdated {
         let destination_str_len_end = 4 * 32;
         let destination_str_len =
             Uint256::from_bytes_be(&data[destination_str_len_start..destination_str_len_end]);
-
         if destination_str_len > u32::MAX.into() {
             return Err(OrchestratorError::InvalidEventLogError(
                 "denom length overflow, probably incorrect parsing".to_string(),
@@ -341,9 +340,9 @@ impl PayeeUpdated {
         let dest = String::from_utf8(destination.to_vec());
         if dest.is_err() {
             if destination.len() < 1000 {
-                warn!("Event nonce {} sends tokens to {} which is invalid utf-8, these funds will be allocated to the community pool", event_nonce, bytes_to_hex_str(destination));
+                warn!("Event nonce {} sends tokens to {} which is invalid utf-8, these funds will be allocated to the faucet account", event_nonce, bytes_to_hex_str(destination));
             } else {
-                warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the community pool", event_nonce);
+                warn!("Event nonce {} sends tokens to a destination that is invalid utf-8, these funds will be allocated to the faucet account", event_nonce);
             }
             return Ok(PayeeUpdatedData {
                 baseledger_validator_address: String::new(),
@@ -355,7 +354,7 @@ impl PayeeUpdated {
         let dest = dest.unwrap().trim().to_string();
 
         if dest.as_bytes().len() > ONE_MEGABYTE {
-            warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the community pool", event_nonce);
+            warn!("Event nonce {} sends tokens to a destination that exceeds the length limit, these funds will be allocated to the faucet account", event_nonce);
             Ok(PayeeUpdatedData {
                 baseledger_validator_address: String::new(),
                 event_nonce,
