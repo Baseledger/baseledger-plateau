@@ -79,7 +79,7 @@ pub async fn send_ethereum_claims(
             block_height: downcast_uint256(deposit.block_height).unwrap(),
             token_contract: deposit.token.to_string(),
             amount: deposit.amount.to_string(),
-            cosmos_receiver: deposit.baseledger_destination_address,
+            baseledger_receiver_account_address: deposit.baseledger_destination_address,
             ethereum_sender: deposit.payee_address.to_string(),
             ubt_price: ubt_price.to_string(),
         };
@@ -94,8 +94,8 @@ pub async fn send_ethereum_claims(
             block_height: downcast_uint256(power_change.block_height).unwrap(),
             token_contract: power_change.token.to_string(),
             amount: power_change.amount.to_string(),
-            cosmos_receiver: power_change.baseledger_destination_address,
-            ethereum_sender: power_change.payee_address.to_string(),
+            baseledger_receiver_validator_address: power_change.baseledger_destination_address,
+            revenue_address: power_change.payee_address.to_string(),
         };
         let msg = Msg::new("/Baseledger.baseledger.bridge.MsgValidatorPowerChangedClaim", claim);
         assert!(unordered_msgs.insert(power_change.event_nonce, msg).is_none());

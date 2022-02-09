@@ -108,7 +108,7 @@ pub struct MsgUbtDepositedClaim {
     #[prost(string, tag="6")]
     pub ethereum_sender: ::prost::alloc::string::String,
     #[prost(string, tag="7")]
-    pub cosmos_receiver: ::prost::alloc::string::String,
+    pub baseledger_receiver_account_address: ::prost::alloc::string::String,
     #[prost(string, tag="8")]
     pub ubt_price: ::prost::alloc::string::String,
 }
@@ -128,9 +128,9 @@ pub struct MsgValidatorPowerChangedClaim {
     #[prost(string, tag="5")]
     pub amount: ::prost::alloc::string::String,
     #[prost(string, tag="6")]
-    pub ethereum_sender: ::prost::alloc::string::String,
+    pub revenue_address: ::prost::alloc::string::String,
     #[prost(string, tag="7")]
-    pub cosmos_receiver: ::prost::alloc::string::String,
+    pub baseledger_receiver_validator_address: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MsgValidatorPowerChangedClaimResponse {
