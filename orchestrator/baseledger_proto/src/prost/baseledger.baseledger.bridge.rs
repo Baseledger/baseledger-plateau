@@ -1,6 +1,17 @@
+// worktoken_eur_price:
+// the price of a single worktoken in EUR. Used in the calculation
+// of the amount of worktoken to be sent to the depositer of UBT tokens
+
+// baseledger_faucet_address:
+// the address used for sending work and stake tokens to validators\ubt depositors
+
 /// Params defines the parameters for the module.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Params {
+    #[prost(string, tag="1")]
+    pub worktoken_eur_price: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub baseledger_faucet_address: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Attestation {
@@ -139,11 +150,11 @@ pub struct MsgCreateOrchestratorValidatorAddressResponse {
 pub struct GenesisState {
     #[prost(message, optional, tag="1")]
     pub params: ::core::option::Option<Params>,
-    #[prost(message, repeated, tag="5")]
-    pub orchestrator_validator_address_list: ::prost::alloc::vec::Vec<OrchestratorValidatorAddress>,
     /// this line is used by starport scaffolding # genesis/proto/state
     #[prost(message, repeated, tag="2")]
     pub attestations: ::prost::alloc::vec::Vec<Attestation>,
     #[prost(uint64, tag="3")]
     pub last_observed_nonce: u64,
+    #[prost(message, repeated, tag="4")]
+    pub orchestrator_validator_address_list: ::prost::alloc::vec::Vec<OrchestratorValidatorAddress>,
 }
