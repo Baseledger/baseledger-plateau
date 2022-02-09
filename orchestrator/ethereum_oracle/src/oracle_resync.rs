@@ -1,10 +1,9 @@
-use utils::types::PayeeUpdated;
 use clarity::{Address, Uint256};
 use utils::get_with_retry::{get_last_event_nonce_with_retry, RETRY_TIME, get_block_number_with_retry};
 use deep_space::address::Address as CosmosAddress;
 use baseledger_proto::baseledger::query_client::QueryClient as BaseledgerQueryClient;
 use utils::types::event_signatures::*;
-use utils::types::{UbtDeposited};
+use utils::types::{UbtSplitterEvent};
 use tokio::time::sleep as delay_for;
 use tonic::transport::Channel;
 use web30::client::Web3;
@@ -74,7 +73,7 @@ pub async fn get_last_checked_block(
         let power_changes_events = power_changes_events.unwrap();
 
         for event in power_changes_events {
-            match PayeeUpdated::from_log(&event) {
+            match UbtSplitterEvent::from_log(&event) {
                 Ok(send) => {
                     trace!(
                         "{} send event nonce {} last event nonce",
@@ -91,7 +90,7 @@ pub async fn get_last_checked_block(
         }
 
         for event in ubt_deposited_events {
-            match UbtDeposited::from_log(&event) {
+            match UbtSplitterEvent::from_log(&event) {
                 Ok(send) => {
                     trace!(
                         "{} send event nonce {} last event nonce",
