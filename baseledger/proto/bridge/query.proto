@@ -67,7 +67,6 @@ message QueryAttestationsResponse {
 
 message QueryGetOrchestratorValidatorAddressRequest {
 	  string orchestratorAddress = 1;
-
 }
 
 message QueryGetOrchestratorValidatorAddressResponse {

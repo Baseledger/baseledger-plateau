@@ -66,8 +66,8 @@ func (k Keeper) GetOrchestratorValidator(ctx sdk.Context, orchestratorAddress st
 	return validator
 }
 
-// GetAllOrchestratorValidatorAddress returns all orchestratorValidatorAddress
-func (k Keeper) GetAllOrchestratorValidatorAddress(ctx sdk.Context) (list []types.OrchestratorValidatorAddress) {
+// GetAllOrchestratorValidatorAddresses returns all orchestratorValidatorAddresses
+func (k Keeper) GetAllOrchestratorValidatorAddresses(ctx sdk.Context) (list []types.OrchestratorValidatorAddress) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrchestratorValidatorAddressKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
