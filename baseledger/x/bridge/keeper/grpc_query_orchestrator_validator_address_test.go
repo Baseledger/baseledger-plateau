@@ -14,9 +14,15 @@ import (
 	"github.com/Baseledger/baseledger/testutil/nullify"
 	"github.com/Baseledger/baseledger/x/bridge/types"
 )
+
+// Prevent strconv unused error
+var _ = strconv.IntSize
+
+func TestOrchestratorValidatorAddressQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.BaseledgerbridgeKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNOrchestratorValidatorAddress(keeper, ctx, 2)
+	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetOrchestratorValidatorAddressRequest
 		response *types.QueryGetOrchestratorValidatorAddressResponse

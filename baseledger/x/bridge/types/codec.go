@@ -24,9 +24,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateOrchestratorValidatorAddress{},
 	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreateOrchestratorValidatorAddress{},
-	)
 	// this line is used by starport scaffolding # 3
 
 	// TODO skos: is this good protoName?

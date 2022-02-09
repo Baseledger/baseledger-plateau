@@ -8,6 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
+	"github.com/Baseledger/baseledger/testutil/network"
+	"github.com/Baseledger/baseledger/x/bridge/client/cli"
 )
 
 // Prevent strconv unused error
@@ -40,8 +44,13 @@ func TestCreateOrchestratorValidatorAddress(t *testing.T) {
 		},
 	} {
 		tc := tc
+		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
 				tc.idOrchestratorAddress,
+			}
+			args = append(args, fields...)
+			args = append(args, tc.args...)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateOrchestratorValidatorAddress(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
