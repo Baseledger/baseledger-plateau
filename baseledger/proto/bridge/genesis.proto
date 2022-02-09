@@ -13,8 +13,8 @@ option go_package = "github.com/Baseledger/baseledger/x/bridge/types";
 // GenesisState defines the bridge module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
-  repeated OrchestratorValidatorAddress orchestratorValidatorAddressList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
   repeated Attestation               attestations        = 2 [(gogoproto.nullable) = false];
   uint64 last_observed_nonce = 3;
+  repeated OrchestratorValidatorAddress orchestratorValidatorAddressList = 4 [(gogoproto.nullable) = false];
 }
