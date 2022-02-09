@@ -65,7 +65,6 @@ func NewKeyringInstance() (keyring.Keyring, error) {
 	// this way we can skip adding keys in file keyring during development
 	useTestKeyRing := viper.GetBool("DEV")
 	if useTestKeyRing {
-		fmt.Printf("WTF\n")
 		kr, err = keyring.New("baseledger", "test", viper.GetString("KEYRING_DIR"), nil)
 	}
 
