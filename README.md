@@ -25,7 +25,7 @@ Overview of changes compared to Gravity Bridge are:
 
 To make this work locally apart from starport rust is needed to be installed and then call
 
-1. check poc_contracts to run hardhat
+1. check https://github.com/Baseledger/baseledger-contracts to run hardhat
 
 2. run `starport chain serve --verbose` in baseledger folder (if starting from scratch run `starport chain serve --verbose --reset-once` and copy alice and bob mnemonics for further usage)
 
