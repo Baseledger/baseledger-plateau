@@ -14278,8 +14278,6 @@ definitions:
     type: object
   Baseledger.baseledger.bridge.MsgUbtDepositedClaimResponse:
     type: object
-  Baseledger.baseledger.bridge.MsgUpdateOrchestratorValidatorAddressResponse:
-    type: object
   Baseledger.baseledger.bridge.MsgValidatorPowerChangedClaimResponse:
     type: object
   Baseledger.baseledger.bridge.OrchestratorValidatorAddress:
