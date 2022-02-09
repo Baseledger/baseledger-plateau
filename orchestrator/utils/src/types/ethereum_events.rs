@@ -41,8 +41,8 @@ const ONE_MEGABYTE: usize = 1000usize.pow(3);
 pub struct UbtSplitterEvent {
     /// UBT contract address (TODO: do we need it?)
     pub token: EthAddress,
-    /// Sender of UBT deposit
-    pub sender: EthAddress,
+    /// Sender of UBT deposit or payee address
+    pub payee_address: EthAddress,
     /// Baseledger destination address - this is a raw value from the Ethereum contract
     /// and therefore could be provided by an attacker. If the string is valid
     /// utf-8 it will be included here, if it is invalid utf8 we will provide
@@ -77,7 +77,7 @@ impl UbtSplitterEvent {
         let topics = (input.topics.get(1), input.topics.get(2));
         if let (Some(erc20_data), Some(sender_data)) = topics {
             let token = EthAddress::from_slice(&erc20_data[12..32])?;
-            let sender = EthAddress::from_slice(&sender_data[12..32])?;
+            let payee_address = EthAddress::from_slice(&sender_data[12..32])?;
             let block_height = if let Some(bn) = input.block_number.clone() {
                 if bn > u64::MAX.into() {
                     return Err(OrchestratorError::InvalidEventLogError(
@@ -113,7 +113,7 @@ impl UbtSplitterEvent {
                 };
                 Ok(UbtSplitterEvent {
                     token,
-                    sender,
+                    payee_address,
                     baseledger_destination_address: data.baseledger_destination_address,
                     validated_destination,
                     amount: data.amount,

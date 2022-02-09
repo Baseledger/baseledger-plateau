@@ -45,7 +45,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 	// deposit in this context means a deposit into the Ethereum side of the bridge
 	case *types.MsgUbtDepositedClaim:
 		invalidAddress := false
-		receiverAddress, err := sdk.AccAddressFromBech32(claim.CosmosReceiver)
+		receiverAddress, err := sdk.AccAddressFromBech32(claim.BaseledgerReceiverAccountAddress)
 		if err != nil {
 			invalidAddress = true
 		}
@@ -181,7 +181,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			return sdkerrors.Wrap(err, "invalid token contract on claim")
 		}
 
-		_, err = types.NewEthAddress(claim.EthereumSender)
+		_, err = types.NewEthAddress(claim.RevenueAddress)
 		if err != nil {
 			hash, _ := claim.ClaimHash()
 			a.keeper.Logger(ctx).Error("Invalid ethereum sender",
@@ -193,7 +193,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			return sdkerrors.Wrap(err, "invalid ethereum sender on claim")
 		}
 
-		valAddr, err := sdk.ValAddressFromBech32(claim.CosmosReceiver)
+		valAddr, err := sdk.ValAddressFromBech32(claim.BaseledgerReceiverValidatorAddress)
 		if err != nil {
 			hash, _ := claim.ClaimHash()
 			a.keeper.Logger(ctx).Error("Invalid validator address",
