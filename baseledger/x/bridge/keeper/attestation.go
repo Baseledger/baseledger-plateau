@@ -216,8 +216,12 @@ func (k Keeper) TryAttestation(ctx sdk.Context, att *types.Attestation) {
 				k.SetAttestation(ctx, claim.GetEventNonce(), hash, att)
 
 				k.processAttestation(ctx, att, claim)
-				k.emitObservedEvent(ctx, att, claim)
 
+				k.Logger(ctx).Info("Attestation observed",
+					"claim type", claim.GetType(),
+					"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
+					"nonce", fmt.Sprint(claim.GetEventNonce()),
+				)
 				break
 			}
 		}
@@ -247,30 +251,6 @@ func (k Keeper) processAttestation(ctx sdk.Context, att *types.Attestation, clai
 	} else {
 		commit() // persist transient storage
 	}
-}
-
-// emitObservedEvent emits an event with information about an attestation that has been applied to
-// consensus state.
-func (k Keeper) emitObservedEvent(ctx sdk.Context, att *types.Attestation, claim types.EthereumClaim) {
-	hash, err := claim.ClaimHash()
-	if err != nil {
-		panic(sdkerrors.Wrap(err, "unable to compute claim hash"))
-	}
-	observationEvent := sdk.NewEvent(
-		types.EventTypeObservation,
-		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-		sdk.NewAttribute(types.AttributeKeyAttestationType, string(claim.GetType())),
-		// TODO: Ognjen - Add to params
-		// sdk.NewAttribute(types.AttributeKeyContract, k.GetBridgeContractAddress(ctx).GetAddress()),
-		// TODO: Ognjen - Add to params
-		// sdk.NewAttribute(types.AttributeKeyBridgeChainID, strconv.Itoa(int(k.GetBridgeChainID(ctx)))),
-		// todo: serialize with hex/ base64 ?
-		sdk.NewAttribute(types.AttributeKeyAttestationID,
-			string(types.GetAttestationKey(claim.GetEventNonce(), hash))),
-		sdk.NewAttribute(types.AttributeKeyNonce, fmt.Sprint(claim.GetEventNonce())),
-		// TODO: do we want to emit more information?
-	)
-	ctx.EventManager().EmitEvent(observationEvent)
 }
 
 // DeleteAttestation deletes the given attestation
