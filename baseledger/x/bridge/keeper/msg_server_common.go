@@ -15,22 +15,14 @@ func (k msgServer) claimHandlerCommon(ctx sdk.Context, msgAny *codectypes.Any, m
 	if err != nil {
 		return sdkerrors.Wrap(err, "create attestation")
 	}
-	// TODO: BAS-106 figure out event usages
+	hash, err := msg.ClaimHash()
+	if err != nil {
+		return sdkerrors.Wrap(err, "unable to compute claim hash")
+	}
 
-	// hash, err := msg.ClaimHash()
-	// if err != nil {
-	// 	return sdkerrors.Wrap(err, "unable to compute claim hash")
-	// }
-
-	// Emit the handle message event
-	// ctx.EventManager().EmitEvent(
-	// 	sdk.NewEvent(
-	// 		sdk.EventTypeMessage,
-	// 		sdk.NewAttribute(sdk.AttributeKeyModule, string(msg.GetType())),
-	// 		// TODO: maybe return something better here? is this the right string representation?
-	// 		sdk.NewAttribute(types.AttributeKeyAttestationID, string(types.GetAttestationKey(msg.GetEventNonce(), hash))),
-	// 	),
-	// )
-
+	k.Logger(ctx).Info("handling claim",
+		"type", string(msg.GetType()),
+		"attestation id", string(types.GetAttestationKey(msg.GetEventNonce(), hash)),
+	)
 	return nil
 }

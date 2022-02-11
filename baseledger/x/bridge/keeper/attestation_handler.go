@@ -157,13 +157,10 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			)
 		}
 
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				sdk.EventTypeMessage,
-				sdk.NewAttribute("MsgUbtDepositedAmount", amountOfWorkTokensToSend.String()),
-				sdk.NewAttribute("MsgUbtDepositedNonce", strconv.Itoa(int(claim.GetEventNonce()))),
-				sdk.NewAttribute("MsgUbtDepositedToken", tokenAddress.GetAddress()),
-			),
+		a.keeper.Logger(ctx).Info("MsgUbtDepositedClaim success",
+			"MsgUbtDepositedAmount", amountOfWorkTokensToSend.String(),
+			"MsgUbtDepositedNonce", strconv.Itoa(int(claim.GetEventNonce())),
+			"MsgUbtDepositedToken", tokenAddress.GetAddress(),
 		)
 	case *types.MsgValidatorPowerChangedClaim:
 		tokenAddress, err := types.NewEthAddress(claim.TokenContract)
@@ -257,13 +254,10 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			}
 		}
 
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				sdk.EventTypeMessage,
-				sdk.NewAttribute("MsgValidatorPowerChangedAmount", claim.Amount.String()),
-				sdk.NewAttribute("MsgValidatorPowerChangedNonce", strconv.Itoa(int(claim.GetEventNonce()))),
-				sdk.NewAttribute("MsgValidatorPowerChangedToken", tokenAddress.GetAddress()),
-			),
+		a.keeper.Logger(ctx).Info("MsgValidatorPowerChangedClaim success",
+			"MsgValidatorPowerChangedAmount", claim.Amount.String(),
+			"MsgValidatorPowerChangedNonce", strconv.Itoa(int(claim.GetEventNonce())),
+			"MsgValidatorPowerChangedToken", tokenAddress.GetAddress(),
 		)
 	default:
 		panic(fmt.Sprintf("Invalid event type for attestations %s", claim.GetType()))
