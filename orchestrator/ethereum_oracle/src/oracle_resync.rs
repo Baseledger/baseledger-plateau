@@ -108,10 +108,7 @@ pub async fn get_last_checked_block(
         current_block = end_search;
     }
 
-    // TODO BAS-94: we are going to need some mechanism for this, for example, deploying our contract should throw some event or something like this
-    // in order for this to work without panicing i will just return latest current block here
     latest_block.clone()
-    // panic!("You have reached the end of block history without finding the Baseledger contract deploy event! You must have the wrong contract address!");
 }
 
 fn upcast(input: u64) -> Uint256 {
