@@ -6,9 +6,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"math/rand"
-	"time"
-
 	"github.com/Baseledger/baseledger/logger"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -28,32 +25,60 @@ var (
 )
 
 func BuildClientCtx(clientCtx client.Context) (*client.Context, error) {
-	keyring, err := NewKeyringInstance()
+	keyringInstance, err := NewKeyringInstance()
+	if err != nil {
+		logger.Errorf("error getting keyring instance %v\n", err.Error())
+		return nil, err
+	}
 
-	keysList, err := keyring.List()
+	// node can specify key address as env variable, otherwise it will use first from keylist
+	key, err := getKey(keyringInstance)
+	if err != nil {
+		logger.Errorf("error getting key %v\n", err.Error())
+		return nil, err
+	}
+
+	clientCtx = clientCtx.
+		WithKeyring(keyringInstance).
+		WithFromAddress(key.GetAddress()).
+		WithSkipConfirmation(true).
+		WithFromName(key.GetName()).
+		WithBroadcastMode("sync")
+
+	return &clientCtx, nil
+}
+
+func getKey(keyringInstance keyring.Keyring) (keyring.Info, error) {
+	keysList, err := keyringInstance.List()
 	if err != nil {
 		logger.Errorf("error getting key list %v\n", err.Error())
 		return nil, errors.New("")
 	}
+	var key keyring.Info
+	addrString := viper.GetString("KEY_ADDRESS")
+	if addrString != "" {
+		logger.Infof("key specified in env variables %v\n", addrString)
+		addr, err := sdk.AccAddressFromBech32(addrString)
+		if err != nil {
+			logger.Errorf("key specified in wrong format %v\n", err.Error())
+			return nil, err
+		}
 
-	if len(keysList) == 0 {
-		return nil, errors.New("")
+		key, err = keyringInstance.KeyByAddress(addr)
+		if err != nil {
+			logger.Errorf("error getting specified key %v\n", err.Error())
+			return nil, err
+		}
+	} else {
+		logger.Infof("key not specified in env variables, picking first from list")
+		key = keysList[0]
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	min := 0
-	max := len(keysList) - 1
-	randomAccIdx := rand.Intn(max-min+1) + min
-
-	// every node should configure key for this purpose, and it should be first in key list
-	clientCtx = clientCtx.
-		WithKeyring(keyring).
-		WithFromAddress(keysList[randomAccIdx].GetAddress()).
-		WithSkipConfirmation(true).
-		WithFromName(keysList[randomAccIdx].GetName()).
-		WithBroadcastMode("sync")
-
-	return &clientCtx, nil
+	if key == nil {
+		logger.Error("key is nil")
+		return nil, errors.New("key is nil")
+	}
+	return key, nil
 }
 
 func NewKeyringInstance() (keyring.Keyring, error) {
@@ -91,6 +116,13 @@ func SignTxAndGetTxBytes(clientCtx client.Context, msg sdk.Msg, accNum uint64, a
 		logger.Errorf("prepare factory error %v\n", err.Error())
 		return nil, errors.New("sign tx error")
 	}
+	simResp, _, err := tx.CalculateGas(clientCtx, txFactory, msg)
+	if err != nil {
+		logger.Errorf("calc gas error %v\n", err.Error())
+		return nil, err
+	}
+
+	txFactory = txFactory.WithGas(simResp.GasInfo.GasUsed)
 
 	transaction, err := tx.BuildUnsignedTx(txFactory, msg)
 	if err != nil {
@@ -98,7 +130,7 @@ func SignTxAndGetTxBytes(clientCtx client.Context, msg sdk.Msg, accNum uint64, a
 		return nil, errors.New("sign tx error")
 	}
 
-	err = tx.Sign(txFactory, clientCtx.GetFromName(), transaction, true)
+	err = tx.Sign(txFactory, clientCtx.GetFromName(), transaction, false)
 	if err != nil {
 		logger.Errorf("sign tx error %v\n", err.Error())
 		return nil, errors.New("sign tx error")
