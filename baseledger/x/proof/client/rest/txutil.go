@@ -3,6 +3,7 @@ package rest
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -83,6 +84,7 @@ func getKey(keyringInstance keyring.Keyring) (keyring.Info, error) {
 
 func NewKeyringInstance() (keyring.Keyring, error) {
 	input := &bytes.Buffer{}
+	fmt.Fprintln(input, viper.GetString("KEYRING_PASSWORD"))
 	kr, err := keyring.New("baseledger", "file", viper.GetString("KEYRING_DIR"), input)
 
 	// just for dev convenience because test keyring is set up by default
@@ -93,7 +95,7 @@ func NewKeyringInstance() (keyring.Keyring, error) {
 	}
 
 	if err != nil {
-		logger.Errorf("error fetching test keyring %v\n", err.Error())
+		logger.Errorf("error fetching keyring, check if you configured KEYRING_PASSWORD and KEYRING_DIR %v\n", err.Error())
 		return nil, errors.New("error fetching key ring")
 	}
 
