@@ -23,7 +23,6 @@ type AttestationHandler struct {
 	// NOTE: If you add anything to this struct, add a nil check to ValidateMembers below!
 	keeper     *Keeper
 	bankKeeper *bankkeeper.BaseKeeper
-	distKeeper *distrkeeper.Keeper
 }
 
 // Check for nil members
@@ -33,9 +32,6 @@ func (a AttestationHandler) ValidateMembers() {
 	}
 	if a.bankKeeper == nil {
 		panic("Nil bankKeeper!")
-	}
-	if a.distKeeper == nil {
-		panic("Nil distKeeper!")
 	}
 }
 

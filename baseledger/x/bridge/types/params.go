@@ -61,7 +61,7 @@ func (p Params) Validate() error {
 func validateWorktokenEurPrice(i interface{}) error {
 	value, err := sdk.NewDecFromStr(fmt.Sprint(i))
 	if err != nil {
-		return fmt.Errorf("invalid parameter type: %T", i)
+		return fmt.Errorf("invalid parameter type: %T %v\n", i, err.Error())
 	}
 
 	if value.LTE(sdk.ZeroDec()) {
@@ -75,7 +75,7 @@ func validateBaseledgerFaucetAddress(i interface{}) error {
 	_, err := sdk.AccAddressFromBech32(fmt.Sprint(i))
 
 	if err != nil {
-		return fmt.Errorf("invalid parameter type: %T", i)
+		return fmt.Errorf("invalid parameter type: %T %v\n", i, err.Error())
 	}
 
 	return nil
