@@ -310,7 +310,7 @@ func MakeTestMarshaler() codec.Codec {
 	return codec.NewProtoCodec(interfaceRegistry)
 }
 
-func SetFiveValidators(t *testing.T) TestKeepers {
+func SetFiveValidators(t *testing.T, createOrchValAddress bool) TestKeepers {
 	t.Helper()
 
 	testKeepers := BaseledgerbridgeKeeper(t)
@@ -345,12 +345,14 @@ func SetFiveValidators(t *testing.T) TestKeepers {
 	// Run the staking endblocker to ensure valset is correct in state
 	staking.EndBlocker(testKeepers.Context, testKeepers.StakingKeeper)
 
-	// Register eth addresses and orchestrator address for each validator
-	for i, addr := range ValAddrs {
-		testKeepers.BridgeKeeper.SetOrchestratorValidatorAddress(testKeepers.Context, types.OrchestratorValidatorAddress{
-			ValidatorAddress:    addr.String(),
-			OrchestratorAddress: OrchAddrs[i].String(),
-		})
+	if createOrchValAddress {
+		// Register eth addresses and orchestrator address for each validator
+		for i, addr := range ValAddrs {
+			testKeepers.BridgeKeeper.SetOrchestratorValidatorAddress(testKeepers.Context, types.OrchestratorValidatorAddress{
+				ValidatorAddress:    addr.String(),
+				OrchestratorAddress: OrchAddrs[i].String(),
+			})
+		}
 	}
 
 	// Return the test input
