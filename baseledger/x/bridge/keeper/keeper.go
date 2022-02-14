@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
@@ -38,7 +37,6 @@ func NewKeeper(
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
 	bankKeeper *bankkeeper.BaseKeeper,
-	distKeeper *distrkeeper.Keeper,
 
 	stakingKeeper *stakingkeeper.Keeper,
 
@@ -62,7 +60,6 @@ func NewKeeper(
 	attestationHandler := AttestationHandler{
 		keeper:     k,
 		bankKeeper: bankKeeper,
-		distKeeper: distKeeper,
 	}
 	attestationHandler.ValidateMembers()
 	k.AttestationHandler = attestationHandler
