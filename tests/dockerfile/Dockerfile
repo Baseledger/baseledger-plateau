@@ -13,7 +13,7 @@ RUN curl https://get.starport.network/starport! | bash
 ADD baseledger.tar.gz /
 # build steps for all codebases in this repo, must be below the add statement
 RUN pushd /baseledger/baseledger && PATH=$PATH:/usr/local/bin/ starport chain build
-RUN pushd /baseledger/orchestrator && PATH=$PATH:$HOME/.cargo/bin cargo build --all --release
+RUN pushd /baseledger/orchestrator && PATH=$PATH:$HOME/.cargo/bin cargo build --all
 # RUN pushd /baseledger/baseledger/ && PATH=$PATH:/usr/local/go/bin GOPROXY=https://proxy.golang.org make && PATH=$PATH:/usr/local/go/bin make install
 # RUN pushd /gravity/solidity/ && npm ci
 
