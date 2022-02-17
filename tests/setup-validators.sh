@@ -11,10 +11,9 @@ ALLOCATION="10000000000stake,10000000000worktoken"
 
 # first we start a genesis.json with validator 1
 # validator 1 will also collect the gentx's once gnerated
-STARTING_VALIDATOR=1
-STARTING_VALIDATOR_HOME="--home /validator"
+BASELEDGER_HOME="--home /validator"
 STARTING_VALIDATOR_CONTAINER="baseledger-validator-container"
-docker exec $STARTING_VALIDATOR_CONTAINER $BIN init $STARTING_VALIDATOR_HOME validator --chain-id=$CHAIN_ID
+docker exec $STARTING_VALIDATOR_CONTAINER $BIN init $BASELEDGER_HOME validator --chain-id=$CHAIN_ID
 
 
 ## Modify generated genesis.json to our liking by editing fields using jq
@@ -35,7 +34,6 @@ docker cp $STARTING_VALIDATOR_CONTAINER:/validator/config/genesis.json .
 # Sets up an arbitrary number of validators on a single machine by docker exec-ing on respective containers
 for i in $(seq 1 $NODES);
 do
-BASELEDGER_HOME="--home /validator"
 ARGS="$BASELEDGER_HOME --keyring-backend test"
 
 # Generate a validator key, orchestrator key for each validator
@@ -51,37 +49,39 @@ docker cp ./genesis.json $STARTING_VALIDATOR_CONTAINER$i:/validator/config/genes
 docker exec $STARTING_VALIDATOR_CONTAINER$i $BIN add-genesis-account $ARGS $VALIDATOR_KEY $ALLOCATION
 docker exec $STARTING_VALIDATOR_CONTAINER$i $BIN add-genesis-account $ARGS $ORCHESTRATOR_KEY $ALLOCATION
 
-# # move the genesis back out
+# move the genesis back out
 docker cp $STARTING_VALIDATOR_CONTAINER$i:/validator/config/genesis.json .
 
 done
 
 
-# for i in $(seq 1 $NODES);
-# do
-# cp /genesis.json /validator$i/config/genesis.json
-# GAIA_HOME="--home /validator$i"
-# ARGS="$GAIA_HOME --keyring-backend test"
-# ORCHESTRATOR_KEY=$($BIN keys show orchestrator$i -a $ARGS)
-# ETHEREUM_KEY=$(grep address /validator-eth-keys | sed -n "$i"p | sed 's/.*://')
-# # the /8 containing 7.7.7.7 is assigned to the DOD and never routable on the public internet
-# # we're using it in private to prevent gaia from blacklisting it as unroutable
-# # and allow local pex
-# $BIN gentx $ARGS $GAIA_HOME --moniker validator$i --chain-id=$CHAIN_ID --ip 7.7.7.$i validator$i 500000000stake $ETHEREUM_KEY $ORCHESTRATOR_KEY
-# # obviously we don't need to copy validator1's gentx to itself
-# if [ $i -gt 1 ]; then
-# cp /validator$i/config/gentx/* /validator1/config/gentx/
-# fi
-# done
+for i in $(seq 1 $NODES);
+do
+# move the genesis in
+docker cp ./genesis.json $STARTING_VALIDATOR_CONTAINER$i:/validator/config/genesis.json
 
+ARGS="$BASELEDGER_HOME --keyring-backend test"
+ORCHESTRATOR_KEY=$(docker exec $STARTING_VALIDATOR_CONTAINER$i $BIN keys show orchestrator -a $ARGS)
 
-# $BIN collect-gentxs $STARTING_VALIDATOR_HOME
-# GENTXS=$(ls /validator1/config/gentx | wc -l)
-# cp /validator1/config/genesis.json /genesis.json
-# echo "Collected $GENTXS gentx"
+docker exec $STARTING_VALIDATOR_CONTAINER$i $BIN gentx $ARGS $BASELEDGER_HOME --moniker validator --chain-id=$CHAIN_ID validator 500000000stake $ORCHESTRATOR_KEY
 
-# # put the now final genesis.json into the correct folders
-# for i in $(seq 1 $NODES);
-# do
-# cp /genesis.json /validator$i/config/genesis.json
-# done
+# copy gentx files to staring validator
+if [ $i -gt 1 ]; then
+docker cp $STARTING_VALIDATOR_CONTAINER$i:/validator/config/gentx/* $STARTING_VALIDATOR_CONTAINER:/validator/config/gentx/
+fi
+done
+
+# collect gentxs in starting validator
+docker exec $STARTING_VALIDATOR_CONTAINER $BIN collect-gentxs $BASELEDGER_HOME
+GENTXS=$(docker exec $STARTING_VALIDATOR_CONTAINER ls /validator/config/gentx | wc -l)
+
+# move the genesis out
+docker cp $STARTING_VALIDATOR_CONTAINER:/validator/config/genesis.json .
+
+echo "Collected $GENTXS gentx"
+
+# put the now final genesis.json into the correct folders of each validator container
+for i in $(seq 1 $NODES);
+do
+docker cp ./genesis.json  $STARTING_VALIDATOR_CONTAINER$i:/validator/config/genesis.json
+done
