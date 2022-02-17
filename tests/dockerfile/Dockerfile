@@ -16,3 +16,6 @@ RUN pushd /baseledger/baseledger && PATH=$PATH:/usr/local/bin/ starport chain bu
 RUN pushd /baseledger/orchestrator && PATH=$PATH:$HOME/.cargo/bin cargo build --all --release
 # RUN pushd /baseledger/baseledger/ && PATH=$PATH:/usr/local/go/bin GOPROXY=https://proxy.golang.org make && PATH=$PATH:/usr/local/go/bin make install
 # RUN pushd /gravity/solidity/ && npm ci
+
+# keep the container running
+CMD ["tail", "-f", "/dev/null"] 
