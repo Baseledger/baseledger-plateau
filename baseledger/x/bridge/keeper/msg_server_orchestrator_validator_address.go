@@ -17,7 +17,7 @@ func (k msgServer) CreateOrchestratorValidatorAddress(goCtx context.Context, msg
 		msg.OrchestratorAddress,
 	)
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "orchestrator already set")
 	}
 
 	val, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
@@ -25,9 +25,10 @@ func (k msgServer) CreateOrchestratorValidatorAddress(goCtx context.Context, msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "validator address format error")
 	}
 
-	// check if validator with this address exists
-	if k.Keeper.StakingKeeper.Validator(ctx, val) == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "validator not found")
+	// check if validator with this address exists in active set
+	validator := k.StakingKeeper.Validator(ctx, val)
+	if validator == nil || !validator.IsBonded() {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "validator not found or not in active set")
 	}
 
 	list := k.Keeper.GetAllOrchestratorValidatorAddresses(ctx)
