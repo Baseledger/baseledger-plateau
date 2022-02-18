@@ -4,14 +4,13 @@ set -eux
 # the directory of this script, useful for allowing this script
 # to be run with any PWD
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-STARTING_VALIDATOR_CONTAINER="baseledger-validator-container"
-NODES=2
+VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
+NODES=3
 
 # Remove existing container instance
 set +e
-docker rm -f $STARTING_VALIDATOR_CONTAINER
 for i in $(seq 1 $NODES);
 do
-docker rm -f $STARTING_VALIDATOR_CONTAINER$i
+docker rm -f $VALIDATOR_CONTAINER_BASE_NAME$i
 done
 set -e
