@@ -92,7 +92,6 @@ func (k Keeper) GetBaseledgerFaucetAddress(ctx sdk.Context) (a string) {
 	// just for dev convenience when using starport locally get bob address for faucet
 	// to not need to always set param
 	useTestKeyRing := viper.GetBool("DEV")
-	useTestKeyRing = true
 	if useTestKeyRing {
 		kr, _ := keyring.New("baseledger", "test", viper.GetString("KEYRING_DIR"), nil)
 		keysList, _ := kr.List()
