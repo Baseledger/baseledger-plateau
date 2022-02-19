@@ -11,3 +11,9 @@ func AccAddress() string {
 	addr := pk.Address()
 	return sdk.AccAddress(addr).String()
 }
+
+func ValAddress() string {
+	pk := ed25519.GenPrivKey().PubKey()
+	addr := pk.Address()
+	return sdk.ValAddress(addr).String()
+}
