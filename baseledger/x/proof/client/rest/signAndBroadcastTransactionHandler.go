@@ -3,7 +3,6 @@ package rest
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Baseledger/baseledger/common"
@@ -43,13 +42,13 @@ func signAndBroadcastTransactionHandler(clientCtx client.Context) http.HandlerFu
 		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String(), req.Payload)
 
 		if err != nil {
-			fmt.Printf("check balance failed %v\n", err)
+			logger.Errorf("check balance failed %v\n", err)
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, "error while checking balance")
 			return
 		}
 
 		if !balanceOk {
-			fmt.Printf("check balance failed %v\n", err)
+			logger.Errorf("check balance failed %v\n", err)
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, "not enough tokens")
 			return
 		}
@@ -97,13 +96,13 @@ func checkBalanceHandler(clientCtx client.Context, payload string) http.HandlerF
 		balanceOk, err := checkTokenBalance(clientCtx.GetFromAddress().String(), payload)
 
 		if err != nil {
-			fmt.Printf("check balance failed %v\n", err)
+			logger.Errorf("check balance failed %v\n", err)
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, "error while checking balance")
 			return
 		}
 
 		if !balanceOk {
-			fmt.Printf("check balance failed %v\n", err)
+			logger.Errorf("check balance failed %v\n", err)
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, "not enough tokens")
 			return
 		}
