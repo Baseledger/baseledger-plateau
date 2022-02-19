@@ -9,6 +9,7 @@ import (
 	"github.com/Baseledger/baseledger/x/bridge/keeper"
 	"github.com/Baseledger/baseledger/x/bridge/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	ccrypto "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
@@ -260,6 +261,78 @@ func TestValidatorPowerChangedClaim_NonRegisteredOrchestratorValidator(t *testin
 	// all validators, nonce 1
 	newAmount, _ := sdk.NewIntFromString("10000005")
 	for _, orchAddress := range keepertest.OrchAddrs {
+		claim := types.MsgValidatorPowerChangedClaim{
+			Creator:                            orchAddress.String(),
+			EventNonce:                         uint64(1),
+			TokenContract:                      baseledgerTokenContract,
+			Amount:                             newAmount,
+			BaseledgerReceiverValidatorAddress: validatorReceiver.String(),
+			RevenueAddress:                     ethereumSender,
+		}
+
+		ctx = ctx.WithBlockTime(myBlockTime)
+		_, err := srv.ValidatorPowerChangedClaim(sdk.WrapSDKContext(ctx), &claim)
+		bridge.EndBlocker(ctx, *testKeepers.BridgeKeeper)
+		require.Error(t, err)
+
+		hash, err := claim.ClaimHash()
+		require.NoError(t, err)
+		attestation := testKeepers.BridgeKeeper.GetAttestation(ctx, uint64(1), hash)
+		require.Nil(t, attestation)
+	}
+
+	// balance not changed
+	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	require.Equal(t, validator.Tokens, startAmount)
+}
+
+func TestValidatorPowerChangedClaim_NonExistingOrchestratorSet(t *testing.T) {
+	var (
+		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+		ethereumSender          = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+		myBlockTime             = time.Date(2020, 9, 14, 15, 20, 10, 0, time.UTC)
+	)
+	// register validators orchestrators
+	testKeepers := keepertest.SetFiveValidators(t, true)
+
+	validatorReceiver := keepertest.ValAddrs[0]
+	ctx := testKeepers.Context
+
+	validator, _ := testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	startAmount, _ := sdk.NewIntFromString("10000000")
+	require.Equal(t, validator.Tokens, startAmount)
+
+	// Orchestrator private keys
+	OrchPrivKeys := []ccrypto.PrivKey{
+		secp256k1.GenPrivKey(),
+		secp256k1.GenPrivKey(),
+		secp256k1.GenPrivKey(),
+		secp256k1.GenPrivKey(),
+		secp256k1.GenPrivKey(),
+	}
+
+	// AccPubKeys holds the pub keys for the account keys
+	OrchPubKeys := []ccrypto.PubKey{
+		OrchPrivKeys[0].PubKey(),
+		OrchPrivKeys[1].PubKey(),
+		OrchPrivKeys[2].PubKey(),
+		OrchPrivKeys[3].PubKey(),
+		OrchPrivKeys[4].PubKey(),
+	}
+	// AccAddrs holds the sdk.AccAddresses
+	NewOrchAddrs := []sdk.AccAddress{
+		sdk.AccAddress(OrchPubKeys[0].Address()),
+		sdk.AccAddress(OrchPubKeys[1].Address()),
+		sdk.AccAddress(OrchPubKeys[2].Address()),
+		sdk.AccAddress(OrchPubKeys[3].Address()),
+		sdk.AccAddress(OrchPubKeys[4].Address()),
+	}
+
+	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
+
+	// all validators, nonce 1
+	newAmount, _ := sdk.NewIntFromString("10000005")
+	for _, orchAddress := range NewOrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
 			EventNonce:                         uint64(1),
