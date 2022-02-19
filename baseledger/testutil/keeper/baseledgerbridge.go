@@ -136,6 +136,8 @@ var (
 		sdk.AccAddress(AccPubKeys[4].Address()),
 	}
 
+	FaucetAccount = AccAddrs[4]
+
 	// ValAddrs holds the sdk.ValAddresses
 	ValAddrs = []sdk.ValAddress{
 		sdk.ValAddress(AccPubKeys[0].Address()),
@@ -259,7 +261,6 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 
 	// total supply to track this
 	totalSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 100000000), sdk.NewInt64Coin("work", 100000000))
-	faucetAccount := AccAddrs[4]
 	faucetSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 50000000), sdk.NewInt64Coin("work", 50000000))
 	// set up initial accounts
 	for name, perms := range maccPerms {
@@ -267,7 +268,7 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 		if name == stakingtypes.NotBondedPoolName {
 			err := bankKeeper.MintCoins(ctx, types.ModuleName, totalSupply)
 			require.NoError(t, err)
-			err = bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, faucetAccount, faucetSupply)
+			err = bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, FaucetAccount, faucetSupply)
 			require.NoError(t, err)
 		}
 		accountKeeper.SetModuleAccount(ctx, mod)
@@ -278,7 +279,7 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 
 	testParams := types.Params{
 		WorktokenEurPrice:       "0.1",
-		BaseledgerFaucetAddress: faucetAccount.String(),
+		BaseledgerFaucetAddress: FaucetAccount.String(),
 	}
 
 	// Initialize params
