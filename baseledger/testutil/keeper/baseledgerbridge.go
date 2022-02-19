@@ -258,18 +258,18 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 	)
 
 	// total supply to track this
-	// totalSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 100000000), sdk.NewInt64Coin("work", 100000000))
-
+	totalSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 100000000), sdk.NewInt64Coin("work", 100000000))
+	faucetAccount := AccAddrs[4]
+	faucetSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 50000000), sdk.NewInt64Coin("work", 50000000))
 	// set up initial accounts
 	for name, perms := range maccPerms {
 		mod := authtypes.NewEmptyModuleAccount(name, perms...)
-		// if name == stakingtypes.NotBondedPoolName {
-		// 	err := bankKeeper.MintCoins(ctx, types.ModuleName, totalSupply)
-		// 	require.NoError(t, err)
-		// 	fmt.Printf("SEND %v -> %v\n", types.ModuleName, mod.Name)
-		// 	err = bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, mod.Name, totalSupply)
-		// 	require.NoError(t, err)
-		// }
+		if name == stakingtypes.NotBondedPoolName {
+			err := bankKeeper.MintCoins(ctx, types.ModuleName, totalSupply)
+			require.NoError(t, err)
+			err = bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, faucetAccount, faucetSupply)
+			require.NoError(t, err)
+		}
 		accountKeeper.SetModuleAccount(ctx, mod)
 	}
 
@@ -278,7 +278,7 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 
 	testParams := types.Params{
 		WorktokenEurPrice:       "0.1",
-		BaseledgerFaucetAddress: OrchAddrs[0].String(),
+		BaseledgerFaucetAddress: faucetAccount.String(),
 	}
 
 	// Initialize params
