@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -198,18 +199,16 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		validator, found := a.keeper.StakingKeeper.GetValidator(ctx, valAddr)
-
-		if !found {
+		if !found || !validator.IsBonded() || validator.IsJailed() {
 			hash, _ := claim.ClaimHash()
-			a.keeper.Logger(ctx).Error("Validator not found",
-				"cause", err.Error(),
+			a.keeper.Logger(ctx).Error("Validator not in active state",
+				"cause", "validator either not found, not bonded, or jailed",
 				"claim type", claim.GetType(),
 				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
 			)
-			return sdkerrors.Wrap(err, "can not find validator specified on claim")
+			return sdkerrors.Wrap(errors.New("validator not found"), "can not find validator specified on claim")
 		}
-
 		faucetAddress, err := sdk.AccAddressFromBech32(a.keeper.GetBaseledgerFaucetAddress(ctx))
 		if err != nil {
 			panic("Faucet address invalid")

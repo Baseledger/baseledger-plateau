@@ -27,7 +27,7 @@ func (k msgServer) CreateOrchestratorValidatorAddress(goCtx context.Context, msg
 
 	// check if validator with this address exists in active set
 	validator := k.StakingKeeper.Validator(ctx, val)
-	if validator == nil || !validator.IsBonded() {
+	if validator == nil || !validator.IsBonded() || validator.IsJailed() {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "validator not found or not in active set")
 	}
 

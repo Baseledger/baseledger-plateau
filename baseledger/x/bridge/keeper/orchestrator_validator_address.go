@@ -57,8 +57,7 @@ func (k Keeper) GetOrchestratorValidator(ctx sdk.Context, orchestratorAddress st
 	}
 
 	validator := k.StakingKeeper.Validator(ctx, valAddr)
-
-	if validator == nil || !validator.IsBonded() {
+	if validator == nil || !validator.IsBonded() || validator.IsJailed() {
 		logger.Errorf("Validator not in active set")
 		return nil
 	}
