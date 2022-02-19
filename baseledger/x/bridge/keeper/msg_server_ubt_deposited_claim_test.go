@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"math/big"
 	"testing"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUbtDepositedClaim(t *testing.T) {
+func TestUbtDepositedClaim_Success(t *testing.T) {
 	var (
 		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 		ethereumSender          = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
@@ -92,14 +93,14 @@ func TestUbtDepositedClaim(t *testing.T) {
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
 	require.Equal(t, "49999999work", faucetBalance.String())
 
-	// all validators, correct nonce 2
+	// all validators, correct nonce 2, but without price
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(2),
 			TokenContract:                    baseledgerTokenContract,
 			Amount:                           sdk.NewIntFromUint64(1),
 			EthereumSender:                   ethereumSender,
-			UbtPrice:                         "1",
+			UbtPrice:                         "0",
 			Creator:                          orchAddress.String(),
 			BaseledgerReceiverAccountAddress: cosmosReceiver.String(),
 		}
@@ -121,6 +122,9 @@ func TestUbtDepositedClaim(t *testing.T) {
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
 	require.Equal(t, "49999998work", faucetBalance.String())
+
+	lastAvgPrice := testKeepers.BridgeKeeper.GetLastAttestationAverageUbtPrice(ctx)
+	require.Equal(t, big.NewInt(1000000000000000000), lastAvgPrice)
 }
 
 func TestUbtDepositedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
