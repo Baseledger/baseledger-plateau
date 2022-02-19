@@ -119,6 +119,126 @@ func TestValidatorPowerChangedClaim_Success(t *testing.T) {
 	require.Equal(t, validator.OperatorAddress, undelegations[0].ValidatorAddress)
 }
 
+func TestValidatorPowerChangedClaim_NotObserved(t *testing.T) {
+	var (
+		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+		ethereumSender          = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+		myBlockTime             = time.Date(2020, 9, 14, 15, 20, 10, 0, time.UTC)
+	)
+	testKeepers := keepertest.SetFiveValidators(t, true)
+
+	validatorReceiver := keepertest.ValAddrs[0]
+	ctx := testKeepers.Context
+
+	validator, _ := testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	startAmount, _ := sdk.NewIntFromString("10000000")
+	require.Equal(t, validator.Tokens, startAmount)
+
+	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
+	// all validators, nonce 1
+	newAmount, _ := sdk.NewIntFromString("10000005")
+	orchSet := []sdk.AccAddress{keepertest.OrchAddrs[0], keepertest.OrchAddrs[1]}
+
+	for _, orchAddress := range orchSet {
+		claim := types.MsgValidatorPowerChangedClaim{
+			Creator:                            orchAddress.String(),
+			EventNonce:                         uint64(1),
+			TokenContract:                      baseledgerTokenContract,
+			Amount:                             newAmount,
+			BaseledgerReceiverValidatorAddress: validatorReceiver.String(),
+			RevenueAddress:                     ethereumSender,
+		}
+
+		ctx = ctx.WithBlockTime(myBlockTime)
+		_, err := srv.ValidatorPowerChangedClaim(sdk.WrapSDKContext(ctx), &claim)
+		bridge.EndBlocker(ctx, *testKeepers.BridgeKeeper)
+		require.NoError(t, err)
+
+		hash, err := claim.ClaimHash()
+		require.NoError(t, err)
+		attestation := testKeepers.BridgeKeeper.GetAttestation(ctx, uint64(1), hash)
+		require.NotNil(t, attestation)
+		require.False(t, attestation.Observed)
+	}
+
+	// balance did not change
+	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	require.Equal(t, validator.Tokens, startAmount)
+}
+
+func TestValidatorPowerChangedClaim_SpreadVotes(t *testing.T) {
+	var (
+		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+		ethereumSender          = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+		myBlockTime             = time.Date(2020, 9, 14, 15, 20, 10, 0, time.UTC)
+	)
+	testKeepers := keepertest.SetFiveValidators(t, true)
+
+	validatorReceiver := keepertest.ValAddrs[0]
+	ctx := testKeepers.Context
+
+	validator, _ := testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	startAmount, _ := sdk.NewIntFromString("10000000")
+	require.Equal(t, validator.Tokens, startAmount)
+
+	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
+	// all validators, nonce 1
+	newAmount, _ := sdk.NewIntFromString("10000005")
+	orchSet := []sdk.AccAddress{keepertest.OrchAddrs[0], keepertest.OrchAddrs[1]}
+
+	for _, orchAddress := range orchSet {
+		claim := types.MsgValidatorPowerChangedClaim{
+			Creator:                            orchAddress.String(),
+			EventNonce:                         uint64(1),
+			TokenContract:                      baseledgerTokenContract,
+			Amount:                             newAmount,
+			BaseledgerReceiverValidatorAddress: validatorReceiver.String(),
+			RevenueAddress:                     ethereumSender,
+		}
+
+		ctx = ctx.WithBlockTime(myBlockTime)
+		_, err := srv.ValidatorPowerChangedClaim(sdk.WrapSDKContext(ctx), &claim)
+		bridge.EndBlocker(ctx, *testKeepers.BridgeKeeper)
+		require.NoError(t, err)
+
+		hash, err := claim.ClaimHash()
+		require.NoError(t, err)
+		attestation := testKeepers.BridgeKeeper.GetAttestation(ctx, uint64(1), hash)
+		require.NotNil(t, attestation)
+		require.False(t, attestation.Observed)
+	}
+
+	// balance did not change
+	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	require.Equal(t, validator.Tokens, startAmount)
+
+	secondOrchSet := []sdk.AccAddress{keepertest.OrchAddrs[2], keepertest.OrchAddrs[3], keepertest.OrchAddrs[4]}
+	for _, orchAddress := range secondOrchSet {
+		claim := types.MsgValidatorPowerChangedClaim{
+			Creator:                            orchAddress.String(),
+			EventNonce:                         uint64(1),
+			TokenContract:                      baseledgerTokenContract,
+			Amount:                             newAmount,
+			BaseledgerReceiverValidatorAddress: validatorReceiver.String(),
+			RevenueAddress:                     ethereumSender,
+		}
+
+		ctx = ctx.WithBlockTime(myBlockTime)
+		_, err := srv.ValidatorPowerChangedClaim(sdk.WrapSDKContext(ctx), &claim)
+		bridge.EndBlocker(ctx, *testKeepers.BridgeKeeper)
+		require.NoError(t, err)
+
+		hash, err := claim.ClaimHash()
+		require.NoError(t, err)
+		attestation := testKeepers.BridgeKeeper.GetAttestation(ctx, uint64(1), hash)
+		require.NotNil(t, attestation)
+	}
+
+	// balance changed
+	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
+	require.Equal(t, validator.Tokens, newAmount)
+}
+
 func TestValidatorPowerChangedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
 	var (
 		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
