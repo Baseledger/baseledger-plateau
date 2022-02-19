@@ -122,3 +122,47 @@ func TestUbtDepositedClaim(t *testing.T) {
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
 	require.Equal(t, "49999998work", faucetBalance.String())
 }
+
+func TestUbtDepositedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
+	var (
+		baseledgerTokenContract = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+		ethereumSender          = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+		myBlockTime             = time.Date(2020, 9, 14, 15, 20, 10, 0, time.UTC)
+	)
+	// DON'T register validators orchestrators
+	testKeepers := keepertest.SetFiveValidators(t, false)
+
+	cosmosReceiver := keepertest.AccAddrs[0]
+
+	ctx := testKeepers.Context
+
+	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
+	require.Equal(t, "0work", cosmosReceiverBalance.String())
+	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
+	require.Equal(t, "50000000work", faucetBalance.String())
+
+	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
+
+	// all validators, nonce 1
+	for _, orchAddress := range keepertest.OrchAddrs {
+		claim := types.MsgUbtDepositedClaim{
+			EventNonce:                       uint64(1),
+			TokenContract:                    baseledgerTokenContract,
+			Amount:                           sdk.NewIntFromUint64(1),
+			EthereumSender:                   ethereumSender,
+			UbtPrice:                         "1",
+			Creator:                          orchAddress.String(),
+			BaseledgerReceiverAccountAddress: cosmosReceiver.String(),
+		}
+
+		ctx = ctx.WithBlockTime(myBlockTime)
+		_, err := srv.UbtDepositedClaim(sdk.WrapSDKContext(ctx), &claim)
+		bridge.EndBlocker(ctx, *testKeepers.BridgeKeeper)
+		require.Error(t, err)
+
+		hash, err := claim.ClaimHash()
+		require.NoError(t, err)
+		attestation := testKeepers.BridgeKeeper.GetAttestation(ctx, uint64(1), hash)
+		require.Nil(t, attestation)
+	}
+}
