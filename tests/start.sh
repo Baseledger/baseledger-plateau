@@ -30,16 +30,27 @@ fi
 # Run new test container instances
 
 ## TODO: We might be missing ports for P2P - check if fails to discover other nodes
-GRPC_PORT=9089
-RPC_PORT=26656
-API_PORT=1316
+GRPC_PORT=9090
+RPC_PORT=26657
+API_PORT=1317
+LISTEN_PORT=26655
+P2P_PORT=26656
+CONTAINER_IP=7.7.7.
+
+docker network create baseledgernet
 
 for i in $(seq 1 $NODES);
 do
 
-GRPC_PORT=$(($GRPC_PORT + 1))
-RPC_PORT=$(($RPC_PORT + 1))
-API_PORT=$(($API_PORT + 1))
+# add this ip for loopback dialing
 
-docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD -d -p $GRPC_PORT:9090 -p $RPC_PORT:26657 -p $API_PORT:1317 baseledger-base
+ip addr add 7.7.7.$i/32 dev eth0 || true # allowed to fail
+docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --cap-add=NET_ADMIN --net baseledgernet -d -p $CONTAINER_IP$i:$GRPC_PORT:9090 -p $CONTAINER_IP$i:$RPC_PORT:26657 -p $CONTAINER_IP$i:$API_PORT:1317 -p $CONTAINER_IP$i:$LISTEN_PORT:26655 -p $CONTAINER_IP$i:$P2P_PORT:26656 baseledger-base
+
+# GRPC_PORT=$(($GRPC_PORT + 1))
+# RPC_PORT=$(($RPC_PORT + 1))
+# API_PORT=$(($API_PORT + 1))
+# LISTEN_PORT=$(($LISTEN_PORT + 10))
+# P2P_PORT=$(($P2P_PORT + 10))
+
 done
