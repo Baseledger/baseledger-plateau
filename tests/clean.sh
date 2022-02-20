@@ -12,7 +12,6 @@ set +e
 for i in $(seq 1 $NODES);
 do
 docker rm -f $VALIDATOR_CONTAINER_BASE_NAME$i
-ip addr del 7.7.7.$i/32 dev eth0 || true
 done
 
 docker network rm baseledgernet
