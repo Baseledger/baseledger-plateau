@@ -6,7 +6,7 @@ import (
 	distributionTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
 
-// AccountKeeper defines the expected account keeper used for simulations (noalias)
+// AccountKeeper defines the expected account keeper
 type AccountKeeper interface {
 	GetAccount(ctx sdk.Context, addr sdk.AccAddress) types.AccountI
 	// Methods imported from account should be defined here
