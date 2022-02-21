@@ -26,7 +26,9 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	k := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	baseledger.InitGenesis(ctx, *k, genesisState)
 	got := baseledger.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)

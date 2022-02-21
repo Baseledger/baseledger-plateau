@@ -3,13 +3,15 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "github.com/Baseledger/baseledger/testutil/keeper"
+	keepertest "github.com/Baseledger/baseledger/testutil/keeper"
 	"github.com/Baseledger/baseledger/x/proof/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetParams(t *testing.T) {
-	k, ctx := testkeeper.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	k := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	params := types.DefaultParams()
 
 	k.SetParams(ctx, params)

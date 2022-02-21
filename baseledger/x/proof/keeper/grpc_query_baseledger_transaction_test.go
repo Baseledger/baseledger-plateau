@@ -16,7 +16,9 @@ import (
 )
 
 func TestBaseledgerTransactionQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	keeper := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBaseledgerTransaction(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -61,7 +63,9 @@ func TestBaseledgerTransactionQuerySingle(t *testing.T) {
 }
 
 func TestBaseledgerTransactionQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	keeper := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBaseledgerTransaction(keeper, ctx, 5)
 
