@@ -13,6 +13,10 @@ func (k msgServer) CreateBaseledgerTransaction(goCtx context.Context, msg *types
 
 	txCreatorAddress, err := sdk.AccAddressFromBech32(msg.Creator)
 
+	if err != nil {
+		panic(err)
+	}
+
 	faucetAccAddress, err := sdk.AccAddressFromBech32(k.bridgeKeeper.GetBaseledgerFaucetAddress(ctx))
 
 	if err != nil {
