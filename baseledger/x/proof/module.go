@@ -11,7 +11,6 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Baseledger/baseledger/x/proof/client/cli"
 	"github.com/Baseledger/baseledger/x/proof/client/rest"
 	"github.com/Baseledger/baseledger/x/proof/keeper"
 	"github.com/Baseledger/baseledger/x/proof/types"
@@ -84,12 +83,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the capability module's root tx command.
 func (a AppModuleBasic) GetTxCmd() *cobra.Command {
-	return cli.GetTxCmd()
+	return nil
 }
 
 // GetQueryCmd returns the capability module's root query command.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return cli.GetQueryCmd(types.StoreKey)
+	return nil
 }
 
 // ----------------------------------------------------------------------------
