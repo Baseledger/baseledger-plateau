@@ -6,7 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOCKERFOLDER=$DIR/dockerfile
 REPOFOLDER=$DIR/..
 
-# change our directory sot hat the git arcive command works as expected
+# change our directory so that the git archive command works as expected
 pushd $REPOFOLDER
 
 #docker system prune -a -f

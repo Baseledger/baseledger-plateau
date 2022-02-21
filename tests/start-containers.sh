@@ -34,16 +34,12 @@ RPC_PORT=26657
 API_PORT=1317
 LISTEN_PORT=26655
 P2P_PORT=26656
-CONTAINER_IP=7.7.7.
 
 docker network create baseledgernet
 
 for i in $(seq 1 $NODES);
 do
 
-# add this ip for loopback dialing
-# ip addr add 7.7.7.$i/32 dev eth0 || true # allowed to fail
-
-docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --cap-add=NET_ADMIN --net baseledgernet -d --expose 9090 --expose 26657 --expose 1317 --expose 26655 --expose 26656 baseledger-base
+docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $LISTEN_PORT --expose $P2P_PORT baseledger-base
 
 done
