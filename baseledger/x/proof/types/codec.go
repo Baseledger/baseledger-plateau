@@ -9,16 +9,12 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateBaseledgerTransaction{}, "baseledger/CreateBaseledgerTransaction", nil)
-	cdc.RegisterConcrete(&MsgUpdateBaseledgerTransaction{}, "baseledger/UpdateBaseledgerTransaction", nil)
-	cdc.RegisterConcrete(&MsgDeleteBaseledgerTransaction{}, "baseledger/DeleteBaseledgerTransaction", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateBaseledgerTransaction{},
-		&MsgUpdateBaseledgerTransaction{},
-		&MsgDeleteBaseledgerTransaction{},
 	)
 	// this line is used by starport scaffolding # 3
 

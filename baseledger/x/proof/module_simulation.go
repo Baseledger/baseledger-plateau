@@ -91,28 +91,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		baseledgersimulation.SimulateMsgCreateBaseledgerTransaction(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
-	var weightMsgUpdateBaseledgerTransaction int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateBaseledgerTransaction, &weightMsgUpdateBaseledgerTransaction, nil,
-		func(_ *rand.Rand) {
-			weightMsgUpdateBaseledgerTransaction = defaultWeightMsgUpdateBaseledgerTransaction
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgUpdateBaseledgerTransaction,
-		baseledgersimulation.SimulateMsgUpdateBaseledgerTransaction(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
-	var weightMsgDeleteBaseledgerTransaction int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteBaseledgerTransaction, &weightMsgDeleteBaseledgerTransaction, nil,
-		func(_ *rand.Rand) {
-			weightMsgDeleteBaseledgerTransaction = defaultWeightMsgDeleteBaseledgerTransaction
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgDeleteBaseledgerTransaction,
-		baseledgersimulation.SimulateMsgDeleteBaseledgerTransaction(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
