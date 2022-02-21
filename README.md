@@ -43,7 +43,7 @@ cargo run -- keys register-orchestrator-address --fees="0token" --validator-phra
 export COINMARKETCAP_API_TOKEN=<token>
 export COINAPI_API_TOKEN=<token>
 
-cargo run -- orchestrator --fees "0token" --ethereum-rpc="http://localhost:8545" --baseledger-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
+cargo run -- orchestrator --ethereum-rpc="http://localhost:8545" --baseledger-contract-address="<BASELEDGER_TEST_CONTRACT_ADDRESS>"
 ```
 
 ## Changing and building proto files
