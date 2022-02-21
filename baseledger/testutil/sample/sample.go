@@ -12,6 +12,12 @@ func AccAddress() string {
 	return sdk.AccAddress(addr).String()
 }
 
+func AccAddressNative() sdk.AccAddress {
+	pk := ed25519.GenPrivKey().PubKey()
+	addr := pk.Address()
+	return sdk.AccAddress(addr)
+}
+
 func ValAddress() string {
 	pk := ed25519.GenPrivKey().PubKey()
 	addr := pk.Address()
