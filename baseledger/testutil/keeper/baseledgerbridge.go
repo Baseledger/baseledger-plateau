@@ -199,8 +199,6 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 
 	require.NoError(t, stateStore.LoadLatestVersion())
 
-	// registry := codectypes.NewInterfaceRegistry()
-	// cdc := codec.NewProtoCodec(registry)
 	cdc := MakeTestMarshaler()
 
 	paramsKeeper := paramskeeper.NewKeeper(cdc, types.Amino, keyParams, tkeyParams)
@@ -273,9 +271,6 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 		}
 		accountKeeper.SetModuleAccount(ctx, mod)
 	}
-
-	ps := types.DefaultParams()
-	ps.ParamSetPairs()
 
 	testParams := types.Params{
 		WorktokenEurPrice:       "0.1",
