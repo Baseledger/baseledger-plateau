@@ -71,12 +71,6 @@ func (k Keeper) GetBaseledgerTransaction(ctx sdk.Context, id uint64) (val types.
 	return val, true
 }
 
-// RemoveBaseledgerTransaction removes a baseledgerTransaction from the store
-func (k Keeper) RemoveBaseledgerTransaction(ctx sdk.Context, id uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseledgerTransactionKey))
-	store.Delete(GetBaseledgerTransactionIDBytes(id))
-}
-
 // GetAllBaseledgerTransaction returns all baseledgerTransaction
 func (k Keeper) GetAllBaseledgerTransaction(ctx sdk.Context) (list []types.BaseledgerTransaction) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseledgerTransactionKey))
