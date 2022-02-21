@@ -32,12 +32,11 @@ do
     
     docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN $ARGS start &> /validator$i/vallogs &
 
-    FEES="--fees '0token'"
     ETH_RPC="--ethereum-rpc='http://localhost:8545'"
     DEPOSIT_CONTRACT_ADDRESS="--baseledger-contract-address='<BASELEDGER_TEST_CONTRACT_ADDRESS>'"
     # TODO: ADD COIN PRICE APIs 
 
-    docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $FEES $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
+    docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
 done
 
 
