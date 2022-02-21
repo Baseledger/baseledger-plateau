@@ -14968,10 +14968,6 @@ definitions:
       id:
         type: string
         format: uint64
-  Baseledger.baseledger.proof.MsgDeleteBaseledgerTransactionResponse:
-    type: object
-  Baseledger.baseledger.proof.MsgUpdateBaseledgerTransactionResponse:
-    type: object
   Baseledger.baseledger.proof.Params:
     type: object
     description: Params defines the parameters for the module.
