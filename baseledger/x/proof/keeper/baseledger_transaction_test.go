@@ -20,7 +20,9 @@ func createNBaseledgerTransaction(keeper *keeper.Keeper, ctx sdk.Context, n int)
 }
 
 func TestBaseledgerTransactionGet(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	keeper := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	items := createNBaseledgerTransaction(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetBaseledgerTransaction(ctx, item.Id)
@@ -32,18 +34,10 @@ func TestBaseledgerTransactionGet(t *testing.T) {
 	}
 }
 
-func TestBaseledgerTransactionRemove(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
-	items := createNBaseledgerTransaction(keeper, ctx, 10)
-	for _, item := range items {
-		keeper.RemoveBaseledgerTransaction(ctx, item.Id)
-		_, found := keeper.GetBaseledgerTransaction(ctx, item.Id)
-		require.False(t, found)
-	}
-}
-
 func TestBaseledgerTransactionGetAll(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	keeper := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	items := createNBaseledgerTransaction(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -52,7 +46,9 @@ func TestBaseledgerTransactionGetAll(t *testing.T) {
 }
 
 func TestBaseledgerTransactionCount(t *testing.T) {
-	keeper, ctx := keepertest.BaseledgerKeeper(t)
+	testKeepers := keepertest.BaseledgerKeeper(t)
+	keeper := testKeepers.ProofKeeper
+	ctx := testKeepers.Context
 	items := createNBaseledgerTransaction(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetBaseledgerTransactionCount(ctx))
