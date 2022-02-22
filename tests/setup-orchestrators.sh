@@ -14,6 +14,6 @@ for i in $(seq 1 $NODES);
 do
 
 # Init each orchestrator and setup configuration
-docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- init
+# docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- init
 
 done
