@@ -2,6 +2,8 @@ const request = require('supertest');
 const Web3 = require('web3')
 const fs = require('fs');
 const path = require("path");
+const chai = require("chai");
+const expect = chai.expect;
 
 const starport_url = 'localhost:1317';
 
@@ -54,7 +56,7 @@ describe('validator power update', () => {
     // TODO: check staking power before and after
   });
 
-  // TODO: test to decrease power
+  // TODO: test to decrease pow
 });
 
 describe('ubt deposit', () => {
@@ -73,15 +75,17 @@ describe('ubt deposit', () => {
     console.log('stake token balance ', parsedResponse.balances[0].amount);
     console.log('work token balance ', parsedResponse.balances[1].amount);
 
+    const workTokenBalanceBefore = parsedResponse.balances[1].amount
+
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 
     const accounts = await web3.eth.getAccounts()
     contract.methods.deposit(100, baseledgerAddress).send({
         from: accounts[0]
-    }).then(console.log)
+    }).then(console.log);
 
-    await sleep(20000)
+    await sleep(20000);
 
     accountBalance = await request(starport_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}`)
     .send().expect(200);
@@ -92,5 +96,9 @@ describe('ubt deposit', () => {
 
     console.log('stake token balance ', parsedResponse.balances[0].amount);
     console.log('work token balance ', parsedResponse.balances[1].amount);
+
+    // check that balance increased by 1
+    const workTokenBalanceAfter = parsedResponse.balances[1].amount;
+    expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 1);
   });
 });
