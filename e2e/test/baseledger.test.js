@@ -24,15 +24,12 @@ describe('validator power update', () => {
     const baseledgerAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].orchestratorAddress;
     const validatorAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].validatorAddress;
 
-    let accountBalance = await request(starport_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}`)
+    let validators = await request(starport_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
-    let parsedResponse = JSON.parse(accountBalance.text);
+    let parsedResponse = JSON.parse(validators.text);
 
-    console.log('parsed response ', parsedResponse);
-
-    console.log('stake token balance ', parsedResponse.balances[0].amount);
-    console.log('work token balance ', parsedResponse.balances[1].amount);
+    console.log('validator tokens ', parsedResponse.validator.tokens);
             
     // console.log('ABI ', baseledger_abi)
     // console.log('WEB3 ', await web3.eth.getAccounts());
@@ -53,7 +50,6 @@ describe('validator power update', () => {
     console.log('parsed response ', parsedResponse);
     console.log('stake token balance ', parsedResponse.balances[0].amount);
     console.log('work token balance ', parsedResponse.balances[1].amount);
-    // console.log('CONTRACT ', contract.methods);
 
     // TODO: check staking power before and after
   });
