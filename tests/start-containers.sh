@@ -43,3 +43,6 @@ do
 docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $LISTEN_PORT --expose $P2P_PORT baseledger-base
 
 done
+
+# Assumes that the baseledger-hardhat has been built by following instructions in the baseledger-contracts repo readme file
+docker run --name baseledger-ethereum-node --net baseledgernet -d -p 8545:8545 baseledger-hardhat
