@@ -5,6 +5,7 @@ set -eux
 # to be run with any PWD
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
+ETHEREUM_CONTAINER_NAME="baseledger-ethereum-node"
 NODES=3
 
 # Remove existing container instance
@@ -45,4 +46,4 @@ docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --net baseledge
 done
 
 # Assumes that the baseledger-hardhat has been built by following instructions in the baseledger-contracts repo readme file
-docker run --name baseledger-ethereum-node --net baseledgernet -d -p 8545:8545 baseledger-hardhat
+docker run --name $ETHEREUM_CONTAINER_NAME --net baseledgernet -d -p 8545:8545 baseledger-hardhat
