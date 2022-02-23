@@ -46,15 +46,21 @@ do
     # phrases are located on 6th, 12th, 18th.. line
     y=$(( 6*$i ))
 
-    VALIDATOR_PHRASE=$(sed "$y q;d" /validator-phrases)
-    ORCHESTRATOR_PHRASE=$(sed "$y q;d" /orchestrator-phrases)
+    VALIDATOR_PHRASE=$(sed "$y q;d" ./validator-phrases)
+    ORCHESTRATOR_PHRASE=$(sed "$y q;d" ./orchestrator-phrases)
 
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- keys set-orchestrator-key --phrase="$ORCHESTRATOR_PHRASE"
+    
+    sleep 10
+    
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- keys register-orchestrator-address --validator-phrase="$VALIDATOR_PHRASE"
     
-    ETH_RPC="--ethereum-rpc='http://$ETHEREUM_CONTAINER_NAME_IP:8545'"
-    DEPOSIT_CONTRACT_ADDRESS="--baseledger-contract-address='0xe7f1725e7734ce288f8367e1bb143e90bb3f0512'"
+    ETH_RPC="--ethereum-rpc=http://$ETHEREUM_CONTAINER_NAME_IP:8545"
+    DEPOSIT_CONTRACT_ADDRESS="--baseledger-contract-address=0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
     # TODO: ADD COIN PRICE APIs
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
 done
+
+rm ./validator-phrases
+rm ./orchestrator-phrases
 

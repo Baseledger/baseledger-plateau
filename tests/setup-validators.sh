@@ -40,8 +40,8 @@ do
 ARGS="$BASELEDGER_HOME --keyring-backend test"
 
 # Generate a validator key, orchestrator key for each validator
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys add $ARGS validator 2>> /validator-phrases
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys add $ARGS orchestrator 2>> /orchestrator-phrases
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys add $ARGS validator 2>> ./validator-phrases
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys add $ARGS orchestrator 2>> ./orchestrator-phrases
 
 VALIDATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show validator -a $ARGS)
 ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show orchestrator -a $ARGS)
