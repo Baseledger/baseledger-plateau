@@ -7,7 +7,8 @@ CHAIN_ID="baseledger"
 
 NODES=3
 
-ALLOCATION="10000000000stake,10000000000work"
+VALIDATOR_ALLOCATION="10000000000stake,10000000000work"
+ORCHESTRATOR_ALLOCATION="1work"
 
 # first we start a genesis.json with validator 1
 # validator 1 will also collect the gentx's once gnerated
@@ -52,8 +53,8 @@ ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show o
 # move the genesis in
 docker cp ./genesis.json $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json
 
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $VALIDATOR_KEY $ALLOCATION
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $ORCHESTRATOR_KEY $ALLOCATION  # TODO: is this supposed to be here?
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $VALIDATOR_KEY $VALIDATOR_ALLOCATION
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $ORCHESTRATOR_KEY $ORCHESTRATOR_ALLOCATION
 
 # move the genesis back out
 docker cp $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json .
