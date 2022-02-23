@@ -5,7 +5,7 @@ BIN=baseledgerd
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 ETHEREUM_CONTAINER_NAME="baseledger-ethereum-node"
 BASELEDGER_HOME="--home /validator"
-NODES=3
+NODES=1
 
 # We are adding first validator as a persisted peer since we could not get pex to autodiscover with this setup
 # (might be an issue with "Cannot add non-routable address fd010b69bae8fb323d9527e377497b93608c11f8@172.24.0.2:26656)
@@ -34,6 +34,11 @@ do
     ARGS="$BASELEDGER_HOME $LISTEN_ADDRESS $RPC_ADDRESS $GRPC_ADDRESS $LOG_LEVEL $INVARIANTS_CHECK $P2P_ADDRESS $PERSISTENT_PEERS"
     
     docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN $ARGS start &> /validator$i/vallogs &
+
+    sleep 10
+
+    ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show orchestrator -a --home /validator --keyring-backend test)
+    docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN tx bank send validator $ORCHESTRATOR_KEY 1worktoken --yes --home /validator --keyring-backend test
 done
 
 for i in $(seq 1 $NODES);

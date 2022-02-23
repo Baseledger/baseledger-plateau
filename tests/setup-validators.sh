@@ -5,7 +5,7 @@ BIN=baseledgerd
 
 CHAIN_ID="baseledger"
 
-NODES=3
+NODES=1
 
 ALLOCATION="10000000000stake,10000000000worktoken"
 
@@ -50,7 +50,7 @@ ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show o
 docker cp ./genesis.json $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json
 
 docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $VALIDATOR_KEY $ALLOCATION
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $ORCHESTRATOR_KEY $ALLOCATION
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN add-genesis-account $ARGS $ORCHESTRATOR_KEY $ALLOCATION  # TODO: is this supposed to be here?
 
 # move the genesis back out
 docker cp $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json .
@@ -68,7 +68,7 @@ ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show o
 
 VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$i)
 
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS $BASELEDGER_HOME --moniker validator --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 500000000stake
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 500000000stake
 
 # copy gentx files to starting validator
 if [ $i -gt 1 ]; then
