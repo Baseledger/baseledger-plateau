@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eux
-# your baseledger binary name
 BIN=baseledgerd
 
 CHAIN_ID="baseledger"
