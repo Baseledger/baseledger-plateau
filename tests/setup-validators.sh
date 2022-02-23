@@ -11,7 +11,7 @@ VALIDATOR_ALLOCATION="10000000000stake,10000000000work"
 ORCHESTRATOR_ALLOCATION="1work"
 
 # first we start a genesis.json with validator 1
-# validator 1 will also collect the gentx's once gnerated
+# validator 1 will also collect the gentx's once generated
 BASELEDGER_HOME="--home /validator"
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 STARTING_VALIDATOR_CONTAINER_NAME=$VALIDATOR_CONTAINER_BASE_NAME"1"

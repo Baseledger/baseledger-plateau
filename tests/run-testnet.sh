@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eux
-# your gaiad binary name
 BIN=baseledgerd
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 ETHEREUM_CONTAINER_NAME="baseledger-ethereum-node"
@@ -20,10 +19,6 @@ do
     rm -rf /validator$i
     mkdir /validator$i
 
-    # this implicitly caps us at ~6000 nodes for this sim
-    # note that we start on 26656 the idea here is that the first
-    # node (node 1) is at the expected contact address from the gentx
-    # faciliating automated peer exchange
     RPC_ADDRESS="--rpc.laddr tcp://0.0.0.0:26657"
     GRPC_ADDRESS="--grpc.address 0.0.0.0:9090"
     LISTEN_ADDRESS="--address tcp://0.0.0.0:26655"
@@ -40,7 +35,7 @@ sleep 10
 
 for i in $(seq 1 $NODES);
 do    
-    # phrases are located on 6th, 12th, 18th.. line
+    # phrases are located each 6th line
     y=$(( 6*$i ))
 
     VALIDATOR_PHRASE=$(sed "$y q;d" ./validator-phrases)
