@@ -5,7 +5,7 @@ BIN=baseledgerd
 
 CHAIN_ID="baseledger"
 
-NODES=1
+NODES=3
 
 ALLOCATION="10000000000stake,10000000000worktoken"
 
