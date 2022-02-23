@@ -7,7 +7,7 @@ CHAIN_ID="baseledger"
 
 NODES=3
 
-ALLOCATION="10000000000stake,10000000000worktoken"
+ALLOCATION="10000000000stake,10000000000work"
 
 # first we start a genesis.json with validator 1
 # validator 1 will also collect the gentx's once gnerated
@@ -22,7 +22,7 @@ docker exec $STARTING_VALIDATOR_CONTAINER_NAME  $BIN init $BASELEDGER_HOME valid
 ## testing the generated one with the default values provided by the module.
 
 # add in denom metadata for both native tokens
-docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.bank.denom_metadata += [{"name": "Work Token", "symbol": "WRK", "base": "worktoken", "description": "A test token for paying work", "denom_units": [{"denom": "worktoken", "exponent": 0}]},{"name": "Stake Token", "symbol": "STK", "base": "stake", "description": "A staking test token", "denom_units": [{"denom": "stake", "exponent": 0}]}]' /validator/config/genesis.json > /metadata-genesis.json
+docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.bank.denom_metadata += [{"name": "Work Token", "symbol": "WRK", "base": "work", "description": "A test token for paying work", "denom_units": [{"denom": "work", "exponent": 0}]},{"name": "Stake Token", "symbol": "STK", "base": "stake", "description": "A staking test token", "denom_units": [{"denom": "stake", "exponent": 0}]}]' /validator/config/genesis.json > /metadata-genesis.json
 docker cp /metadata-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/metadata-genesis.json
 
 # a 60 second voting period to allow us to pass governance proposals in the tests
@@ -71,7 +71,7 @@ ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show o
 
 VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$i)
 
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 500000000stake
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator$i --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 500000000stake
 
 # copy gentx files to starting validator
 if [ $i -gt 1 ]; then

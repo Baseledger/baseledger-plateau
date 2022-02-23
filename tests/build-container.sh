@@ -1,7 +1,6 @@
 #!/bin/bash
 set -eux
 
-# this directy of this script
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOCKERFOLDER=$DIR/dockerfile
 REPOFOLDER=$DIR/..
@@ -9,7 +8,6 @@ REPOFOLDER=$DIR/..
 # change our directory so that the git archive command works as expected
 pushd $REPOFOLDER
 
-#docker system prune -a -f
 # Build base container
 git archive --format=tar.gz -o $DOCKERFOLDER/baseledger.tar.gz --prefix=baseledger/ HEAD
 pushd $DOCKERFOLDER
