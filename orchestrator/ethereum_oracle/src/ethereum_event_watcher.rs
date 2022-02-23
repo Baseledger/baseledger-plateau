@@ -87,8 +87,6 @@ pub async fn check_for_events(
             )
         }
 
-        let ubt_price = fetch_ubt_price().await.unwrap();
-        
         if !power_changes.is_empty() {
             info!(
                 "Oracle observed power change with payee_address {}, destination {:?}, amount {}, and event nonce {}",
@@ -99,6 +97,8 @@ pub async fn check_for_events(
         let mut new_event_nonce: Uint256 = last_event_nonce.into();
         if !deposits.is_empty() || !power_changes.is_empty()
         {
+            let ubt_price = fetch_ubt_price().await.unwrap();
+            
             let res = send_ethereum_claims(
                 contact,
                 our_private_key,
