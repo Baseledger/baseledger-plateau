@@ -49,7 +49,7 @@ do
     DEPOSIT_CONTRACT_ADDRESS="--baseledger-contract-address=0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
     
     # TODO: API tokens for price
-    docker exec --workdir /baseledger/orchestrator -e COINMARKETCAP_API_TOKEN=asd -e COINAPI_API_TOKEN=asd $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
+    docker exec --workdir /baseledger/orchestrator -e RUST_LOG="trace" -e COINMARKETCAP_API_TOKEN=asd -e COINAPI_API_TOKEN=asd $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
 done
 
 
