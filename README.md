@@ -59,5 +59,6 @@ cargo run -- orchestrator --ethereum-rpc="http://localhost:8545" --baseledger-co
 - Navigate to tests
 - Run build-container.sh - This should be ran only once to build the docker images.
 - Run start-containers.sh - Starts 3 baseledger nodes and a hardhat node.
+- Run deploy-contracts.sh - This deploys the dummy UBT token contract as well as the BaseledgerUBTSplitter contract
 - Run setup-validators.sh - Creates and shares genesis.json among validators and creates gentx files.
 - Run run-testnet.sh - Starts the nodes, registers and starts the orchestrators. 
