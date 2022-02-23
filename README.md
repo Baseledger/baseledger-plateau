@@ -53,3 +53,11 @@ cargo run -- orchestrator --ethereum-rpc="http://localhost:8545" --baseledger-co
 - starport chain build --proto-all-modules
 - navigate to <root>/orchestrator/proto_build
 - cargo run
+
+## Running a local dockerized testnet
+
+- Navigate to tests
+- Run build-container.sh - This should be ran only once to build the docker images.
+- Run start-containers.sh - Starts 3 baseledger nodes and a hardhat node.
+- Run setup-validators.sh - Creates and shares genesis.json among validators and creates gentx files.
+- Run run-testnet.sh - Starts the nodes, registers and starts the orchestrators. 
