@@ -34,6 +34,9 @@ docker exec $STARTING_VALIDATOR_CONTAINER_NAME mv /edited-genesis.json /genesis.
 # Copy genesis from starting node to host machine for gentx generation
 docker cp $STARTING_VALIDATOR_CONTAINER_NAME:/validator/config/genesis.json .
 
+rm -rf ./validator-phrases
+rm -rf ./orchestrator-phrases
+
 # Sets up an arbitrary number of validators on a single machine by docker exec-ing on respective containers
 for i in $(seq 1 $NODES);
 do

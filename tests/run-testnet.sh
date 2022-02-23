@@ -34,15 +34,12 @@ do
     ARGS="$BASELEDGER_HOME $LISTEN_ADDRESS $RPC_ADDRESS $GRPC_ADDRESS $LOG_LEVEL $INVARIANTS_CHECK $P2P_ADDRESS $PERSISTENT_PEERS"
     
     docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN $ARGS start &> /validator$i/vallogs &
-
-    sleep 10
-
-    ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show orchestrator -a --home /validator --keyring-backend test)
-    docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN tx bank send validator $ORCHESTRATOR_KEY 1worktoken --yes --home /validator --keyring-backend test
 done
 
+sleep 10
+
 for i in $(seq 1 $NODES);
-do
+do    
     # phrases are located on 6th, 12th, 18th.. line
     y=$(( 6*$i ))
 
@@ -50,8 +47,6 @@ do
     ORCHESTRATOR_PHRASE=$(sed "$y q;d" ./orchestrator-phrases)
 
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- keys set-orchestrator-key --phrase="$ORCHESTRATOR_PHRASE"
-    
-    sleep 10
     
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- keys register-orchestrator-address --validator-phrase="$VALIDATOR_PHRASE"
     
@@ -61,6 +56,4 @@ do
     docker exec --workdir /baseledger/orchestrator -e COINMARKETCAP_API_TOKEN=asd -e COINAPI_API_TOKEN=asd $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
 done
 
-rm ./validator-phrases
-rm ./orchestrator-phrases
 
