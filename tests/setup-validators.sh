@@ -71,9 +71,6 @@ do
 # move the genesis in
 docker cp ./genesis.json $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json
 
-ARGS="$BASELEDGER_HOME --keyring-backend test"
-ORCHESTRATOR_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys show orchestrator -a $ARGS)
-
 VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$i)
 
 docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator$i --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 500000000stake
