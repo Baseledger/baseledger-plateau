@@ -9,10 +9,12 @@ NODES=3
 
 VALIDATOR_ALLOCATION="10000000000stake,10000000000work"
 ORCHESTRATOR_ALLOCATION="1work"
+FAUCET_ALLOCATION="10000000000work"
 
 # first we start a genesis.json with validator 1
 # validator 1 will also collect the gentx's once generated
 BASELEDGER_HOME="--home /validator"
+ARGS="$BASELEDGER_HOME --keyring-backend test"
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 STARTING_VALIDATOR_CONTAINER_NAME=$VALIDATOR_CONTAINER_BASE_NAME"1"
 docker exec $STARTING_VALIDATOR_CONTAINER_NAME  $BIN init $BASELEDGER_HOME validator --chain-id=$CHAIN_ID
@@ -32,6 +34,9 @@ docker cp /edited-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/edited-genesi
 
 docker exec $STARTING_VALIDATOR_CONTAINER_NAME mv /edited-genesis.json /genesis.json
 
+FAUCET_KEY="baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0"
+docker exec $STARTING_VALIDATOR_CONTAINER_NAME $BIN add-genesis-account $ARGS $FAUCET_KEY $FAUCET_ALLOCATION
+
 # Copy genesis from starting node to host machine for gentx generation
 docker cp $STARTING_VALIDATOR_CONTAINER_NAME:/validator/config/genesis.json .
 
@@ -41,7 +46,6 @@ rm -rf ./orchestrator-phrases
 # Sets up an arbitrary number of validators on a single machine by docker exec-ing on respective containers
 for i in $(seq 1 $NODES);
 do
-ARGS="$BASELEDGER_HOME --keyring-backend test"
 
 # Generate a validator key, orchestrator key for each validator
 docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN keys add $ARGS validator 2>> ./validator-phrases
