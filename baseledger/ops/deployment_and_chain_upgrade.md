@@ -62,9 +62,9 @@ An example of performing a migration during chain upgrade is given on branch *ch
 Also look in the module.go file of the bridge module where the migration is registered with the RegisterMigration and where the module version (ConsensusVersion) is increased from 2 to 3. 
 
 ## Backups TODO
-Prior to the upgrade, validators are encouraged to take a full data snapshot. Snapshotting depends heavily on infrastructure, but generally this can be done by backing up the .gaia directory. If you use Cosmovisor to upgrade, by default, Cosmovisor will backup your data upon upgrade.
+Prior to the upgrade, validators are encouraged to take a full data snapshot. Snapshotting depends heavily on infrastructure, but generally this can be done by backing up the .baseledger directory. If you use Cosmovisor to upgrade, by default, Cosmovisor will backup your data upon upgrade.
 
-It is critically important for validator operators to back-up the .baseledgerd/data/priv_validator_state.json file after stopping the baseledgerd process. This file is updated every block as your validator participates in consensus rounds. It is a critical file needed to prevent double-signing, in case the upgrade fails and the previous chain needs to be restarted.
+It is critically important for validator operators to back-up the .baseledger/data/priv_validator_state.json file after stopping the baseledgerd process. This file is updated every block as your validator participates in consensus rounds. It is a critical file needed to prevent double-signing, in case the upgrade fails and the previous chain needs to be restarted.
 
 
 ## Example local test of chain upgrade
