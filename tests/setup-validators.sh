@@ -9,7 +9,7 @@ NODES=3
 
 VALIDATOR_ALLOCATION="10000000000stake,10000000000work"
 ORCHESTRATOR_ALLOCATION="1work"
-FAUCET_ALLOCATION="10000000000work"
+FAUCET_ALLOCATION="10000000000stake,10000000000work"
 
 # first we start a genesis.json with validator 1
 # validator 1 will also collect the gentx's once generated
