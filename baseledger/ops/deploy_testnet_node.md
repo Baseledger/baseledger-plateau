@@ -31,11 +31,11 @@ Other nodes:
 2. Install latest golang
 3. Install cosmovisor: Follow the *deployment_and_chain_upgrade.md*
 4. Place binaries in the respective folders as described in *deployment_and_chain_upgrade.md*
-5. Generate validator account: cosmovisor keys add --keyring-backend test validator (make sure to write down the address and the mnemonic)
-6. Generate orchestrator account: cosmovisor keys add --keyring-backend test orchestrator (make sure to write down the address and the mnemonic)
-7. Add validator account with allocation: cosmovisor add-genesis-account --keyring-backend test <validator_address> 10000000000stake,10000000000work
-8. Add orchestrator account with allocation: cosmovisor add-genesis-account --keyring-backend test <orchestrator_address> 1work
-9. Add gentx transaction: cosmovisor gentx --keyring-backend --moniker <organization>_validator --ip <validator_ip_address> validator 10000000000stake
+5. Generate validator account: ./baseledgerd keys add --keyring-backend file validator (make sure to write down the address and the mnemonic)
+6. Generate orchestrator account: ./baseledgerd keys add --keyring-backend file orchestrator (make sure to write down the address and the mnemonic)
+7. Add validator account with allocation: ./baseledgerd add-genesis-account --keyring-backend file <validator_address> 1stake
+8. Add orchestrator account with allocation: ./baseledgerd add-genesis-account --keyring-backend file <orchestrator_address> 1work
+9. Add gentx transaction: ./baseledgerd gentx --keyring-backend file --moniker <organization>_validator --ip <validator_ip_address> --chain-id=baseledger validator 1stake
 10. Extract the genesis and gentx and send over to Finspot
 
 
