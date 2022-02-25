@@ -1,6 +1,5 @@
 https://docs.cosmos.network/master/run-node/run-node.html
 
-
 # Preparation
 
 DEVS Deploy contracts to testnet and make sure correct values configured in binaries
@@ -12,17 +11,18 @@ DEVS Prepare the package of the compiled binaries to be shared with other node o
 
 Finspot node:
 
-1. Install latest golang
+1. Install latest golang - https://www.geeksforgeeks.org/how-to-install-go-programming-language-in-linux/
 2. Install cosmovisor: Follow the *deployment_and_chain_upgrade.md*
 3. Place binaries in the respective folders as described in *deployment_and_chain_upgrade.md*
 4. Initialize: cosmovisor init validator --chain-id=baseledger
-5. Configure genesis: Edit the genesis file for various params (voting time, tokens metadata etc.)
-6. Generate validator account: cosmovisor keys add --keyring-backend test validator (make sure to write down the address and the mnemonic)
-7. Generate orchestrator account: cosmovisor keys add --keyring-backend test orchestrator (make sure to write down the address and the mnemonic)
-8. Add faucet account with allocation: cosmovisor add-genesis-account --keyring-backend test baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0 10000000000work
-9. Add validator account with allocation: cosmovisor add-genesis-account --keyring-backend test <validator_address> 10000000000stake,10000000000work
-10. Add orchestrator account with allocation: cosmovisor add-genesis-account --keyring-backend test <orchestrator_address> 1work
-11. Add gentx transaction: cosmovisor gentx --keyring-backend --moniker finspot_validator --ip <validator_ip_address> validator 10000000000stake
+5. Configure genesis: Edit the genesis file for various params (voting time, inflation, ubonding time, tokens metadata etc.)
+6. Generate validator account: ./baseledgerd keys add --keyring-backend file validator (make sure to write down the address and the mnemonic)
+7. Generate orchestrator account: ./baseledgerd keys add --keyring-backend file orchestrator (make sure to write down the address and the mnemonic)
+
+8. TODO - Add faucet address generation and addition to genesis as a bridge param. Add faucet account with allocation: ./baseledgerd add-genesis-account --keyring-backend file baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0 10000000000stake,10000000000work
+9. Add validator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <validator_address> 1stake
+10. Add orchestrator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <orchestrator_address> 1work
+11. Add gentx transaction: ./baseledgerd gentx --keyring-backend file --moniker finspot_validator --ip <validator_ip> --chain-id=baseledger validator 1stake
 12. Extract the genesis and add it to the BASELEDGER_PACKAGE
 
 Other nodes:

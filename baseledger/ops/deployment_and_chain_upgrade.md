@@ -16,26 +16,35 @@ Then install cosmovisor:
 
 Cosmovisor reads configuration from environment variables. The following ones need to be setup on the node:
 
-*DAEMON_HOME* is the location where the cosmovisor/ directory is kept that contains the genesis binary, the upgrade binaries, and any additional auxiliary files associated with each binary ($HOME/.baseledgerd)
+*DAEMON_HOME* is the location where the cosmovisor/ directory is kept that contains the genesis binary, the upgrade binaries, and any additional auxiliary files associated with each binary ($HOME/.baseledger)
+export DAEMON_HOME=$HOME/.baseledger
 
 *DAEMON_NAME* is the name of the binary itself (baseledgerd).
+export DAEMON_NAME=baseledgerd
 
 ### Folder structure
 
 $DAEMON_HOME/cosmovisor is expected to belong completely to cosmovisor and the subprocesses that are controlled by it. The folder content is organized as follows:
 
-     .
-     ├── current -> symbolic link to genesis or upgrades/<name>
-     ├── genesis
-     │   └── bin
-     │       └── $DAEMON_NAME
-     └── upgrades
-         └── <name>
-             ├── bin
-             │   └── $DAEMON_NAME
-             └── upgrade-info.json
+     $DAEMON_HOME/cosmovisor
+                    ├── current -> symbolic link to genesis or upgrades/<name>
+                    ├── genesis
+                    │   └── bin
+                    │       └── $DAEMON_NAME
+                    └── upgrades
+                        └── <name>
+                            ├── bin
+                            │   └── $DAEMON_NAME
+                            └── upgrade-info.json
+
+Cosmovisor requires $DAEMON_HOME/data folder to exist as well
 
 It is the responsibility of the admin to prepare the genesis and upgrades folder structure (current will be created by cosmovisor), place the initial binary in the genesis bin folder and then start cosmovisor.
+
+Make sure binary in genesis is marked as executable.
+chmod +x baseledgerd
+
+Make sure current contains a json file upgrade-info.json with content {}
 
 ### Starting the node
 
