@@ -36,14 +36,15 @@ Other nodes:
 7. Add validator account with allocation: ./baseledgerd add-genesis-account --keyring-backend file <validator_address> 1stake
 8. Add orchestrator account with allocation: ./baseledgerd add-genesis-account --keyring-backend file <orchestrator_address> 1work
 9. Add gentx transaction: ./baseledgerd gentx --keyring-backend file --moniker <organization>_validator --ip <validator_ip_address> --chain-id=baseledger validator 1stake
-10. Extract the genesis and gentx and send over to Finspot
+10. Extract the genesis and gentx and send over to Finspot, together with a node id (./baseledgerd tendermint show-node-id) and the static ip address of the node.
 
 
 Finspot node:
 
 1. Make sure latest genesis and gentx transactions are present
-2. cosmovisor collect-gentxs
-3. Distrubute genesis to each validator
+2. ./baseledgerd collect-gentxs
+3. Prepare cosmovisor start scripts with all node ids and ips 
+4. Distribute genesis and run script to each validator
 
 # Start
 
