@@ -1,6 +1,6 @@
 # Running the test suite
 
-## Clean test network between test runs (todo: make this automatic in future)
+## Clean test network between test runs (currently this is optional)
 - Run clean.sh
 ## Start dockerized test network 
 
