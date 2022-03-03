@@ -101,6 +101,10 @@ echo "Cleaned host gentx folder"
 # put the now final genesis.json into the correct folders of each validator container
 for i in $(seq 1 $NODES);
 do
+
+# enable 1317 API
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i sed -i 's/enable = false/enable = true/' /validator/config/app.toml
+
 docker cp ./genesis.json  $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json
 done
 
