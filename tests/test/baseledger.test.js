@@ -7,7 +7,7 @@ const expect = chai.expect;
 
 const node1_api_url = 'localhost:1317';
 const node2_api_url = 'localhost:1318';
-const node3_api_url = 'localhost:1317';
+const node3_api_url = 'localhost:1319';
 
 const baseledger_abi = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseledger_abi.json')));
 
@@ -33,13 +33,20 @@ describe('validator power update', () => {
 
     console.log('validator tokens at start ', parsedResponse.validator.tokens);
             
-    // add payee with 50k ubt
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 
     const accounts = await web3.eth.getAccounts()
-    // 50 000 ubt (8 decimals)
-    contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, validatorAddress).send({
+
+    // check for payee
+    const payeeExists = await contract.methods.payees(accounts[1]).call()
+
+    // add or update payee with 50k ubt (8 decimals)
+    const methodToExecute = payeeExists
+      ? contract.methods.updatePayee(accounts[1], accounts[1], 5000000000000, validatorAddress)
+      : contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, validatorAddress)
+    
+    methodToExecute.send({
         from: accounts[0]
     }).then(console.log)
 
