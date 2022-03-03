@@ -215,11 +215,18 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		stakingIncreased := true
-		if claim.Amount.LT(validator.Tokens) {
+		// ubt is 8 decimals and staking power is 6 decimals, so we divide by 100 to remove 2 zeros
+		amount := claim.Amount.Quo(sdk.NewInt(100))
+
+		fmt.Printf("CLAIM AMOUNT %v %v\n", claim.Amount, amount)
+
+		if amount.LT(validator.Tokens) {
 			stakingIncreased = false
 		}
 
-		stakingAmountChange := claim.Amount.Sub(validator.Tokens).Abs()
+		stakingAmountChange := amount.Sub(validator.Tokens).Abs()
+
+		fmt.Printf("STAKING AMOUNT CHANGE  %v\n", stakingAmountChange)
 
 		if stakingIncreased {
 			_, err = a.keeper.StakingKeeper.Delegate(ctx, faucetAddress, stakingAmountChange, 1, validator, true)
@@ -249,7 +256,7 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		}
 
 		a.keeper.Logger(ctx).Info("MsgValidatorPowerChangedClaim success",
-			"MsgValidatorPowerChangedAmount", claim.Amount.String(),
+			"MsgValidatorPowerChangedAmount", amount.String(),
 			"MsgValidatorPowerChangedNonce", strconv.Itoa(int(claim.GetEventNonce())),
 			"MsgValidatorPowerChangedToken", tokenAddress.GetAddress(),
 		)
