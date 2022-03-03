@@ -43,6 +43,7 @@ describe('validator power update', () => {
         from: accounts[0]
     }).then(console.log)
 
+    // sleep to wait for attestation to be observed
     await sleep(20000);
 
     validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
@@ -59,6 +60,7 @@ describe('validator power update', () => {
         from: accounts[0]
     }).then(console.log)
 
+    // sleep to wait for attestation to be observed
     await sleep(20000);
 
     validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
@@ -74,6 +76,7 @@ describe('validator power update', () => {
         from: accounts[0]
     }).then(console.log)
 
+    // sleep to wait for attestation to be observed
     await sleep(20000);
 
     validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
@@ -100,6 +103,7 @@ describe('ubt deposit', () => {
 
     // save work token balance before deposit
     const workTokenBalanceBefore = parsedResponse.balance.amount
+    console.log('work tokens before deposit ', workTokenBalanceBefore);
 
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
@@ -110,6 +114,7 @@ describe('ubt deposit', () => {
         from: accounts[0]
     }).then(console.log);
 
+    // sleep to wait for attestation to be observed
     await sleep(20000);
 
     accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
@@ -119,6 +124,8 @@ describe('ubt deposit', () => {
 
     // check that balance increased by 1
     const workTokenBalanceAfter = parsedResponse.balance.amount;
+    console.log('work tokens after deposit ', workTokenBalanceAfter);
+
     expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 1);
   });
 });
