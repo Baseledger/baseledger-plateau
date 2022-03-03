@@ -7,6 +7,10 @@ const expect = chai.expect;
 
 const starport_url = 'localhost:1317';
 
+const node1_api_url = 'localhost:1317';
+const node2_api_url = 'localhost:1318';
+const node3_api_url = 'localhost:1317';
+
 const baseledger_abi = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseledger_abi.json')));
 
 const sleep = (ms) => {
@@ -87,43 +91,35 @@ describe('validator power update', () => {
 describe('ubt deposit', () => {
   it('should deposit ubt to baseledger account', async function () {
     this.timeout(TEST_TIMEOUT + 20000);
-    // TODO: how to get/generate account?
+    // random regular baseledger address
     const baseledgerAddress = "baseledger1xu5xhzj63ddw7pce4r5d0y3w3fuzjxtylzvucm"
 
-    let accountBalance = await request(starport_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}`)
+    let accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
     .send().expect(200);
 
     let parsedResponse = JSON.parse(accountBalance.text);
 
-    console.log('parsed response ', parsedResponse);
-
-    console.log('stake token balance ', parsedResponse.balances[0].amount);
-    console.log('work token balance ', parsedResponse.balances[1].amount);
-
-    const workTokenBalanceBefore = parsedResponse.balances[1].amount
+    // save work token balance before deposit
+    const workTokenBalanceBefore = parsedResponse.balance.amount
 
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 
     const accounts = await web3.eth.getAccounts()
-    contract.methods.deposit(100, baseledgerAddress).send({
+    // deposit 1 ubt (8 decimals)
+    contract.methods.deposit(100000000, baseledgerAddress).send({
         from: accounts[0]
     }).then(console.log);
 
     await sleep(20000);
 
-    accountBalance = await request(starport_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}`)
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
     .send().expect(200);
 
     parsedResponse = JSON.parse(accountBalance.text);
 
-    console.log('parsed response ', parsedResponse);
-
-    console.log('stake token balance ', parsedResponse.balances[0].amount);
-    console.log('work token balance ', parsedResponse.balances[1].amount);
-
     // check that balance increased by 1
-    const workTokenBalanceAfter = parsedResponse.balances[1].amount;
+    const workTokenBalanceAfter = parsedResponse.balance.amount;
     expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 1);
   });
 });
