@@ -5,8 +5,6 @@ const path = require("path");
 const chai = require("chai");
 const expect = chai.expect;
 
-const starport_url = 'localhost:1317';
-
 const node1_api_url = 'localhost:1317';
 const node2_api_url = 'localhost:1318';
 const node3_api_url = 'localhost:1317';
@@ -21,69 +19,70 @@ const TEST_TIMEOUT = 30000;
 describe('validator power update', () => {
   it('should add/update validator staking power', async function() {
     this.timeout(TEST_TIMEOUT + 45000);
-    const orchestratorValidatorResponse = await request(starport_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+    const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
         .send().expect(200);
 
-    // TODO: is there a better way to get some sample accounts? these should be as good as any others
+    // using first node validator to change staking
     const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
-    const baseledgerAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].orchestratorAddress;
     const validatorAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].validatorAddress;
 
-    let validators = await request(starport_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    let validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
     let parsedResponse = JSON.parse(validators.text);
 
-    console.log('validator tokens ', parsedResponse.validator.tokens);
+    console.log('validator tokens at start ', parsedResponse.validator.tokens);
             
-    // add payee
+    // add payee with 50k ubt
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 
     const accounts = await web3.eth.getAccounts()
-    contract.methods.addPayee(accounts[1], accounts[1], 100000100, validatorAddress).send({
+    // 50 000 ubt (8 decimals)
+    contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, validatorAddress).send({
         from: accounts[0]
     }).then(console.log)
 
-    await sleep(15000);
+    await sleep(20000);
 
-    validators = await request(starport_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
     parsedResponse = JSON.parse(validators.text);
 
-    console.log('validator tokens ', parsedResponse.validator.tokens);
-    expect(parsedResponse.validator.tokens).to.be.equal("100000100");
+    console.log('validator tokens after setting to 50k ', parsedResponse.validator.tokens);
+    // tokens should be 50k * 10^6
+    expect(parsedResponse.validator.tokens).to.be.equal("50000000000");
 
-    // update payee, increase power
-    contract.methods.updatePayee(accounts[1], accounts[1], 100000200, validatorAddress).send({
+    // update payee, increase power to 80k
+    contract.methods.updatePayee(accounts[1], accounts[1], 8000000000000, validatorAddress).send({
         from: accounts[0]
     }).then(console.log)
 
-    await sleep(15000);
+    await sleep(20000);
 
-    validators = await request(starport_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
     parsedResponse = JSON.parse(validators.text);
 
-    console.log('validator tokens ', parsedResponse.validator.tokens);
-    expect(parsedResponse.validator.tokens).to.be.equal("100000200");
+    console.log('validator tokens after increasing to 80k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("80000000000");
 
-    // update payee, decrease power
-    contract.methods.updatePayee(accounts[1], accounts[1], 100000150, validatorAddress).send({
+    // update payee, decrease power to 70k
+    contract.methods.updatePayee(accounts[1], accounts[1], 7000000000000, validatorAddress).send({
         from: accounts[0]
     }).then(console.log)
 
-    await sleep(15000);
+    await sleep(20000);
 
-    validators = await request(starport_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
     parsedResponse = JSON.parse(validators.text);
 
-    console.log('validator tokens ', parsedResponse.validator.tokens);
-    expect(parsedResponse.validator.tokens).to.be.equal("100000150");
+    console.log('validator tokens after decreasing to 70k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("70000000000");
   });
 
 });
