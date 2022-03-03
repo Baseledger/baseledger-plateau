@@ -18,7 +18,7 @@ const TEST_TIMEOUT = 30000;
 
 describe('validator power update', () => {
   it('should add/update validator staking power', async function() {
-    this.timeout(TEST_TIMEOUT + 45000);
+    this.timeout(TEST_TIMEOUT + 60000);
     const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
         .send().expect(200);
 
