@@ -4,7 +4,8 @@ BIN=baseledgerd
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 ETHEREUM_CONTAINER_NAME="baseledger-ethereum-node"
 BASELEDGER_HOME="--home /validator"
-NODES=3
+NODES=${1:-3}
+ORCHS=${2:-3}
 
 # We are adding first validator as a persisted peer since we could not get pex to autodiscover with this setup
 # (might be an issue with "Cannot add non-routable address fd010b69bae8fb323d9527e377497b93608c11f8@172.24.0.2:26656)
@@ -33,7 +34,7 @@ done
 
 sleep 10
 
-for i in $(seq 1 $NODES);
+for i in $(seq 1 $ORCHS);
 do    
     # phrases are located each 6th line
     y=$(( 6*$i ))

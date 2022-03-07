@@ -6,8 +6,7 @@ set -eux
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 ETHEREUM_CONTAINER_NAME="baseledger-ethereum-node"
-NODES=3
-
+NODES=${1:-3}    
 # Remove existing container instance
 set +e
 for i in $(seq 1 $NODES);

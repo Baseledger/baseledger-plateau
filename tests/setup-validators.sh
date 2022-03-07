@@ -5,7 +5,7 @@ BIN=baseledgerd
 
 CHAIN_ID="baseledger"
 
-NODES=3
+NODES=${1:-3} 
 
 VALIDATOR_ALLOCATION="10000000000stake,10000000000work"
 ORCHESTRATOR_ALLOCATION="1work"
@@ -107,7 +107,5 @@ docker exec $VALIDATOR_CONTAINER_BASE_NAME$i sed -i 's/enable = false/enable = t
 
 docker cp ./genesis.json  $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/genesis.json
 done
-
-rm ./genesis.json
 
 echo "Cleaned host genesis file"
