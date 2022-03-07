@@ -73,7 +73,7 @@ docker cp ./genesis.json $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/gene
 
 VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$i)
 
-docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator$i --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 1000000stake
+docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN gentx $ARGS --moniker validator$i --chain-id=$CHAIN_ID --ip $VALIDATOR_CONTAINER_IP validator 2000000stake
 
 # copy gentx files to starting validator
 if [ $i -gt 1 ]; then
