@@ -248,6 +248,16 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				)
 				return sdkerrors.Wrap(err, "could not undelegate from validator specified on claim")
 			}
+
+			// this is a specific case of validator missbehaving when we want to slash all tokens from validator
+			if amount.Equal(sdk.NewInt(2000000)) {
+				consAddr, err := validator.GetConsAddr()
+				if err != nil {
+					panic(err)
+				}
+				a.keeper.StakingKeeper.Slash(ctx, consAddr, ctx.BlockHeight(), validator.ConsensusPower(sdk.DefaultPowerReduction), sdk.NewDec(2))
+				a.keeper.StakingKeeper.Jail(ctx, consAddr)
+			}
 		}
 
 		a.keeper.Logger(ctx).Info("MsgValidatorPowerChangedClaim success",
