@@ -168,6 +168,149 @@ describe('attestations observed', async function() {
   });
 });
 
+// these tests are using 3 nodes and 1 orchestrator - attestations should NOT be observed
+describe('attestations NOT observed', async function() {
+  this.timeout(50000);
+  before(() => {
+    startTestNet(3, 1);
+  });
+
+  after(() => {
+    cleanTestNet();
+  });
+
+
+  it('should NOT deposit ubt to baseledger account', async function () {
+    this.timeout(TEST_TIMEOUT + 20000);
+
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+
+    // random regular baseledger address
+    const baseledgerAddress = "baseledger1xu5xhzj63ddw7pce4r5d0y3w3fuzjxtylzvucm"
+
+    let accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+
+    let parsedResponse = JSON.parse(accountBalance.text);
+
+    // save work token balance before deposit
+    const workTokenBalanceBefore = parsedResponse.balance.amount
+    console.log('work tokens before deposit ', workTokenBalanceBefore);
+
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+
+    const accounts = await web3.eth.getAccounts()
+    // deposit 1 ubt (8 decimals)
+    contract.methods.deposit(100000000, baseledgerAddress).send({
+        from: accounts[0]
+    }).then(console.log);
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(accountBalance.text);
+
+    // check that balance was not increased
+    const workTokenBalanceAfter = parsedResponse.balance.amount;
+    console.log('work tokens after deposit ', workTokenBalanceAfter);
+
+    expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore );
+
+    // check if event nonces increased by 1
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 1).to.be.equal(endEventNonces[i]);
+    });
+  });
+
+  it('should NOT add/update validator staking power', async function() {
+    this.timeout(TEST_TIMEOUT + 60000);
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+
+    const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+        .send().expect(200);
+
+    // using first node validator to change staking
+    const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
+    const validatorAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].validatorAddress;
+
+    let validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    let parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens at start ', parsedResponse.validator.tokens);
+    const startValidatorTokens = parsedResponse.validator.tokens;
+    expect(startValidatorTokens).to.be.equal("2000000");
+            
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+
+    const accounts = await web3.eth.getAccounts()
+    contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, validatorAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after setting to 50k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("2000000");
+
+    // update payee, increase power to 80k
+    contract.methods.updatePayee(accounts[1], accounts[1], 8000000000000, validatorAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after increasing to 80k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("2000000");
+
+    // update payee, decrease power to 70k
+    contract.methods.updatePayee(accounts[1], accounts[1], 7000000000000, validatorAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after decreasing to 70k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("2000000");
+
+    // check if event nonces increased by 3
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 3).to.be.equal(endEventNonces[i]);
+    });
+  });
+});
+
+
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
