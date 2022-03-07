@@ -166,6 +166,69 @@ describe('attestations observed', async function() {
       expect(n + 1).to.be.equal(endEventNonces[i]);
     });
   });
+
+  it('should jail validator and remove tokens when reducing power back to 2', async function() {
+    this.timeout(TEST_TIMEOUT + 60000);
+
+    const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+        .send().expect(200);
+
+    // using first node validator to change staking
+    const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
+    const validatorAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].validatorAddress;
+
+    let validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    let parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens at start ', parsedResponse.validator.tokens);
+            
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+
+    const accounts = await web3.eth.getAccounts()
+
+    // check for payee
+    const payeeExists = await contract.methods.payees(accounts[1]).call()
+
+    // add or update payee with 50k ubt (8 decimals)
+    const methodToExecute = payeeExists
+      ? contract.methods.updatePayee(accounts[1], accounts[1], 5000000000000, validatorAddress)
+      : contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, validatorAddress)
+    
+    methodToExecute.send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after setting to 50k ', parsedResponse.validator.tokens);
+    // tokens should be 50k * 10^6
+    expect(parsedResponse.validator.tokens).to.be.equal("50000000000");
+
+    // update payee, decrease power to 2
+    contract.methods.updatePayee(accounts[1], accounts[1], 200000000, validatorAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after decreasing to 2 ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("0");
+  });
 });
 
 // these tests are using 3 nodes and 1 orchestrator - attestations should NOT be observed
