@@ -19,7 +19,15 @@ const sleep = (ms) => {
 };
 const TEST_TIMEOUT = 30000;
 
-describe('validator power update', () => {
+describe('validator power update', async function() {
+  this.timeout(50000);
+  before(() => {
+    startTestNet();
+  });
+
+  after(() => {
+    cleanTestNet();
+  });
   it('should add/update validator staking power', async function() {
     this.timeout(TEST_TIMEOUT + 60000);
     const startEventNonces = await getEventNonces();
@@ -110,7 +118,16 @@ describe('validator power update', () => {
 
 });
 
-describe('ubt deposit', () => {
+describe('ubt deposit', async function () {
+  this.timeout(50000);
+  before(() => {
+    startTestNet();
+  });
+
+  after(() => {
+    cleanTestNet();
+  });
+
   it('should deposit ubt to baseledger account', async function () {
     this.timeout(TEST_TIMEOUT + 20000);
 
@@ -161,21 +178,12 @@ describe('ubt deposit', () => {
   });
 });
 
-describe('test child process', async function() {
-  it('should execute sh script', async function() {
-    this.timeout(TEST_TIMEOUT + 20000);
-    startTestNet(4, 2);
-    // cleanTestNet(4);
-  });
-});
-
-
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
   shell.exec(path.join(__dirname, `../deploy-contracts.sh`));
   shell.exec(path.join(__dirname, `../setup-validators.sh ${nodes}`));
-  shell.exec(path.join(__dirname, `../run-testnet.sh ${nodes} ${orchs}}`));
+  shell.exec(path.join(__dirname, `../run-testnet.sh ${nodes} ${orchs}`));
 }
 
 cleanTestNet = (nodes = 3) => {
