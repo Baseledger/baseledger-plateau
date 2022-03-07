@@ -43,7 +43,7 @@ Finspot node:
 
 1. Make sure latest genesis and gentx transactions are present
 2. ./baseledgerd collect-gentxs
-3. Prepare cosmovisor start scripts with all node ids and ips 
+3. Prepare cosmovisor.service and orchestrator.service  scripts with all node ids and ips and relevant params (contract address) 
 4. Distribute genesis and run script to each validator
 
 # Start
@@ -51,10 +51,10 @@ Finspot node:
 Each node:
 
 1. Place the latest genesis in the appropriate folder
-2. Run the node and add all persistent peers as coma delimited list: cosmovisor --p2p.persistent_peers <node1_id>@<node1_ip>:26656,<node2_id>... start
+2. Adjust the orchestrator.service with your local params (infura, coinmarketapi key, coinapi key)
+2. setup the cosmovisor.service and orchestrator.service to run as a systemd services
 3. Init orchestrator: ./baseledger_bridge init
 4. Register orchestrator key: ./baseledger_bridge keys set-orchestrator-key --phrase=<orchestrator_mnemonic>
 5. Register orchestrator address: ./baseledger_bridge keys register-orchestrator-address --validator-phrase=<validator_mnemonic>
-6. Get coinmarket cap api token and set env var COINMARKETCAP_API_TOKEN
-7. Get coinapi api token and set env var COINAPI_API_TOKEN
-8. Run ochestrator: baseledger_bridge orchestrator --ethereum-rpc=<your_eth_url_such_as_infura> --baseledger-contract-address=<baseledger_contract_address_provided_by_the_team>
+8. systemctl start cosmovisor.service
+9. systemctl start orchestrator.service
