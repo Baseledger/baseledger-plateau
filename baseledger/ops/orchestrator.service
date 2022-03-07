@@ -1,0 +1,22 @@
+[Unit]
+Description=Orchestrator - Baseledger Bridge oracle service
+
+[Service]
+WorkingDirectory=/root/.baseledger/orchestrator
+ExecStart=baseledger_bridge orchestrator --ethereum-rpc=https://ropsten.infura.io/v3/0f43a95e908e4114a72f4f9e7e3913a7 --baseledger-contract-address=0x7648a7c010C1C3db8476D6C80C09708EA0681872
+After=cosmovisor.service
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=baseledger-orchestrator
+User=orchestrator
+Environment=COINMARKETCAP_API_TOKEN=TODO
+Environment=COINAPI_API_TOKEN=TODO
+
+# How many seconds to wait for the app to shut down after it receives the initial interrupt signal.
+# If the app doesn't shut down in this period, SIGKILL is issued to terminate the app.
+# The default timeout for most distributions is 90 seconds.
+TimeoutStopSec=90
+
+[Install]
+WantedBy=multi-user.target
