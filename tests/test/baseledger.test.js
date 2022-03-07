@@ -5,6 +5,7 @@ const path = require("path");
 const chai = require("chai");
 const expect = chai.expect;
 
+const host = 'localhost';
 const node1_api_url = 'localhost:1317';
 const node2_api_url = 'localhost:1318';
 const node3_api_url = 'localhost:1319';
@@ -19,6 +20,9 @@ const TEST_TIMEOUT = 30000;
 describe('validator power update', () => {
   it('should add/update validator staking power', async function() {
     this.timeout(TEST_TIMEOUT + 60000);
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+
     const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
         .send().expect(200);
 
@@ -93,6 +97,13 @@ describe('validator power update', () => {
 
     console.log('validator tokens after decreasing to 70k ', parsedResponse.validator.tokens);
     expect(parsedResponse.validator.tokens).to.be.equal("70000000000");
+
+    // check if event nonces increased by 3
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 3).to.be.equal(endEventNonces[i]);
+    });
   });
 
 });
@@ -100,6 +111,10 @@ describe('validator power update', () => {
 describe('ubt deposit', () => {
   it('should deposit ubt to baseledger account', async function () {
     this.timeout(TEST_TIMEOUT + 20000);
+
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+
     // random regular baseledger address
     const baseledgerAddress = "baseledger1xu5xhzj63ddw7pce4r5d0y3w3fuzjxtylzvucm"
 
@@ -134,5 +149,28 @@ describe('ubt deposit', () => {
     console.log('work tokens after deposit ', workTokenBalanceAfter);
 
     expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 1);
+
+    // check if event nonces increased by 1
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 1).to.be.equal(endEventNonces[i]);
+    });
   });
 });
+
+getEventNonces = async () => {
+  const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+    .send().expect(200);
+
+  const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
+  const orchestratorAddresses = parsedOrchValResponse.orchestratorValidatorAddress.map(o => o.orchestratorAddress);
+  const eventNonces = []
+  for(const [i, v] of orchestratorAddresses.entries()) {
+    let nonceResponse = await request(`${host}:${i + 1317}`).get(`/Baseledger/baseledger/bridge/last_event_nonce_by_address/${v}`).send().expect(200);
+
+    eventNonces.push(+JSON.parse(nonceResponse.text).eventNonce);
+  }
+
+  return eventNonces;
+}
