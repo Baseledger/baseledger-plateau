@@ -41,7 +41,7 @@ docker network create baseledgernet
 for i in $(seq 1 $NODES);
 do
 
-docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $LISTEN_PORT --expose $P2P_PORT --publish $(($API_PORT + $i - 1)):$API_PORT --publish $(($RPC_PORT + $i - 1)):$RPC_PORT baseledger-base
+docker run --name $VALIDATOR_CONTAINER_BASE_NAME$i $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $LISTEN_PORT --expose $P2P_PORT --publish $(($API_PORT + $i - 1)):$API_PORT --publish $(($RPC_PORT + $i - 1)):$RPC_PORT  --publish $(($GRPC_PORT + $i - 1)):$GRPC_PORT baseledger-base
 
 done
 
