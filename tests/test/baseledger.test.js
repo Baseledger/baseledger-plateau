@@ -5,6 +5,8 @@ const path = require("path");
 const chai = require("chai");
 const expect = chai.expect;
 
+const shell = require('shelljs')
+
 const host = 'localhost';
 const node1_api_url = 'localhost:1317';
 const node2_api_url = 'localhost:1318';
@@ -158,6 +160,26 @@ describe('ubt deposit', () => {
     });
   });
 });
+
+describe('test child process', async function() {
+  it('should execute sh script', async function() {
+    this.timeout(TEST_TIMEOUT + 20000);
+    startTestNet();
+  });
+});
+
+
+// assumes build-container.sh is already executed
+startTestNet = () => {
+  shell.exec(path.join(__dirname, '../start-containers.sh'));
+  shell.exec(path.join(__dirname, '../deploy-contracts.sh'));
+  shell.exec(path.join(__dirname, '../setup-validators.sh'));
+  shell.exec(path.join(__dirname, '../run-testnet.sh'));
+}
+
+cleanTestNet = () => {
+  shell.exec(path.join(__dirname, '../clean.sh'));
+}
 
 getEventNonces = async () => {
   const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
