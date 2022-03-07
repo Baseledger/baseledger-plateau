@@ -164,21 +164,22 @@ describe('ubt deposit', () => {
 describe('test child process', async function() {
   it('should execute sh script', async function() {
     this.timeout(TEST_TIMEOUT + 20000);
-    startTestNet();
+    startTestNet(4, 2);
+    // cleanTestNet(4);
   });
 });
 
 
 // assumes build-container.sh is already executed
-startTestNet = () => {
-  shell.exec(path.join(__dirname, '../start-containers.sh'));
-  shell.exec(path.join(__dirname, '../deploy-contracts.sh'));
-  shell.exec(path.join(__dirname, '../setup-validators.sh'));
-  shell.exec(path.join(__dirname, '../run-testnet.sh'));
+startTestNet = (nodes = 3, orchs = 3) => {
+  shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
+  shell.exec(path.join(__dirname, `../deploy-contracts.sh`));
+  shell.exec(path.join(__dirname, `../setup-validators.sh ${nodes}`));
+  shell.exec(path.join(__dirname, `../run-testnet.sh ${nodes} ${orchs}}`));
 }
 
-cleanTestNet = () => {
-  shell.exec(path.join(__dirname, '../clean.sh'));
+cleanTestNet = (nodes = 3) => {
+  shell.exec(path.join(__dirname, `../clean.sh ${nodes}`));
 }
 
 getEventNonces = async () => {
