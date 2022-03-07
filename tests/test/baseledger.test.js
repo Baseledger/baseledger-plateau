@@ -19,7 +19,8 @@ const sleep = (ms) => {
 };
 const TEST_TIMEOUT = 30000;
 
-describe('validator power update', async function() {
+// these tests are using 3 nodes and 3 orchestrators - attestations should be observed
+describe('attestations observed', async function() {
   this.timeout(50000);
   before(() => {
     startTestNet();
@@ -28,6 +29,7 @@ describe('validator power update', async function() {
   after(() => {
     cleanTestNet();
   });
+
   it('should add/update validator staking power', async function() {
     this.timeout(TEST_TIMEOUT + 60000);
     const startEventNonces = await getEventNonces();
@@ -114,18 +116,6 @@ describe('validator power update', async function() {
     startEventNonces.forEach((n, i) => {
       expect(n + 3).to.be.equal(endEventNonces[i]);
     });
-  });
-
-});
-
-describe('ubt deposit', async function () {
-  this.timeout(50000);
-  before(() => {
-    startTestNet();
-  });
-
-  after(() => {
-    cleanTestNet();
   });
 
   it('should deposit ubt to baseledger account', async function () {
