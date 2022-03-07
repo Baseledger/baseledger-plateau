@@ -3,6 +3,7 @@ https://docs.cosmos.network/master/run-node/run-node.html
 # Preparation
 
 DEVS Deploy contracts to testnet and make sure correct values configured in binaries
+DEVS Prepare faucet account mnemonic and hardcode the address
 DEVS run starport chain build locally for baseledger node
 DEVS run cargo build --release locally for orchestrator 
 DEVS Prepare the package of the compiled binaries to be shared with other node operators (BASELEDGER_PACKAGE)
@@ -18,8 +19,8 @@ Finspot node:
 5. Configure genesis: Edit the genesis file for various params (voting time, inflation, ubonding time, tokens metadata etc.)
 6. Generate validator account: ./baseledgerd keys add --keyring-backend file validator (make sure to write down the address and the mnemonic)
 7. Generate orchestrator account: ./baseledgerd keys add --keyring-backend file orchestrator (make sure to write down the address and the mnemonic)
-
-8. TODO - Add faucet address generation and addition to genesis as a bridge param. Add faucet account with allocation: ./baseledgerd add-genesis-account --keyring-backend file baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0 10000000000stake,10000000000work
+8. Restore faucet account: ./baseledgerd keys add --recover --keyring-backend file faucet
+9. Add faucet account with allocation: ./baseledgerd add-genesis-account --keyring-backend file <faucet_address> 10000000000stake,10000000000work
 9. Add validator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <validator_address> 1000000stake
 10. Add orchestrator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <orchestrator_address> 1work
 11. Add gentx transaction: ./baseledgerd gentx --keyring-backend file --moniker finspot_validator --ip <validator_ip> --chain-id=baseledger validator 1000000stake
