@@ -167,8 +167,8 @@ describe('attestations observed', async function() {
     });
   });
 
-  it('should jail validator and remove tokens when reducing power back to 2', async function() {
-    this.timeout(TEST_TIMEOUT + 60000);
+  it('should jail validator and remove tokens when reducing power back to 0', async function() {
+    this.timeout(TEST_TIMEOUT + 90000);
 
     const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
         .send().expect(200);
@@ -213,21 +213,23 @@ describe('attestations observed', async function() {
     // tokens should be 50k * 10^6
     expect(parsedResponse.validator.tokens).to.be.equal("50000000000");
 
-    // update payee, decrease power to 2
-    contract.methods.updatePayee(accounts[1], accounts[1], 200000000, validatorAddress).send({
+    // update payee, decrease power to 0
+    contract.methods.updatePayee(accounts[1], accounts[1], 0, validatorAddress).send({
         from: accounts[0]
     }).then(console.log)
 
-    // sleep to wait for attestation to be observed
-    await sleep(20000);
+    // sleep to wait for attestation to be observed and to move validator to unbonding
+    await sleep(50000);
 
     validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
     .send().expect(200);
 
     parsedResponse = JSON.parse(validators.text);
 
-    console.log('validator tokens after decreasing to 2 ', parsedResponse.validator.tokens);
+    console.log('validator tokens after decreasing to 0 ', parsedResponse.validator.tokens);
     expect(parsedResponse.validator.tokens).to.be.equal("0");
+    expect(parsedResponse.validator.jailed).to.be.equal(true);
+    expect(parsedResponse.validator.status).to.be.equal('BOND_STATUS_UNBONDING');
   });
 });
 
@@ -372,7 +374,6 @@ describe('attestations NOT observed', async function() {
     });
   });
 });
-
 
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
