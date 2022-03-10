@@ -9,7 +9,7 @@ Prerequisite on the validator is golang latest version.
 
 Then install cosmovisor:
 
-`go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@latest`
+`go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0`
 
 
 ### Enviroment vars 
