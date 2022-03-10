@@ -237,6 +237,13 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				return sdkerrors.Wrap(err, "could not delegate to validator specified on claim")
 			}
 		} else {
+			minimumAmountOfStake := sdk.NewInt(2000000)
+			// if we reduce to 0, we undelegate total amount minus self delegated 2 mil
+			if amount.IsZero() {
+				stakingAmountChange = stakingAmountChange.Sub(minimumAmountOfStake)
+				fmt.Printf("AMOUNT IS ZERO!!! %v\n", stakingAmountChange)
+			}
+
 			_, err := a.keeper.StakingKeeper.Undelegate(ctx, faucetAddress, valAddr, sdk.NewDecFromInt(stakingAmountChange))
 			if err != nil {
 				hash, _ := claim.ClaimHash()
@@ -249,8 +256,8 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 				return sdkerrors.Wrap(err, "could not undelegate from validator specified on claim")
 			}
 
-			// this is a specific case of validator missbehaving when we want to slash all tokens from validator
-			if amount.Equal(sdk.NewInt(2000000)) {
+			// after undelegation, if amount was zero, we slash remaining 2 mil tokens
+			if amount.IsZero() {
 				consAddr, err := validator.GetConsAddr()
 				if err != nil {
 					panic(err)
