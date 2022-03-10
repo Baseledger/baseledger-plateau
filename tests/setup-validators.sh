@@ -34,14 +34,24 @@ docker cp /edited-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/edited-genesi
 
 docker exec $STARTING_VALIDATOR_CONTAINER_NAME mv /edited-genesis.json /genesis.json
 
-FAUCET_KEY="baseledger1xgs5tamqre7rkz5q7d5fegjsdwufxxvt36w0a0"
+FAUCET_KEY="baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872"
+FAUCET_MNEMONIC="enhance dynamic embrace palace level pretty token clever dog another glad insect cherry midnight bunker gold oval rice banana six goat foster royal shadow"
+
+echo $FAUCET_MNEMONIC > faucet.txt
+
+docker cp faucet.txt $STARTING_VALIDATOR_CONTAINER_NAME:/faucet.txt
+
 docker exec $STARTING_VALIDATOR_CONTAINER_NAME $BIN add-genesis-account $ARGS $FAUCET_KEY $FAUCET_ALLOCATION
+
+# recover faucet to node 1 keyring
+docker exec $STARTING_VALIDATOR_CONTAINER_NAME sh -c 'baseledgerd keys add faucet --recover --keyring-backend test < faucet.txt'
 
 # Copy genesis from starting node to host machine for gentx generation
 docker cp $STARTING_VALIDATOR_CONTAINER_NAME:/validator/config/genesis.json .
 
 rm -rf ./validator-phrases
 rm -rf ./orchestrator-phrases
+rm -rf ./faucet.txt
 
 # Sets up an arbitrary number of validators on a single machine by docker exec-ing on respective containers
 for i in $(seq 1 $NODES);
