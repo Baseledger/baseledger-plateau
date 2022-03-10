@@ -19,23 +19,20 @@ VALIDATOR_CONTAINER_BASE_NAME="baseledger-validator-container"
 STARTING_VALIDATOR_CONTAINER_NAME=$VALIDATOR_CONTAINER_BASE_NAME"1"
 docker exec $STARTING_VALIDATOR_CONTAINER_NAME  $BIN init $BASELEDGER_HOME validator --chain-id=$CHAIN_ID
 
-
 ## Modify generated genesis.json to our liking by editing fields using jq
 ## we could keep a hardcoded genesis file around but that would prevent us from
 ## testing the generated one with the default values provided by the module.
-
-# add in denom metadata for both native tokens
-docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.bank.denom_metadata += [{"name": "Work Token", "symbol": "WRK", "base": "work", "description": "A test token for paying work", "denom_units": [{"denom": "work", "exponent": 0}]},{"name": "Stake Token", "symbol": "STK", "base": "stake", "description": "A staking test token", "denom_units": [{"denom": "stake", "exponent": 0}]}]' /validator/config/genesis.json > /metadata-genesis.json
-docker cp /metadata-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/metadata-genesis.json
-
-# a 60 second voting period to allow us to pass governance proposals in the tests
-docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.gov.voting_params.voting_period = "60s"' /metadata-genesis.json > /edited-genesis.json
-docker cp /edited-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/edited-genesis.json
-
-docker exec $STARTING_VALIDATOR_CONTAINER_NAME mv /edited-genesis.json /genesis.json
-
 FAUCET_KEY="baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872"
 FAUCET_MNEMONIC="enhance dynamic embrace palace level pretty token clever dog another glad insect cherry midnight bunker gold oval rice banana six goat foster royal shadow"
+
+# add in denom metadata for both native tokens
+docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.bank.denom_metadata += [{"name": "Work Token", "display": "work", "symbol": "WRK", "base": "work", "description": "A test token for paying work", "denom_units": [{"denom": "work", "exponent": 0}]},{"name": "Stake Token", "display": "stake", "symbol": "STK", "base": "stake", "description": "A staking test token", "denom_units": [{"denom": "stake", "exponent": 0}]}]' /validator/config/genesis.json > ./metadata-genesis.json
+docker cp ./metadata-genesis.json $STARTING_VALIDATOR_CONTAINER_NAME:/metadata-genesis.json
+
+# a 60 second voting period to allow us to pass governance proposals in the tests and faucet for testing purposes
+docker exec $STARTING_VALIDATOR_CONTAINER_NAME jq '.app_state.gov.voting_params.voting_period = "60s" | .app_state.bridge.params.baseledger_faucet_address = '\"$FAUCET_KEY\"'' /metadata-genesis.json > ./edited-genesis.json
+docker cp ./edited-genesis.json  $STARTING_VALIDATOR_CONTAINER_NAME:/validator/config/genesis.json
+
 
 echo $FAUCET_MNEMONIC > faucet.txt
 
@@ -48,10 +45,6 @@ docker exec $STARTING_VALIDATOR_CONTAINER_NAME sh -c 'baseledgerd keys add fauce
 
 # Copy genesis from starting node to host machine for gentx generation
 docker cp $STARTING_VALIDATOR_CONTAINER_NAME:/validator/config/genesis.json .
-
-rm -rf ./validator-phrases
-rm -rf ./orchestrator-phrases
-rm -rf ./faucet.txt
 
 # Sets up an arbitrary number of validators on a single machine by docker exec-ing on respective containers
 for i in $(seq 1 $NODES);
@@ -119,3 +112,7 @@ docker cp ./genesis.json  $VALIDATOR_CONTAINER_BASE_NAME$i:/validator/config/gen
 done
 
 echo "Cleaned host genesis file"
+
+rm -rf ./faucet.txt
+rm -rf ./edited-genesis.json
+rm -rf ./metadata-genesis.json

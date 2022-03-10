@@ -80,9 +80,6 @@ sleep 5
 VALIDATOR_PHRASE=$(sed "6 q;d" ./validator-phrases-new)
 ORCHESTRATOR_PHRASE=$(sed "6 q;d" ./orchestrator-phrases-new)
 
-rm -rf ./validator-phrases-new
-rm -rf ./orchestrator-phrases-new
-rm -rf ./genesis.json
 docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID cargo run -- keys set-orchestrator-key --phrase="$ORCHESTRATOR_PHRASE"
 
 docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID cargo run -- keys register-orchestrator-address --validator-phrase="$VALIDATOR_PHRASE"
@@ -93,3 +90,7 @@ DEPOSIT_CONTRACT_ADDRESS="--baseledger-contract-address=0xe7f1725e7734ce288f8367
 # TODO: API tokens for price
 # FOR trace logging add -e RUST_LOG="trace" to line bellow
 docker exec --workdir /baseledger/orchestrator -e COINMARKETCAP_API_TOKEN=asd -e COINAPI_API_TOKEN=asd $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$NODE_ID/orclogs &
+
+rm -rf ./validator-phrases-new
+rm -rf ./orchestrator-phrases-new
+rm -rf ./genesis.json

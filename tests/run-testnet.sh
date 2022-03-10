@@ -54,4 +54,5 @@ do
     docker exec --workdir /baseledger/orchestrator -e COINMARKETCAP_API_TOKEN=asd -e COINAPI_API_TOKEN=asd $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- orchestrator $ETH_RPC $DEPOSIT_CONTRACT_ADDRESS &> /validator$i/orclogs &
 done
 
-
+rm -rf ./validator-phrases
+rm -rf ./orchestrator-phrases
