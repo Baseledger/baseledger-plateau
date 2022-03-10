@@ -56,9 +56,18 @@ cargo run -- orchestrator --ethereum-rpc="http://localhost:8545" --baseledger-co
 
 ## Running a local dockerized testnet
 
+Scripts that have N and M next to name has optional parameter to control how many nodes and orchestrators will be spawn. If you leave these out, there will be 3 by default
+
 - Navigate to tests
 - Run build-container.sh - This should be ran only once to build the docker images.
-- Run start-containers.sh - Starts 3 baseledger nodes and a hardhat node.
-- Run deploy-contracts.sh - This deploys the dummy UBT token contract as well as the BaseledgerUBTSplitter contract
-- Run setup-validators.sh - Creates and shares genesis.json among validators and creates gentx files.
-- Run run-testnet.sh - Starts the nodes, registers and starts the orchestrators. 
+- Run start-containers.sh N - Starts N (default 3) baseledger nodes and a hardhat node. 
+- Run deploy-contracts.sh - This deploys the dummy UBT token contract as well as the BaseledgerUBTSplitter contract.
+- Run setup-validators.sh N - Creates and shares genesis.json among N (default 3) validators and creates gentx files.
+- Run run-testnet.sh N M - Starts N (default 3) nodes, registers and starts M (default 3) orchestrators. 
+
+## Running additional node in a local dockerized testnet
+
+- Run add-new-node-sh N - Starts Nth (default 4) node and Nth (default 4) orchestrator and adds it to local dockerized testnet.
+
+## Clean a local dockerized testnet
+- Run clean.sh N - Cleans N (default 3) baseledger nodes, hardhat node and network. 
