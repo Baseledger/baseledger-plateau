@@ -241,7 +241,6 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 			// if we reduce to 0, we undelegate total amount minus self delegated 2 mil
 			if amount.IsZero() {
 				stakingAmountChange = stakingAmountChange.Sub(minimumAmountOfStake)
-				fmt.Printf("AMOUNT IS ZERO!!! %v\n", stakingAmountChange)
 			}
 
 			_, err := a.keeper.StakingKeeper.Undelegate(ctx, faucetAddress, valAddr, sdk.NewDecFromInt(stakingAmountChange))
