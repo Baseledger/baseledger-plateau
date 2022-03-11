@@ -69,7 +69,7 @@ docker exec $VALIDATOR_CONTAINER_BASE_NAME"1" baseledgerd tx bank send $FAUCET_K
 
 docker exec $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID $BIN $ARGS start &> /validator$NODE_ID/vallogs &
 
-sleep 10
+sleep 5
 
 # create-validator with min self delegation 2 mil stake
 PUB_KEY=$(docker exec $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID baseledgerd $BASELEDGER_HOME tendermint show-validator)

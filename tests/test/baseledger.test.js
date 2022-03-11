@@ -244,7 +244,6 @@ describe('attestations NOT observed', async function() {
     cleanTestNet();
   });
 
-
   it('should NOT deposit ubt to baseledger account', async function () {
     this.timeout(TEST_TIMEOUT + 20000);
 
@@ -375,6 +374,90 @@ describe('attestations NOT observed', async function() {
   });
 });
 
+describe('add new node', async function() {
+  this.timeout(70000);
+  before(() => {
+    startTestNet();
+  });
+
+  after(() => {
+    cleanTestNet(4);
+  });
+
+  it('should correctly sync new node nonce', async function() {
+    this.timeout(TEST_TIMEOUT + 200000);
+
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+  
+    // random regular baseledger address
+    const baseledgerAddress = "baseledger1xu5xhzj63ddw7pce4r5d0y3w3fuzjxtylzvucm"
+  
+    let accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    let parsedResponse = JSON.parse(accountBalance.text);
+  
+    // save work token balance before deposit
+    const workTokenBalanceBefore = parsedResponse.balance.amount
+    console.log('work tokens before deposit ', workTokenBalanceBefore);
+  
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+  
+    const accounts = await web3.eth.getAccounts()
+    // deposit 1 ubt (8 decimals)
+    contract.methods.deposit(100000000, baseledgerAddress).send({
+        from: accounts[0]
+    }).then(() => {});
+  
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    // deposit 1 more ubt (8 decimals)
+    contract.methods.deposit(100000000, baseledgerAddress).send({
+        from: accounts[0]
+    }).then(() => {});
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+  
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    parsedResponse = JSON.parse(accountBalance.text);
+  
+    // check that balance increased by 2
+    const workTokenBalanceAfter = parsedResponse.balance.amount;
+    console.log('work tokens after deposit ', workTokenBalanceAfter);
+  
+    expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 2);
+  
+    // check if event nonces increased by 1
+    const endEventNonces = await getEventNonces();
+    startEventNonces.forEach((n, i) => {
+      expect(n +2).to.be.equal(endEventNonces[i]);
+    });
+
+    startNewNode();
+
+    await getEventNonces(true);
+    await sleep(10000)
+
+    // check that added node event nonce is set to 2
+    const noncesAfterAddingNewNode = await getEventNonces(true);
+    expect(noncesAfterAddingNewNode.length).to.be.equal(4);
+    expect(noncesAfterAddingNewNode).to.have.members([2,2,2,2]);
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    parsedResponse = JSON.parse(accountBalance.text);
+    // check that balance is the same
+    const workTokenBalanceAfterNewNode = parsedResponse.balance.amount;
+    expect(+workTokenBalanceAfterNewNode).to.be.equal(+workTokenBalanceAfter);
+  });
+});
+
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
@@ -383,11 +466,15 @@ startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../run-testnet.sh ${nodes} ${orchs}`));
 }
 
+startNewNode = (nodeId = 4) => {
+  shell.exec(path.join(__dirname, `../add-new-node.sh ${nodeId}`));
+}
+
 cleanTestNet = (nodes = 3) => {
   shell.exec(path.join(__dirname, `../clean.sh ${nodes}`));
 }
 
-getEventNonces = async () => {
+getEventNonces = async() => {
   const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
     .send().expect(200);
 
