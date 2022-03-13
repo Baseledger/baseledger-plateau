@@ -3,7 +3,7 @@ Description=Orchestrator - Baseledger Bridge oracle service
 
 [Service]
 WorkingDirectory=/root/.baseledger/orchestrator
-ExecStart=baseledger_bridge orchestrator --ethereum-rpc=https://ropsten.infura.io/v3/<infura_key> --baseledger-contract-address=0x7648a7c010C1C3db8476D6C80C09708EA0681872
+ExecStart=/root/.baseledger/orchestrator/baseledger_bridge orchestrator --ethereum-rpc=https://ropsten.infura.io/v3/<infura_key> --baseledger-contract-address=0x7648a7c010C1C3db8476D6C80C09708EA0681872
 After=cosmovisor.service
 Restart=always
 RestartSec=10
