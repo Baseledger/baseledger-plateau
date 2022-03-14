@@ -27,7 +27,7 @@ func CalculateAmountOfWorkTokens(worktokenEurPrice *big.Int, depositedUbtAmount 
 
 	amountOfWorkTokensCeiled := ceilAmount(amountOfWorkTokens)
 
-	return new(big.Int).Div(amountOfWorkTokensCeiled, big.NewInt(100000000))
+	return new(big.Int).Div(amountOfWorkTokensCeiled, big.NewInt(1000000000000000000))
 }
 
 func calcMean(prices []sdk.Int) *big.Int {
