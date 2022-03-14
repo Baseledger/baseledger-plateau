@@ -49,7 +49,7 @@ do
 
     docker cp testkey.txt $VALIDATOR_CONTAINER_BASE_NAME$i:/testkey.txt
     rm -rf ./testkey.txt
-    docker exec $VALIDATOR_CONTAINER_BASE_NAME$i sh -c 'baseledgerd keys add test --recover --keyring-backend file < testkey.txt'
+    docker exec $VALIDATOR_CONTAINER_BASE_NAME$i sh -c 'baseledgerd keys add test --recover --keyring-backend file --home /validator < testkey.txt'
 
     docker exec --workdir /baseledger/orchestrator $VALIDATOR_CONTAINER_BASE_NAME$i cargo run -- keys set-orchestrator-key --phrase="$ORCHESTRATOR_PHRASE"
     
