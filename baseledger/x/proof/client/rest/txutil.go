@@ -85,7 +85,7 @@ func getKey(keyringInstance keyring.Keyring) (keyring.Info, error) {
 func NewKeyringInstance() (keyring.Keyring, error) {
 	input := &bytes.Buffer{}
 	fmt.Printf("KEYRING KEYRING KEYRING %v %v\n", viper.GetString("KEYRING_PASSWORD"), viper.GetString("KEYRING_DIR"))
-	fmt.Fprintln(input, viper.GetString("KEYRING_PASSWORD"))
+	fmt.Fprintln(input, viper.GetString("KEYRING_PASSWORD"), viper.GetString("KEYRING_PASSWORD"))
 	kr, err := keyring.New("baseledger", "file", viper.GetString("KEYRING_DIR"), input)
 
 	if err != nil {
