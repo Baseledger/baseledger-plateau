@@ -87,13 +87,6 @@ func NewKeyringInstance() (keyring.Keyring, error) {
 	fmt.Fprintln(input, viper.GetString("KEYRING_PASSWORD"))
 	kr, err := keyring.New("baseledger", "file", viper.GetString("KEYRING_DIR"), input)
 
-	// just for dev convenience because test keyring is set up by default
-	// this way we can skip adding keys in file keyring during development
-	useTestKeyRing := viper.GetBool("DEV")
-	if useTestKeyRing {
-		kr, err = keyring.New("baseledger", "test", viper.GetString("KEYRING_DIR"), nil)
-	}
-
 	if err != nil {
 		logger.Errorf("error fetching keyring, check if you configured KEYRING_PASSWORD and KEYRING_DIR %v\n", err.Error())
 		return nil, errors.New("error fetching key ring")
