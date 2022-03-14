@@ -458,6 +458,98 @@ describe('add new node', async function() {
   });
 });
 
+describe('baseledger transaction', async function() {
+  this.timeout(50000);
+  before(() => {
+    startTestNet();
+  });
+
+  after(() => {
+    cleanTestNet();
+  });
+
+  it('should deposit ubt to baseledger account and use it to send proof', async function () {
+    this.timeout(TEST_TIMEOUT + 20000);
+    orchAddresses = await getOrchAddresses();
+
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+
+    const accounts = await web3.eth.getAccounts()
+
+    // deposit ubt to all orch addresses
+    orchAddresses.forEach(o => {
+      contract.methods.deposit(100000000, o).send({
+          from: accounts[0]
+      }).then(() => {});
+    })
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    const dto = {
+      transaction_id: "cbf25e6e-cac1-4afc-8dbf-504eafb3d7d8",
+      payload: "f6d0cf9d716e1"
+    };
+
+    // our API just returns tx hash, not in json format, but it is set to json
+    let txHash = ""
+    await request(node1_api_url)
+    .post('/signAndBroadcast')
+    .set('Accept', 'application/json')
+    .send(dto)
+    .buffer(true)
+    .parse((res, cb) => {
+      txHash = Buffer.from("");
+      res.on("data", function(chunk) {
+        txHash = Buffer.concat([txHash, chunk]);
+      });
+      res.on("end", function() {
+        cb(null, txHash.toString());
+      })
+    })
+    .expect(200);
+  });
+
+  it('should not be able to send proof without deposit', async function () {
+    this.timeout(TEST_TIMEOUT + 20000);
+    orchAddresses = await getOrchAddresses();
+
+    // payload > 512 without additional deposit
+    const dto = {
+      transaction_id: "cbf25e6e-cac1-4afc-8dbf-504eafb3d712",
+      payload: "PYcnlSjsf94yezC2zvaiLy10K1PrUSi5sS5eLzhftG3oWO5yw8rl3YABkbIWulaKqbhdZSxBuRPwUGzQydJHdrqH1t5nyT1Zmc8wcPZ3MuX9nmNWo8XwmFtDP3KwlBDiqJFnWy7aZXIyENLoJkvEHOMgZkx9oqqOgZrjo4iFarYmaR5CqU45zKe4neRmEOb3vrn3oxlro7S01aric07htAnZ450hdlHJPcj6pl14Jc1wHFkxVIbVDFFji6UIUokuLsye8Yed1eLHBtnQvY6KMUD3AggHbuwIU7Qz15KzW91XiU842ypoexg4pXbzwY2C6N9uvFSNpt7dCik4at3fuvTt5JBRUZtY2CZKOgxcOlWAlOQEawUxs1wnpdaKTOnzd0ILLFUvmAfFiFSeSx3Tw5pIxqAbVop7onMewsLndt04MnvwPx3tjiXTtWt83imUo55tjEWjxn92gwst2KPe7uD4JVSSh4EdQQASQno3ZwYRPlOuv8r9Gztuyoj2s8Har"
+    };
+
+    const response = await request(node2_api_url)
+    .post('/signAndBroadcast')
+    .set('Accept', 'application/json')
+    .send(dto)
+    .expect(500);
+
+    expect(response.body.error).to.be.equal("not enough tokens");
+  });
+
+  it('should not be able to send proof without proper uuid', async function () {
+    this.timeout(TEST_TIMEOUT + 20000);
+    orchAddresses = await getOrchAddresses();
+
+    // payload > 512 without additional deposit
+    const dto = {
+      transaction_id: "cbf25e6e",
+      payload: "PYcnlSjsf94yezC2zvaiLy10K1r"
+    };
+
+    const response = await request(node2_api_url)
+    .post('/signAndBroadcast')
+    .set('Accept', 'application/json')
+    .send(dto)
+    .expect(400);
+
+    expect(response.body.error).to.be.equal("transaction id must be uuid");
+  });
+});
+
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
@@ -475,11 +567,7 @@ cleanTestNet = (nodes = 3) => {
 }
 
 getEventNonces = async() => {
-  const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
-    .send().expect(200);
-
-  const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
-  const orchestratorAddresses = parsedOrchValResponse.orchestratorValidatorAddress.map(o => o.orchestratorAddress);
+  const orchestratorAddresses = await getOrchAddresses();
   const eventNonces = []
   for(const [i, v] of orchestratorAddresses.entries()) {
     let nonceResponse = await request(`${host}:${i + 1317}`).get(`/Baseledger/baseledger/bridge/last_event_nonce_by_address/${v}`).send().expect(200);
@@ -488,4 +576,12 @@ getEventNonces = async() => {
   }
 
   return eventNonces;
+}
+
+getOrchAddresses = async () => {
+  const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+    .send().expect(200);
+
+  const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
+  return parsedOrchValResponse.orchestratorValidatorAddress.map(o => o.orchestratorAddress);
 }
