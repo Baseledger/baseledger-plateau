@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
 
@@ -23,6 +24,11 @@ type signAndBroadcastTransactionRequest struct {
 func signAndBroadcastTransactionHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := parseSignAndBroadcastTransactionRequest(w, r, clientCtx)
+
+		if !isValidUUID(req.TransactionId) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "transaction id must be uuid")
+			return
+		}
 
 		clientCtx, err := BuildClientCtx(clientCtx)
 
@@ -82,6 +88,11 @@ func signAndBroadcastTransactionHandler(clientCtx client.Context) http.HandlerFu
 		w.WriteHeader(http.StatusOK)
 		return
 	}
+}
+
+func isValidUUID(u string) bool {
+	_, err := uuid.Parse(u)
+	return err == nil
 }
 
 func checkBalanceHandler(clientCtx client.Context, payload string) http.HandlerFunc {
