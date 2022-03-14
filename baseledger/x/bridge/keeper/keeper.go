@@ -3,12 +3,10 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/Baseledger/baseledger/x/bridge/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -89,14 +87,6 @@ func (k Keeper) SetWorktokenEurPrice(ctx sdk.Context, v string) {
 //
 // This parameter can be changed through a governance param change proposal.
 func (k Keeper) GetBaseledgerFaucetAddress(ctx sdk.Context) (a string) {
-	// just for dev convenience when using starport locally get bob address for faucet
-	// to not need to always set param
-	useTestKeyRing := viper.GetBool("DEV")
-	if useTestKeyRing {
-		kr, _ := keyring.New("baseledger", "test", viper.GetString("KEYRING_DIR"), nil)
-		keysList, _ := kr.List()
-		return string(keysList[1].GetAddress().String())
-	}
 	k.paramstore.Get(ctx, types.ParamsStoreKeyBaseledgerFaucetAddress, &a)
 	return
 }
