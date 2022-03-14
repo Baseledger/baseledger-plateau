@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -520,6 +521,7 @@ func New(
 	viper.SetConfigFile(".env")
 	baseledgerlogger.SetupLogger()
 
+	fmt.Printf("KEYRING INFO %v %v\n", viper.GetString("KEYRING_DIR"), viper.GetString("KEYRING_PASSWORD"))
 	return app
 }
 
