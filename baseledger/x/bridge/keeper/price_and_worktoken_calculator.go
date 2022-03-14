@@ -17,7 +17,7 @@ func CalculateAvgUbtPriceForAttestation(att types.Attestation) *big.Int {
 }
 
 func CalculateAmountOfWorkTokens(worktokenEurPrice *big.Int, depositedUbtAmount *big.Int, averagePrice *big.Int) *big.Int {
-	// worktoken eur price in big int is 18 decimals and ubt token is 8 decimals, 
+	// worktoken eur price in big int is 18 decimals and ubt token is 8 decimals,
 	// so we divide by 10000000000 to remove unnecessary zeroes
 	worktokenEurPrice8decimals := new(big.Int).Quo(worktokenEurPrice, big.NewInt(10000000000))
 
