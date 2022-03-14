@@ -2,6 +2,8 @@ FROM fedora:34
 ENV GOPATH=/go
 ENV GOPROXY=https://proxy.golang.org
 ENV PATH=$PATH:/go/bin
+ENV KEYRING_PASSWORD=12345678
+ENV KEYRING_DIR="/root/validator"
 RUN dnf install -y git make gcc gcc-c++ which iproute iputils procps-ng vim-minimal tmux net-tools htop tar jq npm openssl-devel perl rust cargo golang
 RUN curl https://get.starport.network/starport! | bash
 # the actual source code for this repo, this **only** includes checked in files!
