@@ -30,21 +30,21 @@ mkdir /validator$NODE_ID
 GRPC_PORT=9090
 RPC_PORT=26657
 API_PORT=1317
-LISTEN_PORT=26655
 P2P_PORT=26656
 
-docker run --name $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $LISTEN_PORT --expose $P2P_PORT --publish $(($API_PORT + $NODE_ID - 1)):$API_PORT --publish $(($RPC_PORT + $NODE_ID - 1)):$RPC_PORT  --publish $(($GRPC_PORT + $NODE_ID - 1)):$GRPC_PORT baseledger-base
+docker run --name $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID $PLATFORM_CMD --net baseledgernet -d --expose $GRPC_PORT --expose $RPC_PORT --expose $API_PORT --expose $P2P_PORT --publish $(($API_PORT + $NODE_ID - 1)):$API_PORT --publish $(($RPC_PORT + $NODE_ID - 1)):$RPC_PORT  --publish $(($GRPC_PORT + $NODE_ID - 1)):$GRPC_PORT baseledger-base
 
 docker exec $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID $BIN init $BASELEDGER_HOME validator --chain-id=$CHAIN_ID
 
+VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$NODE_ID)
+
 RPC_ADDRESS="--rpc.laddr tcp://0.0.0.0:26657"
 GRPC_ADDRESS="--grpc.address 0.0.0.0:9090"
-LISTEN_ADDRESS="--address tcp://0.0.0.0:26655"
-P2P_ADDRESS="--p2p.laddr tcp://0.0.0.0:26656"
+P2P_ADDRESS="--p2p.laddr tcp://$VALIDATOR_CONTAINER_IP:26656"
 PERSISTENT_PEERS="--p2p.persistent_peers $FIRST_VALIDATOR_NODE_ID@$FIRST_VALIDATOR_CONTAINER_IP:26656"
 LOG_LEVEL="--log_level info"
 INVARIANTS_CHECK="--inv-check-period 1"
-ARGS="$BASELEDGER_HOME $LISTEN_ADDRESS $RPC_ADDRESS $GRPC_ADDRESS $LOG_LEVEL $INVARIANTS_CHECK $P2P_ADDRESS $PERSISTENT_PEERS"
+ARGS="$BASELEDGER_HOME $RPC_ADDRESS $GRPC_ADDRESS $LOG_LEVEL $INVARIANTS_CHECK $P2P_ADDRESS $PERSISTENT_PEERS"
 
 # copy genesis
 docker cp $VALIDATOR_CONTAINER_BASE_NAME"1":/validator/config/genesis.json .
