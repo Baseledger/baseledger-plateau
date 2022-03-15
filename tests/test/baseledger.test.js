@@ -153,11 +153,11 @@ describe('attestations observed', async function() {
 
     parsedResponse = JSON.parse(accountBalance.text);
 
-    // check that balance increased by 1
+    // check that balance is increased
     const workTokenBalanceAfter = parsedResponse.balance.amount;
     console.log('work tokens after deposit ', workTokenBalanceAfter);
 
-    expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 1);
+    expect(+workTokenBalanceBefore).to.be.below(+workTokenBalanceAfter);
 
     // check if event nonces increased by 1
     const endEventNonces = await getEventNonces();
@@ -427,11 +427,11 @@ describe('add new node', async function() {
   
     parsedResponse = JSON.parse(accountBalance.text);
   
-    // check that balance increased by 2
+    // check that balance is increased
     const workTokenBalanceAfter = parsedResponse.balance.amount;
     console.log('work tokens after deposit ', workTokenBalanceAfter);
   
-    expect(+workTokenBalanceAfter).to.be.equal(+workTokenBalanceBefore + 2);
+    expect(+workTokenBalanceBefore).to.be.below(+workTokenBalanceAfter);
   
     // check if event nonces increased by 1
     const endEventNonces = await getEventNonces();
@@ -472,6 +472,12 @@ describe('baseledger transaction', async function() {
     this.timeout(TEST_TIMEOUT + 20000);
     orchAddresses = await getOrchAddresses();
 
+    let faucetBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872/by_denom?denom=work`)
+     .send().expect(200);
+
+    let parsedResponse = JSON.parse(faucetBalance.text);
+    const faucetBalanceStart = parsedResponse.balance.amount;
+
     const web3 = new Web3('http://localhost:8545');
     let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 
@@ -486,6 +492,23 @@ describe('baseledger transaction', async function() {
 
     // sleep to wait for attestation to be observed
     await sleep(20000);
+
+    let orchAddressesSumBefore = 0
+    orchAddresses.forEach(async o => {
+      let balance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${o}/by_denom?denom=work`)
+      .send().expect(200);
+
+      let parsedResponse = JSON.parse(balance.text);
+      orchAddressesSumBefore = orchAddressesSumBefore + (+parsedResponse.balance.amount);
+    });
+
+    faucetBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872/by_denom?denom=work`)
+     .send().expect(200);
+
+    parsedResponse = JSON.parse(faucetBalance.text);
+    const faucetBalanceBetween = parsedResponse.balance.amount;
+    // can not ask for exact because of price variation, so best to just check that balance was reduced
+    expect(+faucetBalanceBetween).to.be.below(+faucetBalanceStart);
 
     const dto = {
       transaction_id: "cbf25e6e-cac1-4afc-8dbf-504eafb3d7d8",
@@ -509,11 +532,41 @@ describe('baseledger transaction', async function() {
       })
     })
     .expect(200);
+
+    await sleep(10000);
+
+    faucetBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872/by_denom?denom=work`)
+     .send().expect(200);
+
+    parsedResponse = JSON.parse(faucetBalance.text);
+    const faucetBalanceEnd = parsedResponse.balance.amount;
+    // here we can check that proof posting increased faucet balance for 1
+    expect(+faucetBalanceEnd).to.be.equal(+faucetBalanceBetween + 1);
+  
+    let orchAddressesSumAfter = 0
+    orchAddresses.forEach(async o => {
+      let balance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${o}/by_denom?denom=work`)
+      .send().expect(200);
+
+      let parsedResponse = JSON.parse(balance.text);
+      orchAddressesSumAfter = orchAddressesSumAfter + (+parsedResponse.balance.amount);
+    });
+
+    await sleep(10000);
+
+    // check that balance of one of these were reduced by 1
+    expect(orchAddressesSumBefore).to.be.equal(orchAddressesSumAfter + 1);
   });
 
   it('should not be able to send proof without deposit', async function () {
     this.timeout(TEST_TIMEOUT + 20000);
     orchAddresses = await getOrchAddresses();
+
+    let faucetBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872/by_denom?denom=work`)
+    .send().expect(200);
+
+    let parsedResponse = JSON.parse(faucetBalance.text);
+    const faucetBalanceStart = parsedResponse.balance.amount;
 
     // payload > 512 without additional deposit
     const dto = {
@@ -528,6 +581,16 @@ describe('baseledger transaction', async function() {
     .expect(500);
 
     expect(response.body.error).to.be.equal("not enough tokens");
+
+    await sleep(10000);
+
+    faucetBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/baseledger1p8x9ud2m75dmufevmrym3uak0hgcrw58h6n872/by_denom?denom=work`)
+     .send().expect(200);
+
+    parsedResponse = JSON.parse(faucetBalance.text);
+    const faucetBalanceEnd = parsedResponse.balance.amount;
+    // check that faucet balance is not changed
+    expect(+faucetBalanceEnd).to.be.equal(+faucetBalanceStart);
   });
 
   it('should not be able to send proof without proper uuid', async function () {
