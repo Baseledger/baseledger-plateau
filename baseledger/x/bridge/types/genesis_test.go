@@ -3,11 +3,14 @@ package types_test
 import (
 	"testing"
 
+	"github.com/Baseledger/baseledger/testutil/sample"
 	"github.com/Baseledger/baseledger/x/bridge/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGenesisState_Validate(t *testing.T) {
+	mockDefaultGenesis := types.DefaultGenesis()
+	mockDefaultGenesis.Params.BaseledgerFaucetAddress = sample.AccAddress()
 	for _, tc := range []struct {
 		desc     string
 		genState *types.GenesisState
@@ -15,40 +18,24 @@ func TestGenesisState_Validate(t *testing.T) {
 	}{
 		{
 			desc:     "default is valid",
-			genState: types.DefaultGenesis(),
+			genState: mockDefaultGenesis,
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "duplicated orchestratorValidatorAddress",
 			genState: &types.GenesisState{
-
 				OrchestratorValidatorAddressList: []types.OrchestratorValidatorAddress{
-	{
-		OrchestratorAddress: "0",
-},
-	{
-		OrchestratorAddress: "1",
-},
-},
-// this line is used by starport scaffolding # types/genesis/validField
+					{
+						OrchestratorAddress: "0",
+					},
+					{
+						OrchestratorAddress: "0",
+					},
+				},
 			},
-			valid: true,
+			valid: false,
 		},
-		{
-	desc:     "duplicated orchestratorValidatorAddress",
-	genState: &types.GenesisState{
-		OrchestratorValidatorAddressList: []types.OrchestratorValidatorAddress{
-			{
-				OrchestratorAddress: "0",
-},
-			{
-				OrchestratorAddress: "0",
-},
-		},
-	},
-	valid:    false,
-},
-// this line is used by starport scaffolding # types/genesis/testcase
+		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()

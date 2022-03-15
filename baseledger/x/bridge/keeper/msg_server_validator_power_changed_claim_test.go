@@ -31,8 +31,8 @@ func TestValidatorPowerChangedClaim_Success(t *testing.T) {
 	require.Equal(t, validator.Tokens, startAmount)
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
-	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	// all validators, nonce 1, 50k with 8 decimals
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -62,7 +62,9 @@ func TestValidatorPowerChangedClaim_Success(t *testing.T) {
 
 	// balance increased correctly
 	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
-	require.Equal(t, validator.Tokens, newAmount)
+	// 50k with 6 decimals
+	newAmountExp, _ := sdk.NewIntFromString("50000000000")
+	require.Equal(t, validator.Tokens, newAmountExp)
 
 	// all validators, nonce 3 (skipped one)
 	for _, orchAddress := range keepertest.OrchAddrs {
@@ -83,10 +85,10 @@ func TestValidatorPowerChangedClaim_Success(t *testing.T) {
 
 	// balance did not change after skipped nonce
 	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
-	require.Equal(t, validator.Tokens, newAmount)
+	require.Equal(t, validator.Tokens, newAmountExp)
 
-	// all validators, correct nonce 2, this time decrease staking
-	newAmount, _ = sdk.NewIntFromString("10000003")
+	// all validators, correct nonce 2, this time decrease staking, 30k with 8 decimals
+	newAmount, _ = sdk.NewIntFromString("3000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -110,7 +112,9 @@ func TestValidatorPowerChangedClaim_Success(t *testing.T) {
 
 	// balance decreased correctly
 	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
-	require.Equal(t, validator.Tokens, newAmount)
+	// 30k with 6 decimals
+	newAmountExp, _ = sdk.NewIntFromString("30000000000")
+	require.Equal(t, validator.Tokens, newAmountExp)
 
 	// making sure 2stake are unbonding
 	undelegations := testKeepers.StakingKeeper.GetUnbondingDelegations(ctx, keepertest.FaucetAccount, 10)
@@ -137,7 +141,7 @@ func TestValidatorPowerChangedClaim_NotObserved(t *testing.T) {
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	orchSet := []sdk.AccAddress{keepertest.OrchAddrs[0], keepertest.OrchAddrs[1]}
 
 	for _, orchAddress := range orchSet {
@@ -184,7 +188,7 @@ func TestValidatorPowerChangedClaim_SpreadVotes(t *testing.T) {
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	orchSet := []sdk.AccAddress{keepertest.OrchAddrs[0], keepertest.OrchAddrs[1]}
 
 	for _, orchAddress := range orchSet {
@@ -237,7 +241,8 @@ func TestValidatorPowerChangedClaim_SpreadVotes(t *testing.T) {
 
 	// balance changed
 	validator, _ = testKeepers.StakingKeeper.GetValidator(ctx, validatorReceiver)
-	require.Equal(t, validator.Tokens, newAmount)
+	newAmountExp, _ := sdk.NewIntFromString("50000000000")
+	require.Equal(t, validator.Tokens, newAmountExp)
 }
 
 func TestValidatorPowerChangedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
@@ -259,7 +264,7 @@ func TestValidatorPowerChangedClaim_NonRegisteredOrchestratorValidator(t *testin
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -331,7 +336,7 @@ func TestValidatorPowerChangedClaim_NonExistingOrchestratorSet(t *testing.T) {
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range NewOrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -378,7 +383,7 @@ func TestValidatorPowerChangedClaim_NonExistingValidatorReceiver(t *testing.T) {
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -426,7 +431,7 @@ func TestValidatorPowerChangedClaim_NonBondedValidatorReceiver(t *testing.T) {
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),
@@ -469,7 +474,7 @@ func TestValidatorPowerChangedClaim_JailedValidatorReceiver(t *testing.T) {
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
 	// all validators, nonce 1
-	newAmount, _ := sdk.NewIntFromString("10000005")
+	newAmount, _ := sdk.NewIntFromString("5000000000000")
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgValidatorPowerChangedClaim{
 			Creator:                            orchAddress.String(),

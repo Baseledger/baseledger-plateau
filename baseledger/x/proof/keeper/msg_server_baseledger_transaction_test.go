@@ -18,7 +18,7 @@ func TestBaseledgerTransactionMsgServerCreate_Success(t *testing.T) {
 	require.Equal(t, "100work", startCreatorBalance.String())
 
 	startFaucetBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", startFaucetBalance.String())
+	require.Equal(t, "500000000000000work", startFaucetBalance.String())
 	for i := 0; i < 5; i++ {
 		resp, err := srv.CreateBaseledgerTransaction(ctx, &types.MsgCreateBaseledgerTransaction{Creator: creator.String(), Payload: "A"})
 		require.NoError(t, err)
@@ -27,7 +27,7 @@ func TestBaseledgerTransactionMsgServerCreate_Success(t *testing.T) {
 		currentCreatorBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, creator, "work")
 		require.Equal(t, fmt.Sprintf("%dwork", substractedBalance), currentCreatorBalance.String())
 
-		faucetBalance := 50000000 + i + 1
+		faucetBalance := 500000000000000 + i + 1
 		currentFaucetBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, keepertest.FaucetAccount, "work")
 		require.Equal(t, fmt.Sprintf("%dwork", faucetBalance), currentFaucetBalance.String())
 	}
@@ -57,7 +57,7 @@ func TestBaseledgerTransactionMsgServerCreate_DifferentPayloads(t *testing.T) {
 	}
 
 	startFaucetBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", startFaucetBalance.String())
+	require.Equal(t, "500000000000000work", startFaucetBalance.String())
 	for i := 0; i < 4; i++ {
 		resp, err := srv.CreateBaseledgerTransaction(ctx, &types.MsgCreateBaseledgerTransaction{Creator: creator.String(), Payload: payloads[i]})
 		require.NoError(t, err)
@@ -66,7 +66,7 @@ func TestBaseledgerTransactionMsgServerCreate_DifferentPayloads(t *testing.T) {
 		currentCreatorBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, creator, "work")
 		require.Equal(t, fmt.Sprintf("%dwork", substractedBalance), currentCreatorBalance.String())
 
-		faucetBalance := 50000000 + payloadsCost[i]
+		faucetBalance := 500000000000000 + payloadsCost[i]
 		currentFaucetBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, keepertest.FaucetAccount, "work")
 		require.Equal(t, fmt.Sprintf("%dwork", faucetBalance), currentFaucetBalance.String())
 	}
@@ -81,7 +81,7 @@ func TestBaseledgerTransactionMsgServerCreate_NoFundsForCreator(t *testing.T) {
 	creator := sample.AccAddress()
 
 	startFaucetBalance := testKeepers.BankKeeper.GetBalance(testKeepers.Context, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", startFaucetBalance.String())
+	require.Equal(t, "500000000000000work", startFaucetBalance.String())
 	for i := 0; i < 5; i++ {
 		_, err := srv.CreateBaseledgerTransaction(ctx, &types.MsgCreateBaseledgerTransaction{Creator: creator})
 		require.Error(t, err)
