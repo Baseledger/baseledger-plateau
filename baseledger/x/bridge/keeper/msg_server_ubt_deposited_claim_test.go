@@ -30,7 +30,7 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
@@ -39,7 +39,7 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -65,17 +65,17 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance increased correctly
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "1work", cosmosReceiverBalance.String())
+	require.Equal(t, "10work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "49999999work", faucetBalance.String())
+	require.Equal(t, "499999999999990work", faucetBalance.String())
 
 	// all validators, nonce 3 (skipped one)
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(3),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -90,17 +90,17 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance did not change after skipped nonce
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "1work", cosmosReceiverBalance.String())
+	require.Equal(t, "10work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "49999999work", faucetBalance.String())
+	require.Equal(t, "499999999999990work", faucetBalance.String())
 
 	// all validators, correct nonce 2, but without price
 	for _, orchAddress := range keepertest.OrchAddrs {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(2),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "0",
 			Creator:                          orchAddress.String(),
@@ -120,10 +120,10 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance increased again correctly
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "2work", cosmosReceiverBalance.String())
+	require.Equal(t, "20work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "49999998work", faucetBalance.String())
+	require.Equal(t, "499999999999980work", faucetBalance.String())
 
 	lastAvgPrice := testKeepers.BridgeKeeper.GetLastAttestationAverageUbtPrice(ctx)
 	require.Equal(t, big.NewInt(1000000000000000000), lastAvgPrice)
@@ -145,7 +145,7 @@ func TestUbtDepositedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
 	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
@@ -176,7 +176,7 @@ func TestUbtDepositedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 }
 
 func TestUbtDepositedClaim_NonExistingOrchestratorSet(t *testing.T) {
@@ -195,7 +195,7 @@ func TestUbtDepositedClaim_NonExistingOrchestratorSet(t *testing.T) {
 	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	// Orchestrator private keys
 	OrchPrivKeys := []ccrypto.PrivKey{
@@ -252,7 +252,7 @@ func TestUbtDepositedClaim_NonExistingOrchestratorSet(t *testing.T) {
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 }
 
 func TestUbtDepositedClaim_NotObserved(t *testing.T) {
@@ -270,7 +270,7 @@ func TestUbtDepositedClaim_NotObserved(t *testing.T) {
 	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
@@ -303,7 +303,7 @@ func TestUbtDepositedClaim_NotObserved(t *testing.T) {
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 }
 
 func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
@@ -321,7 +321,7 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 	cosmosReceiverBalance := testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance := testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	srv := keeper.NewMsgServerImpl(*testKeepers.BridgeKeeper)
 
@@ -354,7 +354,7 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "0work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "50000000work", faucetBalance.String())
+	require.Equal(t, "500000000000000work", faucetBalance.String())
 
 	secondOrchSet := []sdk.AccAddress{keepertest.OrchAddrs[2], keepertest.OrchAddrs[3], keepertest.OrchAddrs[4]}
 
@@ -380,5 +380,5 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
 	require.Equal(t, "1work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "49999999work", faucetBalance.String())
+	require.Equal(t, "499999999999999work", faucetBalance.String())
 }

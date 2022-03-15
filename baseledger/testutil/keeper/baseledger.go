@@ -100,8 +100,8 @@ func BaseledgerKeeper(t testing.TB) TestProofKeepers {
 		DefaultSendEnabled: true,
 	})
 	// total supply to track this
-	totalSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 100000000), sdk.NewInt64Coin("work", 100000000))
-	faucetSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 50000000), sdk.NewInt64Coin("work", 50000000))
+	totalSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 10000000000000000), sdk.NewInt64Coin("work", 10000000000000000))
+	faucetSupply := sdk.NewCoins(sdk.NewInt64Coin("stake", 500000000000000), sdk.NewInt64Coin("work", 500000000000000))
 	// set up initial accounts
 	for name, perms := range maccPerms {
 		mod := authtypes.NewEmptyModuleAccount(name, perms...)
