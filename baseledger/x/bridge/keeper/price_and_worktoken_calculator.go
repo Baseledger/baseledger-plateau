@@ -21,7 +21,10 @@ func CalculateAmountOfWorkTokens(worktokenEurPrice *big.Int, depositedUbtAmount 
 	// so we divide by 10000000000 to remove unnecessary zeroes
 	worktokenEurPrice8decimals := new(big.Int).Quo(worktokenEurPrice, big.NewInt(10000000000))
 
-	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice)
+	// same goes for average price
+	averagePrice8decimals := new(big.Int).Quo(averagePrice, big.NewInt(10000000000))
+
+	depositedEurValueInt := depositedUbtAmount.Mul(depositedUbtAmount, averagePrice8decimals)
 
 	amountOfWorkTokens := new(big.Int).Quo(depositedEurValueInt, worktokenEurPrice8decimals)
 

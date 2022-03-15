@@ -19,16 +19,19 @@ for i in $(seq 1 $NODES);
 do
     rm -rf /validator$i
     mkdir /validator$i
+    
+    docker exec $VALIDATOR_CONTAINER_BASE_NAME$i sed -i 's/addr_book_strict = true/addr_book_strict = false/' /validator/config/config.toml
+
+    VALIDATOR_CONTAINER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VALIDATOR_CONTAINER_BASE_NAME$i)
 
     RPC_ADDRESS="--rpc.laddr tcp://0.0.0.0:26657"
     GRPC_ADDRESS="--grpc.address 0.0.0.0:9090"
-    LISTEN_ADDRESS="--address tcp://0.0.0.0:26655"
-    P2P_ADDRESS="--p2p.laddr tcp://0.0.0.0:26656"
+    LISTEN_ADDRESS="--address tcp://$VALIDATOR_CONTAINER_IP:26655"
+    P2P_ADDRESS="--p2p.laddr tcp://$VALIDATOR_CONTAINER_IP:26656"
     PERSISTENT_PEERS="--p2p.persistent_peers $FIRST_VALIDATOR_NODE_ID@$FIRST_VALIDATOR_CONTAINER_IP:26656"
     LOG_LEVEL="--log_level info"
     INVARIANTS_CHECK="--inv-check-period 1"
     ARGS="$BASELEDGER_HOME $LISTEN_ADDRESS $RPC_ADDRESS $GRPC_ADDRESS $LOG_LEVEL $INVARIANTS_CHECK $P2P_ADDRESS $PERSISTENT_PEERS"
-    
     docker exec $VALIDATOR_CONTAINER_BASE_NAME$i $BIN $ARGS start &> /validator$i/vallogs &
 done
 
