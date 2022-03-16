@@ -23,7 +23,8 @@ Finspot node:
 9. Add validator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <validator_address> 2000000stake
 10. Add orchestrator account with allocation: ./baseledgerd  add-genesis-account --keyring-backend file <orchestrator_address> 1work
 11. Add gentx transaction: ./baseledgerd gentx --keyring-backend file --moniker finspot_validator --ip <validator_ip> --chain-id=baseledger validator 2000000stake
-12. Extract the genesis and add it to the BASELEDGER_PACKAGE
+12. ./baseledgerd keys add --recover --keyring-backend file faucet
+13. Extract the genesis and add it to the BASELEDGER_PACKAGE
 
 Other nodes:
 
