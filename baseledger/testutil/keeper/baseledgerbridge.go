@@ -273,7 +273,7 @@ func BaseledgerbridgeKeeper(t testing.TB) TestKeepers {
 	}
 
 	testParams := types.Params{
-		WorktokenEurPrice:       "0.1",
+		WorktokenEurPrice:       "0.01",
 		BaseledgerFaucetAddress: FaucetAccount.String(),
 	}
 
