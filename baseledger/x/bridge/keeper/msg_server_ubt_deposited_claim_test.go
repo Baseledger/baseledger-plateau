@@ -65,10 +65,10 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance increased correctly
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "10work", cosmosReceiverBalance.String())
+	require.Equal(t, "100work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "499999999999990work", faucetBalance.String())
+	require.Equal(t, "499999999999900work", faucetBalance.String())
 
 	// all validators, nonce 3 (skipped one)
 	for _, orchAddress := range keepertest.OrchAddrs {
@@ -90,10 +90,10 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance did not change after skipped nonce
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "10work", cosmosReceiverBalance.String())
+	require.Equal(t, "100work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "499999999999990work", faucetBalance.String())
+	require.Equal(t, "499999999999900work", faucetBalance.String())
 
 	// all validators, correct nonce 2, but without price
 	for _, orchAddress := range keepertest.OrchAddrs {
@@ -120,10 +120,10 @@ func TestUbtDepositedClaim_Success(t *testing.T) {
 
 	// balance increased again correctly
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "20work", cosmosReceiverBalance.String())
+	require.Equal(t, "200work", cosmosReceiverBalance.String())
 
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "499999999999980work", faucetBalance.String())
+	require.Equal(t, "499999999999800work", faucetBalance.String())
 
 	lastAvgPrice := testKeepers.BridgeKeeper.GetLastAttestationAverageUbtPrice(ctx)
 	require.Equal(t, big.NewInt(1000000000000000000), lastAvgPrice)
@@ -154,7 +154,7 @@ func TestUbtDepositedClaim_NonRegisteredOrchestratorValidator(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -230,7 +230,7 @@ func TestUbtDepositedClaim_NonExistingOrchestratorSet(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -280,7 +280,7 @@ func TestUbtDepositedClaim_NotObserved(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -331,7 +331,7 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -363,7 +363,7 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 		claim := types.MsgUbtDepositedClaim{
 			EventNonce:                       uint64(1),
 			TokenContract:                    baseledgerTokenContract,
-			Amount:                           sdk.NewIntFromUint64(1),
+			Amount:                           sdk.NewIntFromUint64(100000000),
 			EthereumSender:                   ethereumSender,
 			UbtPrice:                         "1",
 			Creator:                          orchAddress.String(),
@@ -378,7 +378,7 @@ func TestUbtDepositedClaim_SpreadVotes(t *testing.T) {
 
 	// balance changed
 	cosmosReceiverBalance = testKeepers.BankKeeper.GetBalance(ctx, cosmosReceiver, "work")
-	require.Equal(t, "1work", cosmosReceiverBalance.String())
+	require.Equal(t, "100work", cosmosReceiverBalance.String())
 	faucetBalance = testKeepers.BankKeeper.GetBalance(ctx, keepertest.FaucetAccount, "work")
-	require.Equal(t, "499999999999999work", faucetBalance.String())
+	require.Equal(t, "499999999999900work", faucetBalance.String())
 }

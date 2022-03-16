@@ -15,7 +15,7 @@ func TestParamsQuery(t *testing.T) {
 	wctx := sdk.WrapSDKContext(testKeepers.Context)
 	params := types.Params{
 		BaseledgerFaucetAddress: sample.AccAddress(),
-		WorktokenEurPrice:       "0.1",
+		WorktokenEurPrice:       "0.01",
 	}
 	testKeepers.BridgeKeeper.SetParams(testKeepers.Context, params)
 

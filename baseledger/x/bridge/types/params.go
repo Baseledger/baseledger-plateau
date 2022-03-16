@@ -25,7 +25,7 @@ func NewParams() Params {
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
 	return Params{
-		WorktokenEurPrice:       "0.1",
+		WorktokenEurPrice:       "0.01",
 		BaseledgerFaucetAddress: "baseledger1c67pz890v79axz0zyaw8dr2p9a2jjh6h934lpw",
 	}
 }

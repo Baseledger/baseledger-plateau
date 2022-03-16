@@ -11,7 +11,7 @@ import (
 func TestGetParams(t *testing.T) {
 	testKeepers := keepertest.SetFiveValidators(t, true)
 	params := types.Params{
-		WorktokenEurPrice:       "0.1",
+		WorktokenEurPrice:       "0.01",
 		BaseledgerFaucetAddress: keepertest.FaucetAccount.String(),
 	}
 

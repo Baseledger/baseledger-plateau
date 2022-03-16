@@ -16,7 +16,7 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.Params{
-			WorktokenEurPrice:       "0.1",
+			WorktokenEurPrice:       "0.01",
 			BaseledgerFaucetAddress: sample.AccAddress(),
 		},
 
