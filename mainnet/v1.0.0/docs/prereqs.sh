@@ -14,7 +14,6 @@ echo "Installing Cosmovisor"
 
 go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
 export DAEMON_HOME=$HOME/.baseledger
-export DAEMON_NAME=baseledgerd
 
 echo "Creating Cosmovisor folders"
 
@@ -25,7 +24,7 @@ mkdir -p $DAEMON_HOME/data
 
 echo "Moving baseledgerd binary to $DAEMON_HOME/cosmovisor/genesis/bin"
 
-tar -C $DAEMON_HOME/cosmovisor/genesis/bin -xzf baseledger_linux_amd64.tar.gz
+tar -C $DAEMON_HOME/cosmovisor/genesis/bin -xzf ../baseledger/baseledger_linux_amd64.tar.gz
 
 echo "Execute permission on baseledgerd binary"
 

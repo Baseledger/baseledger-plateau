@@ -6,3 +6,5 @@
 4. Copy the mainnet/v1.0.0 folder to your host
 5. Navigate to mainnet/v1.0.0/docs
 6. Run prereqs.sh
+7. Navigate to /root/.baseledger/cosmovisor/genesis/bin
+8. Run ./baseledgerd init validator --chain-id=baseledger
