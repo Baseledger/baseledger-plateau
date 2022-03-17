@@ -8,7 +8,7 @@ Restart=always
 RestartSec=10
 KillSignal=SIGINT
 SyslogIdentifier=baseledger-cosmovisor
-User=cosmovisor
+User=root
 Environment=DAEMON_HOME=/root/.baseledger
 Environment=DAEMON_NAME=baseledgerd
 Environment=KEYRING_PASSWORD=<password>
