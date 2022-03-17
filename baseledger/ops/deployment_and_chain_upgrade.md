@@ -68,6 +68,8 @@ This file is parsed by cosmovisor and is a trigger to stop the app, switch the c
 
 ## Migrations of chain data during upgrades
 
+In order for an upgrade with the given name to proceed, a handler for this upgrade must be set in code. Example is in app.go, search for SetUpgradeHandler
+
 An example of performing a migration during chain upgrade is given on branch *chain-upgrade*. Look for SetUpgradeHandler call in the app.go that defines the upgrade name and actions to be taken.
 
 Also look in the module.go file of the bridge module where the migration is registered with the RegisterMigration and where the module version (ConsensusVersion) is increased from 2 to 3. 
@@ -109,11 +111,11 @@ place upgraded version binary in it
 
 Open a new terminal and submit an upgrade propoposal
 
-    baseledgerd tx gov submit-proposal software-upgrade <upgrade_name>     --title upgrade --description upgrade --upgrade-height 50 --from validator     --yes
+    baseledgerd tx gov submit-proposal software-upgrade <upgrade_name>     --title upgrade --description upgrade --upgrade-height 50 --from validator     --yes --keyring-backend file
 
-    baseledgerd tx gov deposit 1 10000000stake --from validator --yes
+    baseledgerd tx gov deposit 1 10000000stake --from validator --yes --keyring-backend file
 
-    baseledgerd tx gov vote 1 yes --from validator --yes
+    baseledgerd tx gov vote 1 yes --from validator --yes --keyring-backend file
 
 This will create a proposal which is voted pass. when the current version of the node reaches this height, it will halt consensus on all nodes, create a upgrade-info.json that will be read by cosmosvisor and will trigger a switch of the sym link to upgrade folder. Start of the chain will trigger migrations defined in the new app and the chain will continue consensus. 
 
@@ -139,11 +141,11 @@ Open a new terminal and submit a param change propoposal
 
     copy the ./params.json to the folder where you are running the command
 
-    baseledgerd tx gov submit-proposal param-change param.json  --from validator     --yes
+    baseledgerd tx gov submit-proposal param-change param.json  --from validator  --yes --keyring-backend file
 
-    baseledgerd tx gov deposit 1 10000000stake --from validator --yes
+    baseledgerd tx gov deposit 2 10000000stake --from validator --yes --keyring-backend file
 
-    baseledgerd tx gov vote 1 yes --from validator --yes
+    baseledgerd tx gov vote 2 yes --from validator --yes --keyring-backend file
 
 Misc
 
