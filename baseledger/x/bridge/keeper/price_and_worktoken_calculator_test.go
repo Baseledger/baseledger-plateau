@@ -101,7 +101,7 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithMod__ReturnsCeiledAmou
 
 func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithModVariation__ReturnsCeiledAmount(t *testing.T) {
 	// Arrange
-	depositedUbtAmount, _ := new(big.Int).SetString("9999000000", 0)   // 99.99
+	depositedUbtAmount, _ := new(big.Int).SetString("9999900000", 0)   // 99.99
 	avgUbtPrice, _ := new(big.Int).SetString("1000000000000000000", 0) // 1
 	worktokenEurPrice, _ := sdk.NewDecFromStr("0.01")
 
@@ -109,7 +109,7 @@ func TestCalculateAmountOfWorkTokens_UbtAmountAndPriceWithModVariation__ReturnsC
 	calculatedWorkTokenAmount := CalculateAmountOfWorkTokens(worktokenEurPrice.BigInt(), depositedUbtAmount, avgUbtPrice)
 
 	// Assert
-	expectedWorktokenAmount, _ := new(big.Int).SetString("9999", 0)
+	expectedWorktokenAmount, _ := new(big.Int).SetString("10000", 0)
 	require.Equal(t, expectedWorktokenAmount, calculatedWorkTokenAmount)
 }
 
