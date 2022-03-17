@@ -57,6 +57,8 @@ It is the job of the admin to setup any systemd process to execute this command 
 
 # Upgrade process
 
+There has to be upgrade handler set, even if it's without any module migrations - check app.go and look for `SetUpgradeHandler` with noop func handler, uncomment it and replace <UPGRADE_NAME> with proper name.
+
 The admin places the new upgrade binary in the $DAEMON_HOME/upgrades/<name>/bin fodler.
 There is a process of voting for a upgrade proposal happening on chain (shown in the example bellow).
 
