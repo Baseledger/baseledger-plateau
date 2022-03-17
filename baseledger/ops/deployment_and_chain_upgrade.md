@@ -44,7 +44,6 @@ It is the responsibility of the admin to prepare the genesis and upgrades folder
 Make sure binary in genesis is marked as executable.
 chmod +x baseledgerd
 
-Make sure current contains a json file upgrade-info.json with content {}
 
 ### Starting the node
 
