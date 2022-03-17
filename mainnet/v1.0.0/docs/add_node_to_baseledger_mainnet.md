@@ -29,3 +29,5 @@
 26. Run *./baseledger_bridge keys register-orchestrator-address --validator-phrase="<validator_mnemonic>"*
 27. Run *systemctl start orchestrator*
 28. Verify by running *systemctl status orchestrator* and *journalctl -u orchestrator*
+29. Request staking tokens for the validator from the faucet.
+30. After tokens received, run *./baseledgerd tx staking create-validator --amount=2000000stake --pubkey=$(./baseledgerd tendermint show-validator) --moniker=<your_moniker> --commission-rate="0" --commission-max-rate="0" --commission-max-change-rate="0" --min-self-delegation="2000000" --from=<your_validator_address> --yes --keyring-backend file*
