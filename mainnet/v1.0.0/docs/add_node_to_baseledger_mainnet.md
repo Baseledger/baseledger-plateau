@@ -19,7 +19,7 @@
 16. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your infura url here *--ethereum-rpc=<your_infura_url>*
 17. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your Coin market cap api token here *Environment=COINMARKETCAP_API_TOKEN=<your_coinmarketcap_api_token>*
 18. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your Coin api api token here *Environment=COINAPI_API_TOKEN=<your_coin_api_token>*
-19. Copy the adjusted mainnet/v1.0.0/orchestrator/orchestrator.service to /etc/systemd.system
+19. Copy the adjusted mainnet/v1.0.0/orchestrator/orchestrator.service to /etc/systemd/system
 20. Run *systemctl daemon-reload*
 21. Run *systemctl start cosmovisor*
 22. Verify by running *systemctl status cosmovisor* and *journalctl -u cosmovisor*
