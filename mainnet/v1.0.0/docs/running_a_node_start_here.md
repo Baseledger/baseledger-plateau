@@ -5,13 +5,8 @@ Please apply first, using the following form: https://forms.gle/Vcp1t4XFUxmct9yc
 Without an approved application you wont be able to join the network.
 
 2) A Baseledger Node is being run on a dedicated or managed server running linux. We recommend Ubuntu 20.0.4 LTS for setting up a node and following the documentation.
-Minimum hardware requirements:
-4GB RAM
-250GB SSD
-x64 2.0 GHz 2v CPU
-Static ip address
-
-These kind of server are offered by most hosting. 
+Minimum hardware requirements: 4GB RAM, 250GB SSD, x64 2.0 GHz 2v CPU, Static IP address
+These kind of servesr are offered by most web hosting providers. 
   
 
 3) Once you application is approved, you can start setting up the node. The technical setup on how to do it is layed out in the file add_node_to_baseledger_mainnet.md in this folder. Thhis documentation requires you to have setup the server as described before and have access via a terminal (SSH / PuTTy) to execute commands.
