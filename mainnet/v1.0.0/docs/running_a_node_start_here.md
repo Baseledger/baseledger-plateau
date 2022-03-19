@@ -11,7 +11,7 @@ These kind of servesr are offered by most web hosting providers.
 
 3) Once you application is approved, you can start setting up the node. The technical setup on how to do it is layed out in the file add_node_to_baseledger_mainnet.md in this folder. Thhis documentation requires you to have setup the server as described before and have access via a terminal (SSH / PuTTy) to execute commands.
 
-4) During node setup you will be required to receive an initial stake token to join the mainnet. Please request the token opening a ticket on our support portal stating your newly created Baseledger address to send a token to. Be sure to select the product/section "Baseledger" when opening the ticket and use the same email address for creating the ticket that you used to apply for running a node.
+4) During node setup you will be required to receive an initial stake token and initial work token to join the mainnet. Please request the tokens opening a ticket on our support portal stating your newly created Baseledger validator and orchestrator address to send tokens to. Be sure to select the product/section "Baseledger" when opening the ticket and use the same email address for creating the ticket that you used to apply for running a node.
 https://desk.zoho.eu/portal/unibrightitgmbh/en/newticket
 
 5) Additional support on can be reached via creating a ticket as well as described above.
