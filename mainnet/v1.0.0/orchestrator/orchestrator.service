@@ -3,7 +3,7 @@ Description=Orchestrator - Baseledger Bridge oracle service
 
 [Service]
 WorkingDirectory=/root/.baseledger/orchestrator
-ExecStart=/root/.baseledger/orchestrator/baseledger_bridge orchestrator --ethereum-rpc=<infura_link> --baseledger-contract-address=0xc69deddbe38bfc1bb750cc1ddb1d805b339cde0c
+ExecStart=/root/.baseledger/orchestrator/baseledger_bridge orchestrator --ethereum-rpc=<infura_link> --baseledger-contract-address=0xdade4688c10c05716929f91d3005c23d4e233869
 Restart=always
 RestartSec=10
 KillSignal=SIGINT
