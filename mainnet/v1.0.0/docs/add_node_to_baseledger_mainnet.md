@@ -12,8 +12,7 @@
 10.  Run *./baseledgerd keys add --keyring-backend file validator* and store address and  mnemonic in a safe place
     10.1 You will be asked to create a keyring-backend password. Make sure to write a strong password and save it somewhere safe
 11. Run *./baseledgerd keys add --keyring-backend file orchestrator* and store address and mnemonic in a safe place
-12. Request 1 work token for orchestrator address from the faucet. Commands from step 27 can happen only after this account has 1work balance.
-13. Request staking tokens for the validator address from the faucet. Command 24 can happen only after your validator has 2000000 stake tokens.
+12. Request 1 work token for orchestrator address and staking tokens for validator address by following the step 4 from ./running_a_node_start_here.md. You will not be able to execute step 24 as well as steps after step 26 until you receive the tokens.
 14. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your node ip here *--p2p.laddr tcp://<your_node_ip>:26656*
 15. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your keyring password here *Environment=KEYRING_PASSWORD=<your_keyring_password>*
 16. Copy the adjusted mainnet/v1.0.0/baseledger/cosmovisor.service to /etc/systemd/system
