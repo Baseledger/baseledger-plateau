@@ -613,6 +613,150 @@ describe('baseledger transaction', async function() {
   });
 });
 
+describe('bad input', async function() {
+  this.timeout(70000);
+  before(() => {
+    startTestNet();
+  });
+
+  after(() => {
+    cleanTestNet();
+  });
+
+  it('should pass bad deposit address and not increase balance', async function() {
+    this.timeout(TEST_TIMEOUT + 40000);
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+  
+    // random regular baseledger address
+    const baseledgerAddress = "baseledger1xu5xhzj63ddw7pce4r5d0y3w3fuzjxtylzvucm"
+    const badBaseledgerAddress = "notbaseledgeraddress"
+  
+    let accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    let parsedResponse = JSON.parse(accountBalance.text);
+  
+    // save work token balance before deposit
+    const workTokenBalanceBefore = parsedResponse.balance.amount
+    console.log('work tokens before deposit ', workTokenBalanceBefore);
+  
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+  
+    const accounts = await web3.eth.getAccounts()
+    // deposit 1 ubt (8 decimals) to bad baseledger address
+    contract.methods.deposit(100000000, badBaseledgerAddress).send({
+        from: accounts[0]
+    }).then(console.log);
+  
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+  
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    parsedResponse = JSON.parse(accountBalance.text);
+  
+    // check that balance is not increased
+    const workTokenBalanceAfter = parsedResponse.balance.amount;
+    console.log('work tokens after deposit ', workTokenBalanceAfter);
+  
+    expect(+workTokenBalanceBefore).to.be.equal(+workTokenBalanceAfter);
+  
+    // deposit 1 ubt (8 decimals) to good baseledger address
+    contract.methods.deposit(100000000, baseledgerAddress).send({
+      from: accounts[0]
+    }).then(console.log);
+  
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+  
+    accountBalance = await request(node1_api_url).get(`/cosmos/bank/v1beta1/balances/${baseledgerAddress}/by_denom?denom=work`)
+    .send().expect(200);
+  
+    parsedResponse = JSON.parse(accountBalance.text);
+  
+    // check that balance is increased
+    const workTokenBalanceEnd = parsedResponse.balance.amount;
+    console.log('work tokens after deposit ', workTokenBalanceAfter);
+  
+    expect(+workTokenBalanceAfter).to.be.below(+workTokenBalanceEnd);
+  
+    // check if event nonces increased by 2
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 2).to.be.equal(endEventNonces[i]);
+    });
+  });
+
+  it('should pass bad staking address', async function() {
+    this.timeout(TEST_TIMEOUT + 80000);
+    const startEventNonces = await getEventNonces();
+    console.log('start event nonces ', await getEventNonces());
+
+    const orchestratorValidatorResponse = await request(node1_api_url).get('/Baseledger/baseledger/bridge/orchestrator_validator_address')
+        .send().expect(200);
+
+    // using first node validator to change staking
+    const parsedOrchValResponse = JSON.parse(orchestratorValidatorResponse.text);
+    const validatorAddress = parsedOrchValResponse.orchestratorValidatorAddress[0].validatorAddress;
+
+    let validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    let parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens at start ', parsedResponse.validator.tokens);
+            
+    const web3 = new Web3('http://localhost:8545');
+    let contract = new web3.eth.Contract(baseledger_abi, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+
+    const accounts = await web3.eth.getAccounts()
+
+    const badValAddress = "badvaladdress";
+    contract.methods.addPayee(accounts[1], accounts[1], 5000000000000, badValAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after setting to 50k ', parsedResponse.validator.tokens);
+    // tokens should be 2 still
+    expect(parsedResponse.validator.tokens).to.be.equal("2000000");
+
+    // update payee, increase power to 80k, with proper address
+    contract.methods.updatePayee(accounts[1], accounts[1], 8000000000000, validatorAddress).send({
+        from: accounts[0]
+    }).then(console.log)
+
+    // sleep to wait for attestation to be observed
+    await sleep(20000);
+
+    validators = await request(node1_api_url).get(`/cosmos/staking/v1beta1/validators/${validatorAddress}`)
+    .send().expect(200);
+
+    parsedResponse = JSON.parse(validators.text);
+
+    console.log('validator tokens after increasing to 80k ', parsedResponse.validator.tokens);
+    expect(parsedResponse.validator.tokens).to.be.equal("80000000000");
+
+    // check if event nonces increased by 2
+    const endEventNonces = await getEventNonces();
+    console.log('end event nonces ', endEventNonces);
+    startEventNonces.forEach((n, i) => {
+      expect(n + 2).to.be.equal(endEventNonces[i]);
+    });
+  });
+});
+
 // assumes build-container.sh is already executed
 startTestNet = (nodes = 3, orchs = 3) => {
   shell.exec(path.join(__dirname, `../start-containers.sh ${nodes}`));
