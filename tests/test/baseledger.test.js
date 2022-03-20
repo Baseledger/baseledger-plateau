@@ -460,11 +460,11 @@ describe('add new node', async function() {
 
 describe('baseledger transaction', async function() {
   this.timeout(50000);
-  before(() => {
+  beforeEach(() => {
     startTestNet();
   });
 
-  after(() => {
+  afterEach(() => {
     cleanTestNet();
   });
 
