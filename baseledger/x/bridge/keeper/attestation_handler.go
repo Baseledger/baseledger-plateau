@@ -146,11 +146,12 @@ func (a AttestationHandler) Handle(ctx sdk.Context, att types.Attestation, claim
 		} else {
 			hash, _ := claim.ClaimHash()
 			a.keeper.Logger(ctx).Error("Invalid receiver address",
-				"cause", err.Error(),
+				"cause", "invalid baseledger receiver address",
 				"claim type", claim.GetType(),
 				"id", types.GetAttestationKey(claim.GetEventNonce(), hash),
 				"nonce", fmt.Sprint(claim.GetEventNonce()),
 			)
+			return sdkerrors.Wrap(err, "invalid baseledger receiver address on claim")
 		}
 
 		a.keeper.Logger(ctx).Info("MsgUbtDepositedClaim success",

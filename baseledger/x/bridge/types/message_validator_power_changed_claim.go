@@ -61,9 +61,6 @@ func (msg *MsgValidatorPowerChangedClaim) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "orchestrator")
 	}
-	if _, err := sdk.ValAddressFromBech32(msg.BaseledgerReceiverValidatorAddress); err != nil {
-		return sdkerrors.Wrap(err, "cosmos receiver")
-	}
 	if msg.EventNonce == 0 {
 		return fmt.Errorf("nonce == 0")
 	}
