@@ -3,7 +3,7 @@ Description=Cosmovisor process running the underlying Baseledger Node
 
 [Service]
 WorkingDirectory=/root/.baseledger/cosmovisor/
-ExecStart=/root/go/bin/cosmovisor --p2p.persistent_peers <TODO_list_of_persistent_peers> --p2p.laddr tcp://<your_static_ip>:26656" start
+ExecStart=/root/go/bin/cosmovisor --p2p.persistent_peers <TODO_list_of_persistent_peers> --p2p.laddr tcp://<your_static_ip>:26656 start
 Restart=always
 RestartSec=10
 KillSignal=SIGINT
