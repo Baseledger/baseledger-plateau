@@ -34,16 +34,22 @@ Note: IP addresses of the other nodes will be communicated to you by the council
 
 ## Starting the node
 
-14. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your node ip here *--p2p.laddr tcp://<your_node_ip>:26656*
-15. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your keyring password here *Environment=KEYRING_PASSWORD=<your_keyring_password>*
-16. Copy the adjusted mainnet/v1.0.0/baseledger/cosmovisor.service to /etc/systemd/system
-17. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your infura url here *--ethereum-rpc=<your_infura_url>*
-18. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your Coin market cap api token here *Environment=COINMARKETCAP_API_TOKEN=<your_coinmarketcap_api_token>*
-19. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your Coin api api token here *Environment=COINAPI_API_TOKEN=<your_coin_api_token>*
-20. Copy the adjusted mainnet/v1.0.0/orchestrator/orchestrator.service to /etc/systemd/system
-21. Run *systemctl daemon-reload*
-22. Run *systemctl start cosmovisor*
+14. Update `v1.0.0/baseledger/cosmovisor.service` by adding your node ip here *--p2p.laddr tcp://<your_static_ip>:26656*
+    14.1 On Linux you can use `vim`: From root, run *vim v1.0.0/baseledger/cosmovisor.service*
+    14.2 Press `i` and navigate to `<your_static_ip>` with arrow keys and replace with your ip
+15. Update now the keyring password here *Environment=KEYRING_PASSWORD=<your_keyring_password>*
+    15.1 When ip and keyring password is added, press `esc` to stop editing
+    15.2 Type `:wq` to save and close file and hit `enter`
+16. Go to root and run *sudo cp v1.0.0/baseledger/cosmovisor.service /etc/systemd/system* to copy the adjusted `mainnet/v1.0.0/baseledger/cosmovisor.service` to `/etc/systemd/system`
+17. Update `v1.0.0/orchestrator/orchestrator.service` by adding your infura url here *--ethereum-rpc=<infura_url>*
+18. Update `v1.0.0/orchestrator/orchestrator.service` by adding your Coin market cap api token here *Environment=COINMARKETCAP_API_TOKEN=<COINMARKETCAP_API_TOKEN>*
+19. Update `v1.0.0/orchestrator/orchestrator.service` by adding your Coin api api token here *Environment=COINAPI_API_TOKEN=<COINAPI_API_TOKEN>*
+    19.1 If using `vim`; follow steps as in 14 and 15
+20. Go to root and run *sudo cp v1.0.0/orchestrator/orchestrator.service /etc/systemd/system* to copy the adjusted `v1.0.0/orchestrator/orchestrator.service` to `/etc/systemd/system`
+21. Run *systemctl daemon-reload* and use the keyrring password to authenticate
+22. Run *systemctl start cosmovisor* and use the keyrring password to authenticate
 23. Verify by running *systemctl status cosmovisor* and *journalctl -u cosmovisor*
+    23.1 You can get out of the status and journal with `ctrl + c`
 
 ## Registering as a validator
 
