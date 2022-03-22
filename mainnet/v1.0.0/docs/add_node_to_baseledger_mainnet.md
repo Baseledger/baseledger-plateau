@@ -8,7 +8,7 @@
 3.  Prepare a https://infura.io/product/ethereum RPC url. Free plan is ok for now.
 4.  Copy the mainnet/v1.0.0 folder from the repo to your node
 5.  Navigate to mainnet/v1.0.0/docs on the node
-6.  Execute chmod +x prereqs.sh and the bash prereqs.sh
+6.  Execute `chmod +x prereqs.sh` and then `bash prereqs.sh`
 
 Note: IP addresses of the other nodes will be communicated to you by the council. These must be allowed in the firewall rules of your host machine under port 26656. All other incoming connections should be disabled.
 
