@@ -27,7 +27,7 @@ Note: IP addresses of the other nodes will be communicated to you by the council
 
 ## Starting the node
 
-14. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your node ip here *--p2p.laddr tcp://<your_node_ip>:26656*
+14. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding the list of persistent peers here *--p2p.persistent_peers <list_of_persistent_peers>* and your node ip here *--p2p.laddr tcp://<your_node_ip>:26656*. List of persistent peers can be provided by request from the council.
 15. Adjust the mainnet/v1.0.0/baseledger/cosmovisor.service by adding your keyring password here *Environment=KEYRING_PASSWORD=<your_keyring_password>*
 16. Copy the adjusted mainnet/v1.0.0/baseledger/cosmovisor.service to /etc/systemd/system
 17. Adjust the mainnet/v1.0.0/orchestrator/orchestrator.service by adding your infura url here *--ethereum-rpc=<your_infura_url>*
