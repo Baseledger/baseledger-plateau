@@ -13,7 +13,7 @@
     4.4 Move the `mainnet/v1.0.0` folder to the root with *mv baseledger-plateau/mainnet/v1.0.0/ ../*
     4.5 Navigate to root and remove test directory with *rm -rf test/*
 5.  Navigate to `v1.0.0/docs`
-6.  Execute chmod +x prereqs.sh and the bash prereqs.sh
+6.  Execute `chmod +x prereqs.sh` and then `bash prereqs.sh`
 
 Note: IP addresses of the other nodes will be communicated to you by the council. These must be allowed in the firewall rules of your host machine under port 26656. All other incoming connections should be disabled.
 
