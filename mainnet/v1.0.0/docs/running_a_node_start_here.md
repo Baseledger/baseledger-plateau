@@ -4,7 +4,7 @@ This file is the stating point for everyone wanting to run a Baseledger (validat
 Please apply first, using the following form: https://forms.gle/Vcp1t4XFUxmct9yc9
 Without an approved application you wont be able to join the network.
 
-2) A Baseledger Node is being run on a dedicated or managed server running linux. We recommend Ubuntu 20.0.4 LTS for setting up a node and following the documentation.
+2) A Baseledger Node is being run on a dedicated or managed server running linux you have root access to (to run shells, create directories and so on). We recommend Ubuntu 20.0.4 LTS for setting up a node and following the documentation.
 Minimum hardware requirements: 4GB RAM, 250GB SSD, x64 2.0 GHz 2v CPU, Static IP address
 These kind of servers are offered by most web hosting providers.
 
