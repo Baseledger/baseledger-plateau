@@ -1,5 +1,7 @@
 # ADD NODE TO BASELEDGER MAINET
 
+## Root user
+It is very important to note, that you have to be logged in as `root` user - you can always check it by running `whoami`
 
 ## Preparing
 
