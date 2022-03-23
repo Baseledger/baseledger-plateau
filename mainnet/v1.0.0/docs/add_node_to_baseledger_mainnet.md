@@ -3,6 +3,10 @@
 ## Root user
 It is very important to note, that you have to be logged in as `root` user - you can always check it by running `whoami`
 
+## Firewall
+
+IP addresses of the other nodes will be communicated to you by the council. These must be allowed in the firewall rules of your host machine under port 26656. All other incoming connections should be disabled.
+
 ## Preparing
 
 1.  Prepare a https://pro.coinmarketcap.com/ API token. Free plan is ok for now.
@@ -19,11 +23,10 @@ It is very important to note, that you have to be logged in as `root` user - you
     4.4 Move the `mainnet/v1.0.0` folder to the root with `mv baseledger-plateau/mainnet/ /root/`
 
     4.5 Navigate to root and remove test directory with `rm -rf test/`
-    
+
 5.  Navigate to `mainnet/v1.0.0/docs`
 6.  Execute `chmod +x prereqs.sh` and then `bash prereqs.sh`
 
-Note: IP addresses of the other nodes will be communicated to you by the council. These must be allowed in the firewall rules of your host machine under port 26656. All other incoming connections should be disabled.
 
 ## Setting up accounts
 
@@ -35,9 +38,9 @@ Note: IP addresses of the other nodes will be communicated to you by the council
 
     9.2 Navigate to root and run `cp /root/mainnet/v1.0.0/genesis.json /root/.baseledger/config/`
 
-10.  Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and  mnemonic in a safe place
-
-    10.1 You will be asked to create a keyring-backend password. Make sure to write a strong password and save it somewhere safe
+10.  Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and mnemonic in a safe place
+    
+     10.1 You will be asked to create a keyring-backend password. Make sure to write a strong password and save it somewhere safe
 
 11. Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file orchestrator` and store address and mnemonic in a safe place
 
