@@ -56,7 +56,7 @@ Note: IP addresses of the other nodes will be communicated to you by the council
 
 ## Registering as a validator
 
-24. After tokens received, run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tx staking create-validator --amount=2000000stake --pubkey=$(.baseledger/cosmovisor/genesis/bin/baseledgerd tendermint show-validator) --moniker=<your_moniker> --commission-rate="0" --commission-max-rate="0" --commission-max-change-rate="0" --min-self-delegation="2000000" --from=validator --yes --keyring-backend file`. your_moniker is the name of the node which will be visible through the explorer ("node_xyz", "org_node", "mars"). You will be prompted to enter the keyring pasword you defined in step 10. Enter it!
+24. After tokens received, run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tx staking create-validator --amount=2000000stake --pubkey=$(/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tendermint show-validator) --moniker=<your_moniker> --commission-rate="0" --commission-max-rate="0" --commission-max-change-rate="0" --min-self-delegation="2000000" --from=validator --yes --keyring-backend file`. your_moniker is the name of the node which will be visible through the explorer ("node_xyz", "org_node", "mars"). You will be prompted to enter the keyring pasword you defined in step 10. Enter it!
 25. Verify your validator is added by performing `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd query staking validators`
 
 ## Starting the oracle
