@@ -9,10 +9,10 @@ IP addresses of the other nodes will be communicated to you by the council. Thes
 
 ## Preparing
 
-1.  Prepare a https://pro.coinmarketcap.com/ API token. Free plan is ok for now.
-2.  Prepare a https://www.coinapi.io/ API token. Free plan is ok for now.
-3.  Prepare a https://infura.io/product/ethereum RPC url. Free plan is ok for now.
-4.  Copy the mainnet/v1.0.0 folder from the repo to your node
+1. Prepare a https://pro.coinmarketcap.com/ API token. Free plan is ok for now.
+2. Prepare a https://www.coinapi.io/ API token. Free plan is ok for now.
+3. Prepare a https://infura.io/product/ethereum RPC url. Free plan is ok for now.
+4. Copy the mainnet/v1.0.0 folder from the repo to your node
 
     4.1 A way to do it is through `git clone`:
 
@@ -24,23 +24,23 @@ IP addresses of the other nodes will be communicated to you by the council. Thes
 
     4.5 Navigate to root and remove test directory with `rm -rf test/`
 
-5.  Navigate to `mainnet/v1.0.0/docs`
-6.  Execute `chmod +x prereqs.sh` and then `bash prereqs.sh`
+5. Navigate to `mainnet/v1.0.0/docs`
+6. Execute `chmod +x prereqs.sh` and then `bash prereqs.sh`
 
 
 ## Setting up accounts
 
-7.  Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
-8.  Run `/root/./baseledgerd init validator --chain-id=baseledger`
-9.  Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
+7. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
+8. Run `/root/./baseledgerd init validator --chain-id=baseledger`
+9. Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
 
     9.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
 
     9.2 Navigate to root and run `cp /root/mainnet/v1.0.0/genesis.json /root/.baseledger/config/`
 
-10.  Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and mnemonic in a safe place
+10. Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and mnemonic in a safe place
     
-     10.1 You will be asked to create a keyring-backend password. Make sure to write a strong password and save it somewhere safe
+    10.1 You will be asked to create a keyring-backend password. Make sure to write a strong password and save it somewhere safe
 
 11. Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file orchestrator` and store address and mnemonic in a safe place
 
