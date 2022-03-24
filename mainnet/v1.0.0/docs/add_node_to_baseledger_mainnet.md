@@ -7,6 +7,9 @@ It is very important to note, that you have to be logged in as `root` user - you
 
 IP addresses of the other nodes will be communicated to you by the council. These must be allowed in the firewall rules of your host machine under port 26656. All other incoming connections should be disabled.
 
+Example command with ufw to add a firewall rule: 
+ufw allow from <incoming_node_ip> to any port 26656
+
 ## Preparing
 
 1. Prepare a https://pro.coinmarketcap.com/ API token. Free plan is ok for now.
@@ -31,7 +34,7 @@ IP addresses of the other nodes will be communicated to you by the council. Thes
 ## Setting up accounts
 
 7. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
-8. Run `/root/.baseledgerd init validator --chain-id=baseledger`
+8. Run `/root/.baseledger/cosmovisor/genesis/bin/.baseledgerd init validator --chain-id=baseledger`
 9. Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
 
     9.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
