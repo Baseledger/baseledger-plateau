@@ -31,7 +31,7 @@ IP addresses of the other nodes will be communicated to you by the council. Thes
 ## Setting up accounts
 
 7. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
-8. Run `/root/./baseledgerd init validator --chain-id=baseledger`
+8. Run `/root/.baseledgerd init validator --chain-id=baseledger`
 9. Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
 
     9.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
