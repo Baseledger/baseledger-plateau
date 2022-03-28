@@ -34,7 +34,7 @@ ufw allow from <incoming_node_ip> to any port 26656
 ## Setting up accounts
 
 7. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
-8. Run `/root/.baseledger/cosmovisor/genesis/bin/.baseledgerd init validator --chain-id=baseledger`
+8. Run `/root/.baseledger/cosmovisor/genesis/bin/.baseledgerd init <moniker> --chain-id=baseledger`
 9. Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
 
     9.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
