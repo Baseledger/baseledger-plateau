@@ -31,7 +31,7 @@ ufw allow from <incoming_node_ip> to any port 26656
 ## Setting up accounts
 
 4. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
-5. Run `/root/.baseledger/cosmovisor/genesis/bin/.baseledgerd init <moniker> --chain-id=baseledger`
+5. Run `./baseledgerd init <moniker> --chain-id=baseledger`
 6. Delete `genesis.json` in `/root/.baseledger/config/genesis.json` and copy/paste `genesis.json` from `mainnet/v1.0.0/genesis.json`
 
     6.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
@@ -46,13 +46,13 @@ ufw allow from <incoming_node_ip> to any port 26656
 
 8. Update `mainnet/v1.0.0/baseledger/cosmovisor.service` by adding the list of persistent peers here `--p2p.persistent_peers <list_of_persistent_peers>` and your node ip here `--p2p.laddr tcp://<your_static_ip>:26656`
 
-    14.1 List of persistent peers can be provided by request from the council
+    8.1 List of persistent peers can be provided by request from the council
 
-    14.2 On Linux you can use `vim`: From root, run `vim mainnet/v1.0.0/baseledger/cosmovisor.service`
+    8.2 On Linux you can use `vim`: From root, run `vim mainnet/v1.0.0/baseledger/cosmovisor.service`
 
-    14.3 Press `i` and navigate to `<list_of_persistent_peers>` with arrow keys and replace with the list provided by the council
+    8.3 Press `i` and navigate to `<list_of_persistent_peers>` with arrow keys and replace with the list provided by the council
 
-    14.4 Navigate to `<your_static_ip>` with arrow keys and replace with your ip
+    8.4 Navigate to `<your_static_ip>` with arrow keys and replace with your ip
 
 9. Update now the keyring password here `Environment=KEYRING_PASSWORD=<your_keyring_password>`
 
@@ -65,5 +65,5 @@ ufw allow from <incoming_node_ip> to any port 26656
 12. Run `systemctl start cosmovisor`
 13. Verify by running `systemctl status cosmovisor` and `journalctl -u cosmovisor`
 
-    23.1 You can get out of the status and journal with `ctrl + c`
+    13.1 You can get out of the status and journal with `ctrl + c`
 
