@@ -83,16 +83,19 @@ ufw allow from <incoming_node_ip> to any port 26656
 
     23.1 You can get out of the status and journal with `ctrl + c`
 
+24. Run `systemctl enable cosmovisor` to make sure it is restarted on host restart
+
 ## Registering as a validator
 
-24. After tokens received, run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tx staking create-validator --amount=2000000stake --pubkey=$(/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tendermint show-validator) --moniker=<your_moniker> --commission-rate="0" --commission-max-rate="0" --commission-max-change-rate="0" --min-self-delegation="2000000" --from=validator --yes --keyring-backend file`. your_moniker is the name of the node which will be visible through the explorer ("node_xyz", "org_node", "mars"). You will be prompted to enter the keyring pasword you defined in step 10. Enter it!
-25. Verify your validator is added by performing `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd query staking validators`
+25. After tokens received, run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tx staking create-validator --amount=2000000stake --pubkey=$(/root/.baseledger/cosmovisor/genesis/bin/baseledgerd tendermint show-validator) --moniker=<your_moniker> --commission-rate="0" --commission-max-rate="0" --commission-max-change-rate="0" --min-self-delegation="2000000" --from=validator --yes --keyring-backend file`. your_moniker is the name of the node which will be visible through the explorer ("node_xyz", "org_node", "mars"). You will be prompted to enter the keyring pasword you defined in step 10. Enter it!
+26. Verify your validator is added by performing `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd query staking validators`
 
 ## Starting the oracle
 
-26. Navigate to /root/.baseledger/orchestrator
-27. Run `/root/.baseledger/orchestrator/baseledger_bridge init`
-28. Run `/root/.baseledger/orchestrator/baseledger_bridge keys set-orchestrator-key --phrase="<orchestrator_mnemonic>"`. Prepare the command in a text editor and replace <orchestrator_mnemonic>  with the mnemonic you stored when executing step 11.
-29. Run `/root/.baseledger/orchestrator/baseledger_bridge keys register-orchestrator-address --validator-phrase="<validator_mnemonic>"`. Prepare the command in a text editor and replace <validator_mnemonic>  with the mnemonic you stored when executing step 10.
-30. Run `systemctl start orchestrator`
-31. Verify service active by running `systemctl status orchestrator` and `journalctl -u orchestrator`
+27. Navigate to /root/.baseledger/orchestrator
+28. Run `/root/.baseledger/orchestrator/baseledger_bridge init`
+29. Run `/root/.baseledger/orchestrator/baseledger_bridge keys set-orchestrator-key --phrase="<orchestrator_mnemonic>"`. Prepare the command in a text editor and replace <orchestrator_mnemonic>  with the mnemonic you stored when executing step 11.
+30. Run `/root/.baseledger/orchestrator/baseledger_bridge keys register-orchestrator-address --validator-phrase="<validator_mnemonic>"`. Prepare the command in a text editor and replace <validator_mnemonic>  with the mnemonic you stored when executing step 10.
+31. Run `systemctl start orchestrator`
+32. Verify service active by running `systemctl status orchestrator` and `journalctl -u orchestrator`
+33. Run `systemctl enable orchestrator` to make sure it is restarted on host restart
