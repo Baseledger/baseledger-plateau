@@ -28,24 +28,21 @@ ufw allow from <incoming_node_ip> to any port 26656
     4.5 Navigate to root and remove test directory with `rm -rf test/`
 
 5. Navigate to `mainnet/v1.0.0/docs` 
+    
     5.1 To install the node to the home directory of the root user, execute `chmod +x prereqs.sh` and then `bash prereqs.sh` 
     
     5.2 To install the node to a different location, open the file `prereqs_custom_location.sh` 
-    
         5.2.1 On Linux you can use `vim`: From root, run `vim mainnet/v1.0.0/docs/prereqs_custom_location.sh`
-    
         5.2.2 Press `i` and navigate to `<path_where_to_install_the_node>` with arrow keys and replace with your chosen location f.e (/opt/mynode)
-    
         5.2.3 Press `esc` to stop editing
-    
         5.2.4 Type `:wq` to save and close and hit `enter`
-    
         5.2.5 Execute `chmod +x prereqs_custom_location.sh` and then `bash prereqs_custom_location.sh` 
 
 
 ## Setting up accounts
 
-If you have used the `prereqs_custom_location.sh` script to install the node to your custom location, you will have to run every one of the following commands with `/<path_where_to_install_the_node>/.baseledger` f.e (`/opt/mynode/.baseledger/cosmovisor/genesis/bin` instead of `/root/.baseledger/cosmovisor/genesis/bin`) if not told differently after a command!
+If you have used the `prereqs_custom_location.sh` script to install the node to your custom location, you will have to run every one of the following commands with `/<path_where_to_install_the_node>/.baseledger` f.e (`/opt/mynode/.baseledger/cosmovisor/genesis/bin` instead of `/root/.baseledger/cosmovisor/genesis/bin`) if not told differently after the command!
+
 
 6. Navigate to `/root/.baseledger/cosmovisor/genesis/bin`
 7. Run `/root/.baseledger/cosmovisor/genesis/bin/.baseledgerd init validator --chain-id=baseledger`
@@ -54,7 +51,7 @@ If you have used the `prereqs_custom_location.sh` script to install the node to 
     8.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
 
     8.2 Navigate to root and run `cp /root/mainnet/v1.0.0/genesis.json /root/.baseledger/config/`
-        9.2.1 If you have used the `prereqs_custom_location.sh` script to install the node to your custom location, run `cp /root/mainnet/v1.0.0/genesis.json <path_where_to_install_the_node>/.baseledger/config/` 
+        8.2.1 If you have used the `prereqs_custom_location.sh` script to install the node to your custom location, run `cp /root/mainnet/v1.0.0/genesis.json <path_where_to_install_the_node>/.baseledger/config/` 
 
 9. Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and mnemonic in a safe place
     
