@@ -56,6 +56,7 @@ If you have used the `prereqs_custom_location.sh` script to install the node to 
     8.1 Navigate to `/root/.baseledger/config` and run `rm genesis.json`
 
     8.2 Navigate to root and run `cp /root/mainnet/v1.0.0/genesis.json /root/.baseledger/config/`
+        
         8.2.1 If you have used the `prereqs_custom_location.sh` script to install the node to your custom location, run `cp /root/mainnet/v1.0.0/genesis.json <path_where_to_install_the_node>/.baseledger/config/` 
 
 9. Run `/root/.baseledger/cosmovisor/genesis/bin/baseledgerd keys add --keyring-backend file validator` and store address and mnemonic in a safe place
