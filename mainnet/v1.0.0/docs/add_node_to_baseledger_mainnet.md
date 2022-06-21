@@ -32,10 +32,15 @@ ufw allow from <incoming_node_ip> to any port 26656
     5.1 To install the node to the home directory of the root user, execute `chmod +x prereqs.sh` and then `bash prereqs.sh` 
     
     5.2 To install the node to a different location, open the file `prereqs_custom_location.sh` 
+        
         5.2.1 On Linux you can use `vim`: From root, run `vim mainnet/v1.0.0/docs/prereqs_custom_location.sh`
+        
         5.2.2 Press `i` and navigate to `<path_where_to_install_the_node>` with arrow keys and replace with your chosen location f.e (/opt/mynode)
+        
         5.2.3 Press `esc` to stop editing
+        
         5.2.4 Type `:wq` to save and close and hit `enter`
+        
         5.2.5 Execute `chmod +x prereqs_custom_location.sh` and then `bash prereqs_custom_location.sh` 
 
 
